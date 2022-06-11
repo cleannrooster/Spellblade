@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "spellblademod:block/totem1"
+      },
+      {
+        "model": "spellblademod:block/totem2"
+      },
+      {
+        "model": "spellblademod:block/totem3"
+      },
+      {
+        "model": "spellblademod:block/totem4"
+      }
+    ]
+  }
+}

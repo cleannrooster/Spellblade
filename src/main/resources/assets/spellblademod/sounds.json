@@ -1,0 +1,26 @@
+{
+  "hit1": {
+    "category" : "player",
+    "sounds": [{
+      "name": "spellblademod:hit1",
+      "stream": false
+    }
+    ]
+  },
+  "ready1": {
+    "category" : "player",
+    "sounds": [{
+      "name": "spellblademod:ready1",
+      "stream": false
+    }
+    ]
+  },
+  "shatter1": {
+    "category" : "player",
+    "sounds": [{
+      "name": "spellblademod:shatter1",
+      "stream": false
+    }
+    ]
+  }
+}

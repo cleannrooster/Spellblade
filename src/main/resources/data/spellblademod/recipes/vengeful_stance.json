@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:enchanted_book"
+    },
+    {
+      "tag": "forge:rods/blaze"
+    },
+    {
+      "tag": "forge:rods/blaze"
+    },
+    {
+      "item": "minecraft:blaze_powder"
+    },
+    {
+      "item": "minecraft:blaze_powder"
+    }
+  ],
+  "result":
+  {
+    "item": "spellblademod:vengeful_stance"
+  }
+}

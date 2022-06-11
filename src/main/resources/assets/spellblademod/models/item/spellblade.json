@@ -1,0 +1,12 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+  "layer0": "spellblademod:item/spellblade"
+  },
+  "overrides": [
+    { "predicate":  { "custom_model_data": 1 }, "model": "spellblademod:item/spellblade_tier_1"},
+    { "predicate":  { "custom_model_data": 2 }, "model": "spellblademod:item/spellblade_tier_2"},
+    { "predicate":  { "custom_model_data": 3 }, "model": "spellblademod:item/spellblade_tier_3"},
+    { "predicate":  { "custom_model_data": 4 }, "model": "spellblademod:item/spellblade_tier_4"}
+  ]
+}

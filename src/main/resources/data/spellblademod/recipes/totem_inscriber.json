@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smithing",
+  "base": {
+    "item": "minecraft:stick"
+  },
+  "addition": {
+    "item": "spellblademod:wardiron"
+  },
+  "result": {
+    "item": "spellblademod:totem_inscriber"
+  }
+}

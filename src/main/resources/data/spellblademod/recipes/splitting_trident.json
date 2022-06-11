@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:enchanted_book"
+    },
+    {
+      "tag": "forge:dusts/prismarine"
+    },
+    {
+      "tag": "forge:gems/diamond"
+    },
+    {
+      "tag": "forge:ingots/iron"
+    }
+  ],
+  "result":
+  {
+    "item": "spellblademod:splitting_trident"
+  }
+}
