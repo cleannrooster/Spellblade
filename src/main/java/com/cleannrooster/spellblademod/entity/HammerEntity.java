@@ -59,10 +59,10 @@ public boolean secondary = false;
             Random random = new Random();
             SoundEvent event = SoundEvents.GLASS_BREAK;
             this.level.playSound((Player) null, new BlockPos((double)this.getX(),(double)this.getY(),(double)this.getZ()), event, SoundSource.PLAYERS, 1.0F, 1.0F);
-            int num_pts = 1000;
+            int num_pts = 200;
             LivingEntity entity = (LivingEntity) this.getOwner();
             if (entity.getEffect(StatusEffectsModded.WARDLOCKED.get()) != null){
-                num_pts = 250;
+                num_pts = 100;
             }
             /*if (this.getLevel().isClientSide)
             {

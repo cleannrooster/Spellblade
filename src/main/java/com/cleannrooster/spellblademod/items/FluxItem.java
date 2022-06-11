@@ -54,21 +54,19 @@ public class FluxItem extends Item {
         if (target == entity){
             return;
         }
-        if (target.getLevel().isClientSide){
+        if (target.getLevel().isClientSide || target.invulnerableTime > 10){
             return;
         }
         target.hurt(DamageSource.MAGIC,1);
-        if (target.hasEffect(StatusEffectsModded.FLUXED.get())) {
-            if (target.getEffect(StatusEffectsModded.FLUXED.get()).getAmplifier() == 0) {
-                List entities = target.level.getEntitiesOfClass(LivingEntity.class, new AABB(target.getX() - 4, target.getY() + 0.5 - 4, target.getZ() - 4, target.getX() + 4, target.getY() + 4, target.getZ() + 4));
-                Object[] entitiesarray = entities.toArray();
+        if (target.hasEffect(StatusEffectsModded.FLUXED.get()) ) {
+            List entities = target.level.getEntitiesOfClass(LivingEntity.class, new AABB(target.getX() - 4, target.getY() + 0.5 - 4, target.getZ() - 4, target.getX() + 4, target.getY() + 4, target.getZ() + 4));
+            Object[] entitiesarray = entities.toArray();
 
-                int entityamount = entitiesarray.length;
-                for (int ii = 0; ii < entityamount; ii = ii + 1) {
+            int entityamount = entitiesarray.length;
+            for (int ii = 0; ii < entityamount; ii = ii + 1) {
 
-                    LivingEntity target2 = (LivingEntity) entities.get(ii);
-                    target.addEffect(new MobEffectInstance(StatusEffectsModded.FLUXED.get(), 4, 1, true, true));
-
+                LivingEntity target2 = (LivingEntity) entities.get(ii);
+                if(target2.invulnerableTime <= 10) {
                     FluxFlux(entity, target2);
                 }
             }
