@@ -116,8 +116,6 @@ public class FluxHandler {
                 }
             living.hurt(new DamageSource("fluxed"), (float) (Amount*2.5));
                 list.add(living);
-            System.out.println(living.getLevel());
-
             List entities = living.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(living.getX() - 4, living.getY() + 0.5 - 4, living.getZ() - 4, living.getX() + 4, living.getY() + 4, living.getZ() + 4));
             Object[] entitiesarray = entities.toArray();
             float mult = 1;
