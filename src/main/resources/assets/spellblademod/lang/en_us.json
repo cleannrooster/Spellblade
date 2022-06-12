@@ -24,5 +24,7 @@
   "effect.spellblademod.lightning_whirl_effect": "Lightning Whirl",
   "effect.spellblademod.vengeful_stance": "Vengeful Stance",
   "effect.spellblademod.wardlocked": "Wardlocked",
-  "itemGroup.spellblade": "Spellblade"
+  "itemGroup.spellblade": "Spellblade",
+  "death.attack.fluxed": "%1$s got fluxed",
+  "death.attack.fluxed.player": "%2$s fluxed %1$s"
 }

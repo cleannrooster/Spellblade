@@ -23,7 +23,7 @@ public enum ModArmorMaterials implements ArmorMaterial {
     NETHERITE_WARDING("netherite_warding", 37, new int[]{1, 2, 3, 1}, 15, SoundEvents.ARMOR_EQUIP_CHAIN, 0, 0, () -> {
         return Ingredient.of(Items.NETHERITE_INGOT);
     }),
-    DIAMOND_WARDING("diamond_warding", 37, new int[]{1, 4, 5, 2}, 15, SoundEvents.ARMOR_EQUIP_CHAIN, 0, 0, () -> {
+    DIAMOND_WARDING("diamond_warding", 37, new int[]{2, 5, 6, 3}, 15, SoundEvents.ARMOR_EQUIP_CHAIN, 0, 0, () -> {
         return Ingredient.of(ModItems.WARDING_MAIL.get());
     });
 
