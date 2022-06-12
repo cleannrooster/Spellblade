@@ -13,7 +13,7 @@ public class ModTileEntity {
             DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, "spellblademod");
 
     public static final RegistryObject<BlockEntityType<WardingTotemBlockEntity>> WARDING_TOTEM_BLOCK_ENTITY =
-            BLOCK_ENTITIES.register("gem_cutting_station_block_entity", () ->
+            BLOCK_ENTITIES.register("warding_totem_block_entity", () ->
                     BlockEntityType.Builder.of(WardingTotemBlockEntity::new,
                             ModBlocks.WARDING_TOTEM_BLOCK.get()).build(null));
 

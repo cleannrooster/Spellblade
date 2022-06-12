@@ -31,6 +31,6 @@ public class ModBlocks {
     }
 
     public static final RegistryObject<Block> WARDING_TOTEM_BLOCK = registerBlock("warding_totem_block",
-            () -> new WardingTotemBlock(BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)));
+            () -> new WardingTotemBlock(BlockBehaviour.Properties.of(Material.WOOD).strength(2F,3).requiresCorrectToolForDrops().sound(SoundType.WOOD)));
 
 }
