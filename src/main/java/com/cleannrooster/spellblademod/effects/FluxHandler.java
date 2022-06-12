@@ -40,6 +40,8 @@ public class FluxHandler {
                 }
                 float amount = (float) (event.getAmount()*Math.pow(1.25,((Spellblade) player.getMainHandItem().getItem()).tier));
                 living.hurt(new DamageSource("fluxed"), (float) (amount*2.5));
+                player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(),40,1));
+
                 living.removeEffect(StatusEffectsModded.FLUXED.get());
                 living.addEffect(new MobEffectInstance(StatusEffectsModded.OVERLOAD.get(), 5, 0));
                 List entities = living.level.getEntitiesOfClass(LivingEntity.class, new AABB(living.getX() - 4, living.getY() + 0.5 - 4, living.getZ() - 4, living.getX() + 4, living.getY() + 4, living.getZ() + 4));
