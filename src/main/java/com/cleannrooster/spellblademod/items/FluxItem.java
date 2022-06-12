@@ -3,8 +3,12 @@ package com.cleannrooster.spellblademod.items;
 import com.cleannrooster.spellblademod.StatusEffectsModded;
 import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
 import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
+import it.unimi.dsi.fastutil.objects.ObjectLists;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.sounds.SoundEvents;
@@ -29,14 +33,22 @@ import net.minecraft.world.level.block.GrowingPlantHeadBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
+import java.util.stream.IntStream;
+
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 
 public class FluxItem extends Item {
+    Random random = new Random();
     public FluxItem(Properties p_41383_) {
         super(p_41383_);
     }
     public net.minecraft.world.InteractionResult interactLivingEntity(ItemStack stack, net.minecraft.world.entity.player.Player playerIn, LivingEntity entity, net.minecraft.world.InteractionHand hand) {
+        List<LivingEntity> list = new ArrayList<>();
         Player player = playerIn;
         PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
         if (entity instanceof ServerPlayer){
@@ -45,7 +57,7 @@ public class FluxItem extends Item {
             }
         }
         if(playerMana.getMana() > 39 && !player.hasEffect(StatusEffectsModded.WARD_DRAIN.get())) {
-            FluxFlux(player, entity);
+            FluxFlux(player, entity, player.level, list);
             player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(),5,0));
             return net.minecraft.world.InteractionResult.SUCCESS;
         }
@@ -54,7 +66,7 @@ public class FluxItem extends Item {
         }
 
     }
-    public void FluxFlux(LivingEntity entity, LivingEntity target){
+    public void FluxFlux(LivingEntity entity, LivingEntity target, Level level, List<LivingEntity> list){
         if (target == null){
             return;
         }
@@ -66,22 +78,38 @@ public class FluxItem extends Item {
         if (target == entity){
             return;
         }
-        if (target.getLevel().isClientSide || target.invulnerableTime > 10){
-            return;
-        }
+
 
         target.hurt(DamageSource.MAGIC,1);
+            list.add(target);
+        target.addEffect(new MobEffectInstance(StatusEffectsModded.OVERLOAD.get(), 5, 0));
+
+
         if (target.hasEffect(StatusEffectsModded.FLUXED.get()) ) {
-            List entities = target.level.getEntitiesOfClass(LivingEntity.class, new AABB(target.getX() - 4, target.getY() + 0.5 - 4, target.getZ() - 4, target.getX() + 4, target.getY() + 4, target.getZ() + 4));
+            List entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(target.getX() - 4, target.getY() + 0.5 - 4, target.getZ() - 4, target.getX() + 4, target.getY() + 4, target.getZ() + 4));
             Object[] entitiesarray = entities.toArray();
 
             int entityamount = entitiesarray.length;
             for (int ii = 0; ii < entityamount; ii = ii + 1) {
 
                 LivingEntity target2 = (LivingEntity) entities.get(ii);
-                if(target2.invulnerableTime <= 10) {
-                    FluxFlux(entity, target2);
+                if(!list.contains(target2)) {
+                    FluxFlux(entity, target2, level,list);
                 }
+
+            }
+            int num_pts = 100;
+            for (int i = 0; i <= num_pts; i = i + 1) {
+                double[] indices = IntStream.rangeClosed(0, (int) ((num_pts - 0) / 1))
+                        .mapToDouble(x -> x * 1 + 0).toArray();
+
+                double phi = Math.acos(1 - 2 * indices[i] / num_pts);
+                double theta = Math.PI * (1 + Math.pow(5, 0.5) * indices[i]);
+                double x = cos(theta) * sin(phi);
+                double y = Math.sin(theta) * sin(phi);
+                double z = cos(phi);
+                level.addParticle(ParticleTypes.DRAGON_BREATH.getType(), true, target.getX() + random.nextDouble(-0.1, 0.1), target.getY() + random.nextDouble(-0.1, 0.1), target.getZ() + random.nextDouble(-0.1, 0.1), x * 0.2, y * 0.2, z * 0.2);
+
             }
         }
             target.addEffect(new MobEffectInstance(StatusEffectsModded.FLUXED.get(), 120, 0, true, true));
