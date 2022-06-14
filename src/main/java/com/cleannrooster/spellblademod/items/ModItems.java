@@ -59,8 +59,6 @@ public class ModItems {
             () -> new LightningEffigy( new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
     public static final RegistryObject<Item> WARDING_TOTEM = ITEMS.register("warding_totem",
             () -> new WardingTotem(ModBlocks.WARDING_TOTEM_BLOCK.get(), new Item.Properties().tab(ModSetup.ITEM_GROUP)));
-    public static final RegistryObject<Item> TOTEM_INSCRIBER = ITEMS.register("totem_inscriber",
-            () -> new TotemInscriber( new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
     public static final RegistryObject<Item> LIGHTNING_WHIRL = ITEMS.register("lightning_whirl",
             () -> new LightningWhirl( new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
     public static final RegistryObject<Item> VENGEFUL_STANCE = ITEMS.register("vengeful_stance",

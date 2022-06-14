@@ -7,6 +7,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -22,8 +23,17 @@ public class WardingTotemBlockEntity extends BlockEntity {
     public WardingTotemBlockEntity(BlockPos pWorldPosition, BlockState pBlockState) {
         super(ModTileEntity.WARDING_TOTEM_BLOCK_ENTITY.get(), pWorldPosition, pBlockState);
     }
+
     public static void tick(Level pLevel, BlockPos pPos, BlockState pState, WardingTotemBlockEntity pBlockEntity) {
-        List entities = pLevel.getEntitiesOfClass(Player.class,new AABB(pPos.getX()+0.5-32, pPos.getY()+0.5-32,pPos.getZ()+0.5-32,pPos.getX()+0.5+32,pPos.getY()+0.5+32,pPos.getZ()+0.5+32 ));
+        for (int i = 1; i < pLevel.getMaxBuildHeight() - pPos.getY(); i++){
+            boolean airblock = pLevel.getBlockState(pPos.above(i)).getBlock() instanceof AirBlock;
+            boolean totemblock = pLevel.getBlockState(pPos.above(i)).getBlock() instanceof WardingTotemBlock;
+            if(!(airblock) && !(totemblock)){
+                pLevel.destroyBlock(pPos, true);
+                return;
+            }
+        }
+        List entities = pLevel.getEntitiesOfClass(Player.class,new AABB(pPos.getX()+0.5-32, pLevel.getMinBuildHeight(),pPos.getZ()+0.5-32,pPos.getX()+0.5+32,pLevel.getMaxBuildHeight(),pPos.getZ()+0.5+32 ));
         Object[] entitiesarray = entities.toArray();
         int entityamount = entitiesarray.length;
         int ceiling = 0;

@@ -50,7 +50,7 @@ public class EffigyOfUnity extends Item {
             return InteractionResultHolder.fail(itemstack);
         }
         else {
-            player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(),3, 10));
+            player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(),5, 3));
             p_41433_.startUsingItem(p_41434_);
             return InteractionResultHolder.consume(itemstack);
         }
