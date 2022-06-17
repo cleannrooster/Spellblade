@@ -10,6 +10,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
@@ -73,6 +74,32 @@ public class FluxItem extends Spell {
 
     }
 
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level p_41432_, Player p_41433_, InteractionHand p_41434_) {
+        Player player = p_41433_;
+        PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
+        ItemStack itemstack = p_41433_.getItemInHand(p_41434_);
+        if (!p_41432_.isClientSide() && player.isShiftKeyDown()) {
+            CompoundTag nbt;
+            if (itemstack.hasTag())
+            {
+                nbt = itemstack.getTag();
+                nbt.remove("Triggerable");
+                return InteractionResultHolder.success(itemstack);
+
+            }
+            else
+            {
+                nbt = itemstack.getOrCreateTag();
+                nbt.putInt("Triggerable", 1);
+                return InteractionResultHolder.success(itemstack);
+            }
+        }
+        else{
+            return InteractionResultHolder.fail(itemstack);
+        }
+    }
+
     public void FluxFlux(Player entity, LivingEntity target, Level level, List<LivingEntity> list) {
         if (target == null) {
             return;
@@ -97,12 +124,24 @@ public class FluxItem extends Spell {
             {
                 target.hurt(DamageSource.MAGIC, 1);
                 list.add(target);
+                int num_pts = 100;
+                for (int i = 0; i <= num_pts; i = i + 1) {
+                    double[] indices = IntStream.rangeClosed(0, (int) ((num_pts - 0) / 1))
+                            .mapToDouble(x -> x * 1 + 0).toArray();
 
+                    double phi = Math.acos(1 - 2 * indices[i] / num_pts);
+                    double theta = Math.PI * (1 + Math.pow(5, 0.5) * indices[i]);
+                    double x = cos(theta) * sin(phi);
+                    double y = Math.sin(theta) * sin(phi);
+                    double z = cos(phi);
+                    level.addParticle(ParticleTypes.DRAGON_BREATH.getType(), true, target.getX() + random.nextDouble(-0.1, 0.1), target.getY() + random.nextDouble(-0.1, 0.1), target.getZ() + random.nextDouble(-0.1, 0.1), x * 0.2, y * 0.2, z * 0.2);
+
+                }
 
                 if (target.hasEffect(StatusEffectsModded.FLUXED.get())) {
                     List entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(target.getX() - 4, target.getY() + 0.5 - 4, target.getZ() - 4, target.getX() + 4, target.getY() + 4, target.getZ() + 4));
                     Object[] entitiesarray = entities.toArray();
-
+                    System.out.println(target.getLevel());
                     int entityamount = entitiesarray.length;
                     for (int ii = 0; ii < entityamount; ii = ii + 1) {
 
@@ -110,26 +149,11 @@ public class FluxItem extends Spell {
                         if (!list.contains(target2)) {
                             FluxFlux(entity, target2, level, list);
                         }
-
-                    }
-                    int num_pts = 100;
-                    for (int i = 0; i <= num_pts; i = i + 1) {
-                        double[] indices = IntStream.rangeClosed(0, (int) ((num_pts - 0) / 1))
-                                .mapToDouble(x -> x * 1 + 0).toArray();
-
-                        double phi = Math.acos(1 - 2 * indices[i] / num_pts);
-                        double theta = Math.PI * (1 + Math.pow(5, 0.5) * indices[i]);
-                        double x = cos(theta) * sin(phi);
-                        double y = Math.sin(theta) * sin(phi);
-                        double z = cos(phi);
-                        level.addParticle(ParticleTypes.DRAGON_BREATH.getType(), true, target.getX() + random.nextDouble(-0.1, 0.1), target.getY() + random.nextDouble(-0.1, 0.1), target.getZ() + random.nextDouble(-0.1, 0.1), x * 0.2, y * 0.2, z * 0.2);
-
                     }
                 }
-                target.addEffect(new MobEffectInstance(StatusEffectsModded.FLUXED.get(), 120, 0, true, true));
-                target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 120, 0));
+                    target.addEffect(new MobEffectInstance(StatusEffectsModded.FLUXED.get(), 120, 0, true, true));
+                    target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 120, 0));
             }
-
         }
     }
 
@@ -137,7 +161,7 @@ public class FluxItem extends Spell {
         PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
         List<LivingEntity> list = new ArrayList<>();
 
-        playerMana.addMana(-40 * modifier);
+        playerMana.addMana(-10);
         boolean flag1 = false;
         if (player.getInventory().contains(ModItems.FRIENDSHIP.get().getDefaultInstance())){
             flag1 = true;
@@ -182,6 +206,16 @@ public class FluxItem extends Spell {
             FluxFlux(player, chained, player.level, list);
             player.getCooldowns().addCooldown(this, 10);
         }
+    }
+
+    @Override
+    public boolean isFoil(ItemStack p_41453_) {
+        if (p_41453_.hasTag()){
+            if(p_41453_.getTag().getInt("Triggerable") == 1){
+                return true;
+            }
+        }
+        return false;
     }
 }
 

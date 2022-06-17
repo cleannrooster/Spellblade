@@ -6,6 +6,7 @@ import com.cleannrooster.spellblademod.entity.ModEntities;
 import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
 import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -30,6 +31,22 @@ public class HammerRain extends Spell {
         ItemStack itemstack = p_43406_.getItemInHand(p_43407_);
 
         PlayerMana playerMana = p_43406_.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
+        if (!p_43405_.isClientSide() && p_43406_.isShiftKeyDown()) {
+            CompoundTag nbt;
+            if (itemstack.hasTag())
+            {
+                nbt = itemstack.getTag();
+                nbt.remove("Triggerable");
+                return InteractionResultHolder.success(itemstack);
+
+            }
+            else
+            {
+                nbt = itemstack.getOrCreateTag();
+                nbt.putInt("Triggerable", 1);
+                return InteractionResultHolder.success(itemstack);
+            }
+        }
         if (playerMana.getMana() > 79) {
             p_43406_.getCooldowns().addCooldown(this,10);
             p_43406_.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(), 5, 1));
@@ -58,5 +75,14 @@ public class HammerRain extends Spell {
 
         hammer1.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.6F, 1.0F);
         level.addFreshEntity(hammer1);
+    }
+    @Override
+    public boolean isFoil(ItemStack p_41453_) {
+        if (p_41453_.hasTag()){
+            if(p_41453_.getTag().getInt("Triggerable") == 1){
+                return true;
+            }
+        }
+        return false;
     }
 }

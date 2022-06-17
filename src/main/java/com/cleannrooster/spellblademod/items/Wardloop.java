@@ -48,8 +48,11 @@ public class Wardloop extends Spell{
                 if (p_41404_.getTag().get("CustomModelData") != null)
                 for(int i = 0; i <= 9; i++){
                     if (player.getInventory().getItem(i).getItem() != this && player.getInventory().getItem(i).getItem() instanceof Spell && !player.getCooldowns().isOnCooldown(player.getInventory().getItem(i).getItem())){
-                        ((Spell) player.getInventory().getItem(i).getItem()).trigger(p_41405_, player,(float)1/8);
-                        player.getCooldowns().addCooldown(player.getInventory().getItem(i).getItem(), 10);
+                        if (player.getInventory().getItem(i).hasTag()){
+                            if(player.getInventory().getItem(i).getTag().getInt("Triggerable") == 1){
+                                ((Spell) player.getInventory().getItem(i).getItem()).trigger(p_41405_, player,(float)1/8);
+                                player.getCooldowns().addCooldown(player.getInventory().getItem(i).getItem(), 10);                            }
+                        }
                     }
                 }
             }

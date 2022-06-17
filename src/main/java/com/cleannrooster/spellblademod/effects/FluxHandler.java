@@ -20,9 +20,7 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.entity.EntityTeleportEvent;
-import net.minecraftforge.event.entity.living.EnderManAngerEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -42,31 +40,38 @@ public class FluxHandler {
 
     static Random random = new Random();
     @SubscribeEvent
-    public static void fluxHandler(LivingHurtEvent event){
+    public static void fluxHandler(LivingAttackEvent event){
         LivingEntity living = event.getEntityLiving();
         if (living instanceof ServerPlayer){
             if (!(((ServerPlayer)living).gameMode.getGameModeForPlayer() == GameType.SURVIVAL)){
                 return;
             }
         }
-        List<LivingEntity> entitieshit = new ArrayList<>();
-        if (event.getSource().getDirectEntity() instanceof Player) {
-            Player player = (Player)event.getSource().getEntity();
+        if(event.getSource().getDirectEntity() instanceof Player) {
+            Player player = (Player) event.getSource().getEntity();
 
-            if (player == living || event.getSource().getDirectEntity() == living){
-                return;
-            }
-            if (((DamageSource)event.getSource()).msgId != "fluxed" && ((DamageSource)event.getSource()).msgId != "eyelaser" && living.hasEffect(StatusEffectsModded.FLUXED.get()) && player.getMainHandItem().getItem() instanceof Spellblade) {
-                if (living.hasEffect(MobEffects.GLOWING)) {
-                    living.removeEffect(MobEffects.GLOWING);
-
-                }
-/*
-                player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(),40,1));
-*/
+            if (((DamageSource) event.getSource()).msgId != "fluxed" && ((DamageSource) event.getSource()).msgId != "eyelaser" && player.getMainHandItem().getItem() instanceof Spellblade) {
+                int i;
                 float amount = (float) (event.getAmount());
-                int num_pts = 100;
-                    for (int i = 0; i <= num_pts; i = i + 1) {
+                List<LivingEntity> entitieshit = new ArrayList<>();
+                List entities = living.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(living.getX() - 4, living.getY() + 0.5 - 4, living.getZ() - 4, living.getX() + 4, living.getY() + 4, living.getZ() + 4));
+                Object[] entitiesarray = entities.toArray();
+
+                float mult = 1;
+                int ii;
+                int entityamount = entitiesarray.length;
+
+                if (player == living || event.getSource().getDirectEntity() == living) {
+                    return;
+                }
+                if (living.hasEffect(StatusEffectsModded.FLUXED.get())) {
+                    if (living.hasEffect(MobEffects.GLOWING)) {
+                        living.removeEffect(MobEffects.GLOWING);
+                    }
+                    living.hurt(DamageSourceModded.fluxed(player), (float) (amount * 2.5));
+                    player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(), 40, 1));
+                    int num_pts = 100;
+                    for (i = 0; i <= num_pts; i = i + 1) {
                         double[] indices = IntStream.rangeClosed(0, (int) ((num_pts - 0) / 1))
                                 .mapToDouble(x -> x * 1 + 0).toArray();
 
@@ -76,32 +81,21 @@ public class FluxHandler {
                         double y = Math.sin(theta) * sin(phi);
                         double z = cos(phi);
 
-                        living.level.addParticle(ParticleTypes.GLOW_SQUID_INK.getType(), true, living.getX() + random.nextDouble(-0.1, 0.1), living.getY() + random.nextDouble(-0.1, 0.1), living.getZ() + random.nextDouble(-0.1, 0.1), x*0.5, y*0.5, z*0.5);
+                        living.level.addParticle(ParticleTypes.GLOW_SQUID_INK.getType(), true, living.getX() + random.nextDouble(-0.1, 0.1), living.getY() + random.nextDouble(-0.1, 0.1), living.getZ() + random.nextDouble(-0.1, 0.1), x * 0.5, y * 0.5, z * 0.5);
                     }
-                living.hurt(DamageSourceModded.fluxed( player), (float) (amount*2.5));
+
+                    for (ii = 0; ii < entityamount; ii = ii + 1) {
+
+                        LivingEntity living2 = (LivingEntity) entities.get(ii);
+                        if (living2.hasEffect(StatusEffectsModded.FLUXED.get()) && living != living2) {
+                            fluxHandler2(living2, player, amount, player.level, entitieshit);
+                        }
+                    }
+                }
 
                 living.removeEffect(StatusEffectsModded.FLUXED.get());
-                List entities = living.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(living.getX() - 4, living.getY() + 0.5 - 4, living.getZ() - 4, living.getX() + 4, living.getY() + 4, living.getZ() + 4));
-                Object[] entitiesarray = entities.toArray();
-
-                float mult = 1;
-
-                int entityamount = entitiesarray.length;
-                for (int ii = 0; ii < entityamount; ii = ii + 1) {
-
-                    LivingEntity living2 = (LivingEntity) entities.get(ii);
-                    if (living2.hasEffect(StatusEffectsModded.FLUXED.get()) && living != living2) {
-                        fluxHandler2(living2, player,amount, player.level, entitieshit);
-                    }
-                }
-                for (int iii = 0; iii < entitieshit.size(); iii = iii + 1){
-                    if(entitieshit.get(iii).hasEffect(StatusEffectsModded.FLUXED.get())) {
-                        entitieshit.get(iii).removeEffect(StatusEffectsModded.FLUXED.get());
-                    }
-                }
             }
         }
-
     }
     public static void fluxHandler2(LivingEntity living, Player player, float Amount, Level level, List<LivingEntity> list) {
         if (living instanceof ServerPlayer){
@@ -128,6 +122,8 @@ public class FluxHandler {
                 }
             living.hurt( DamageSourceModded.fluxed(player), (float) (Amount*2.5));
                 list.add(living);
+            living.removeEffect(StatusEffectsModded.FLUXED.get());
+
             List entities = living.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(living.getX() - 4, living.getY() + 0.5 - 4, living.getZ() - 4, living.getX() + 4, living.getY() + 4, living.getZ() + 4));
             Object[] entitiesarray = entities.toArray();
             float mult = 1;

@@ -9,6 +9,7 @@ import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
 import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -38,6 +39,23 @@ public class EndersEye extends Spell {
 
         Player player = (Player) p_43406_;
         PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
+
+        if (!p_43405_.isClientSide() && player.isShiftKeyDown()) {
+            CompoundTag nbt;
+            if (itemstack.hasTag())
+            {
+                nbt = itemstack.getTag();
+                nbt.remove("Triggerable");
+                return InteractionResultHolder.success(itemstack);
+
+            }
+            else
+            {
+                nbt = itemstack.getOrCreateTag();
+                nbt.putInt("Triggerable", 1);
+                return InteractionResultHolder.success(itemstack);
+            }
+        }
         if (playerMana.getMana() > 79) {
             player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(), 5, 1));
             player.addEffect(new MobEffectInstance(StatusEffectsModded.ENDERSGAZE.get(), 120, 0));
@@ -96,6 +114,15 @@ public class EndersEye extends Spell {
                 target.invulnerableTime = 0;
             }
         }
+    }
+    @Override
+    public boolean isFoil(ItemStack p_41453_) {
+        if (p_41453_.hasTag()){
+            if(p_41453_.getTag().getInt("Triggerable") == 1){
+                return true;
+            }
+        }
+        return false;
     }
 
 }

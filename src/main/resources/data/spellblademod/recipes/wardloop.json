@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smithing",
+  "base": {
+    "item": "minecraft:heart_of_the_sea"
+  },
+  "addition": {
+    "item": "spellblademod:wardiron"
+  },
+  "result": {
+    "item": "spellblademod:wardloop"
+  }
+}

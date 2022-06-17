@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern":
+  [
+    " x ",
+    "x x",
+    " a "
+  ],
+  "key":
+  {
+    "x":
+    {
+      "tag": "forge:ingots/gold"
+    },
+    "a":
+    {
+      "tag": "forge:gems/amethyst"
+    }
+  },
+  "result":
+  {
+    "item": "spellblademod:friendshipbracelet"
+  }
+}

@@ -73,7 +73,7 @@ public class WeaponHandler {
         if (event.getSource().getEntity() instanceof Player) {
             Player player = (Player) event.getSource().getEntity();
             PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-            if (((Player) event.getSource().getEntity()).getMainHandItem().getItem() instanceof Spellblade) {
+            if (((Player) event.getSource().getEntity()).getMainHandItem().getItem() instanceof Spellblade  && event.getSource().msgId != "eyelaser") {
                 Spellblade spellblade = (Spellblade) ((Player) event.getSource().getEntity()).getMainHandItem().getItem();
                 event.setAmount((float) (event.getAmount()*Math.pow(1.25, spellblade.tier)));
             }
@@ -124,6 +124,7 @@ public class WeaponHandler {
         }
 
     }
+
     @SubscribeEvent
     public static void VengefulHandler(LivingHurtEvent event) {
         if (event.getEntityLiving() instanceof Player) {
