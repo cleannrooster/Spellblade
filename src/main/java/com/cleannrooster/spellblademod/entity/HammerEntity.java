@@ -1,46 +1,23 @@
 package com.cleannrooster.spellblademod.entity;
 
-import com.cleannrooster.spellblademod.StatusEffectsModded;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.FireworkParticles;
-import net.minecraft.commands.arguments.NbtTagArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.network.protocol.Packet;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.AreaEffectCloud;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.*;
-import net.minecraft.world.item.FireworkRocketItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.Explosion;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import org.apache.commons.compress.utils.Lists;
-import org.lwjgl.system.CallbackI;
+import net.minecraft.world.phys.*;
 
-import java.sql.Array;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -48,27 +25,78 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
 public class HammerEntity extends ThrownTrident {
+    public boolean triggered = false;
+    public boolean dealtDamage = false;
 
 public boolean secondary = false;
     public HammerEntity(EntityType<? extends ThrownTrident> p_37561_, Level p_37562_) {
         super(p_37561_, p_37562_);
     }
+    private ItemStack tridentItem = new ItemStack(Items.TRIDENT);
+    protected void onHitEntity(EntityHitResult p_37573_) {
+        Entity entity = p_37573_.getEntity();
+        float f = 8.0F;
+        if (entity instanceof LivingEntity) {
+            LivingEntity livingentity = (LivingEntity)entity;
+            f += EnchantmentHelper.getDamageBonus(this.tridentItem, livingentity.getMobType());
+        }
 
-    @Override
-    protected void onHit(HitResult p_36913_) {
-            Random random = new Random();
-            SoundEvent event = SoundEvents.GLASS_BREAK;
-            this.level.playSound((Player) null, new BlockPos((double)this.getX(),(double)this.getY(),(double)this.getZ()), event, SoundSource.PLAYERS, 1.0F, 1.0F);
-            int num_pts = 200;
-            LivingEntity entity = (LivingEntity) this.getOwner();
-            if (entity.getEffect(StatusEffectsModded.WARDLOCKED.get()) != null){
-                num_pts = 100;
+        Entity entity1 = this.getOwner();
+        DamageSource damagesource = DamageSource.trident(this, (Entity)(entity1 == null ? this : entity1));
+        this.dealtDamage = true;
+        SoundEvent soundevent = SoundEvents.TRIDENT_HIT;
+        if (entity.hurt(damagesource, f)) {
+            if (entity.getType() == EntityType.ENDERMAN) {
+                return;
             }
+
+            if (entity instanceof LivingEntity) {
+                LivingEntity livingentity1 = (LivingEntity)entity;
+                if (entity1 instanceof LivingEntity) {
+                    EnchantmentHelper.doPostHurtEffects(livingentity1, entity1);
+                    EnchantmentHelper.doPostDamageEffects((LivingEntity)entity1, livingentity1);
+                }
+
+                this.doPostHurtEffects(livingentity1);
+            }
+        }
+
+        this.setDeltaMovement(this.getDeltaMovement().multiply(-0.01D, -0.1D, -0.01D));
+        float f1 = 1.0F;
+        if (this.level instanceof ServerLevel && this.level.isThundering() && this.isChanneling()) {
+            BlockPos blockpos = entity.blockPosition();
+            if (this.level.canSeeSky(blockpos)) {
+                LightningBolt lightningbolt = EntityType.LIGHTNING_BOLT.create(this.level);
+                lightningbolt.moveTo(Vec3.atBottomCenterOf(blockpos));
+                lightningbolt.setCause(entity1 instanceof ServerPlayer ? (ServerPlayer)entity1 : null);
+                this.level.addFreshEntity(lightningbolt);
+                soundevent = SoundEvents.TRIDENT_THUNDER;
+                f1 = 5.0F;
+            }
+        }
+
+        this.playSound(soundevent, f1, 1.0F);
+    }
+    protected void onHit(HitResult p_36913_) {
+        super.onHit(p_36913_);
+        Random random = new Random();
+        if (this.onGround){
+            return;
+        }
+            float multi;
+            if (!triggered){
+                multi = 1;
+            }
+            else{
+                multi = 0.5F;
+            }
+            int num_pts = 75;
+            LivingEntity entity = (LivingEntity) this.getOwner();
             /*if (this.getLevel().isClientSide)
             {
                 ClientLevel level = (ClientLevel) this.getLevel();*/
             int i = 0;
-                for ( i = 0; i <= num_pts; i = i + 1) {
+                for ( i = 0; i <= num_pts*multi*multi; i = i + 1) {
                     double[] indices = IntStream.rangeClosed(0, (int) ((1000 - 0) / 1))
                             .mapToDouble(x -> x * 1 + 0).toArray();
 
@@ -78,37 +106,118 @@ public boolean secondary = false;
                     double y = Math.sin(theta) * sin(phi);
                     double z = cos(phi);
 
-                            this.level.addParticle(ParticleTypes.FIREWORK, this.getX() + 4 * x, this.getY() + 4 * y, this.getZ() + 4 * z, 0, 0, 0);
+                            this.getLevel().addParticle(ParticleTypes.FIREWORK, this.getX() + 4D * x, this.getY() + 4D * y, this.getZ() + 4D * z, 0, 0, 0);
                         }
 
             //}
         if (this.getOwner() != null) {
 
-            List entities = this.level.getEntitiesOfClass(LivingEntity.class, new AABB(this.getX() - 4, this.getY() + 0.5 - 4, this.getZ() - 4, this.getX() + 4, this.getY() + 4, this.getZ() + 4));
+            List<LivingEntity> entities = this.level.getEntitiesOfClass(LivingEntity.class, new AABB(this.getX() - 4, this.getY() + 0.5 - 4, this.getZ() - 4, this.getX() + 4, this.getY() + 4, this.getZ() + 4));
             Object[] entitiesarray = entities.toArray();
             int entityamount = entitiesarray.length;
             for (int ii = 0; ii < entityamount; ii = ii + 1) {
                 LivingEntity target = (LivingEntity) entities.get(ii);
                 if (target != this.getOwner()) {
-                    target.hurt(DamageSource.trident(this, this.getOwner()), 8);
+                    target.invulnerableTime = 0;
+                    target.hurt(DamageSource.trident(this, this.getOwner()), 8*multi);
                     target.invulnerableTime = 0;
                 }
 
             }
         }
-        super.onHit(p_36913_);
 
 
-        this.remove(RemovalReason.DISCARDED);
 
     }
+    /*@Override
+    protected void onHitEntity(EntityHitResult p_37573_) {
+        Entity entity = p_37573_.getEntity();
+        float multiplier;
+        if (this.triggered){
+            multiplier = 0.5F;
+        }
+        else{
+            multiplier = 1;
+        }
+        float f = 8.0F;
+        if (entity instanceof LivingEntity) {
+            LivingEntity livingentity = (LivingEntity)entity;
+            f += EnchantmentHelper.getDamageBonus(this.tridentItem, livingentity.getMobType());
+        }
+
+        Entity entity1 = this.getOwner();
+        DamageSource damagesource = DamageSource.trident(this, (Entity)(entity1 == null ? this : entity1));
+        this.dealtDamage = true;
+        SoundEvent soundevent = SoundEvents.TRIDENT_HIT;
+        if (entity.hurt(damagesource, f*multiplier)) {
+            if (entity.getType() == EntityType.ENDERMAN) {
+                return;
+            }
+
+            if (entity instanceof LivingEntity) {
+                LivingEntity livingentity1 = (LivingEntity)entity;
+                if (entity1 instanceof LivingEntity) {
+                    EnchantmentHelper.doPostHurtEffects(livingentity1, entity1);
+                    EnchantmentHelper.doPostDamageEffects((LivingEntity)entity1, livingentity1);
+                }
+
+                this.doPostHurtEffects(livingentity1);
+                int num_pts = 75;
+                int i = 0;
+                for ( i = 0; i <= num_pts*0.25; i = i + 1) {
+                    double[] indices = IntStream.rangeClosed(0, (int) ((1000 - 0) / 1))
+                            .mapToDouble(x -> x * 1 + 0).toArray();
+
+                    double phi = Math.acos(1 - 2 * indices[i] / num_pts);
+                    double theta = Math.PI * (1 + Math.pow(5, 0.5) * indices[i]);
+                    double x = cos(theta) * sin(phi);
+                    double y = Math.sin(theta) * sin(phi);
+                    double z = cos(phi);
+
+                    this.getLevel().addParticle(ParticleTypes.FIREWORK, this.getX() + 4D * x, this.getY() + 4D * y, this.getZ() + 4D * z, 0, 0, 0);
+                }
+                this.playSound(soundevent, 1F, 1.0F);
+                if (this.getOwner() != null) {
+
+                    List<LivingEntity> entities = this.level.getEntitiesOfClass(LivingEntity.class, new AABB(this.getX() - 4, this.getY() + 0.5 - 4, this.getZ() - 4, this.getX() + 4, this.getY() + 4, this.getZ() + 4));
+                    Object[] entitiesarray = entities.toArray();
+                    int entityamount = entitiesarray.length;
+                    for (int ii = 0; ii < entityamount; ii = ii + 1) {
+                        LivingEntity target = (LivingEntity) entities.get(ii);
+                        if (target != this.getOwner()) {
+                            target.invulnerableTime = 0;
+                            target.hurt(DamageSource.trident(this, this.getOwner()), 4);
+                            target.invulnerableTime = 0;
+                        }
+
+                    }
+                }
+            }
+        }*/
+/*
+        this.setDeltaMovement(this.getDeltaMovement().multiply(-0.01D, -0.1D, -0.01D));
+        float f1 = 1.0F;
+        if (this.level instanceof ServerLevel && this.level.isThundering() && this.isChanneling()) {
+            BlockPos blockpos = entity.blockPosition();
+            if (this.level.canSeeSky(blockpos)) {
+                LightningBolt lightningbolt = EntityType.LIGHTNING_BOLT.create(this.level);
+                lightningbolt.moveTo(Vec3.atBottomCenterOf(blockpos));
+                lightningbolt.setCause(entity1 instanceof ServerPlayer ? (ServerPlayer)entity1 : null);
+                this.level.addFreshEntity(lightningbolt);
+                soundevent = SoundEvents.TRIDENT_THUNDER;
+                f1 = 5.0F;
+            }
+        }
+
+        this.playSound(soundevent, f1, 1.0F);
+    }*/
     public void tick() {
+
         Entity entity = this.getOwner();
         if (this.tickCount > 80){
             this.discard();
         }
-        super.tick();
-        if (tickCount%5 == 0 && secondary == false) {
+        if (tickCount%5 == 0 && !secondary && !this.inGround) {
             if (this.getOwner() != null) {
                 /*if (this.secondary == false){
                     System.out.println(this.getXRot());
@@ -116,22 +225,29 @@ public boolean secondary = false;
                 }*/
                 HammerEntity lance = new HammerEntity(ModEntities.TRIDENT.get(), this.level);
 
-                lance.shootFromRotation(entity, -this.xRotO+10, -this.yRotO+10, 0.0F, 1.6F, 1.0F);
+                lance.shootFromRotation(this, -this.xRotO+10, -this.yRotO+10, 0.0F, 1F, 1.0F);
                 lance.setPos(this.getEyePosition());
                 lance.setOwner(this.getOwner());
                 lance.secondary = true;
+                if (this.triggered){
+                    lance.triggered = true;
+                }
                 lance.pickup = Pickup.DISALLOWED;
                 HammerEntity lance2 = new HammerEntity(ModEntities.TRIDENT.get(), this.level);
 
                 lance2.setOwner(this.getOwner());
-                lance2.shootFromRotation(entity, -this.xRotO+10, -this.yRotO-10, 0.0F, 1.6F, 1.0F);
+                lance2.shootFromRotation(this, -this.xRotO+10, -this.yRotO-10, 0.0F, 1F, 1.0F);
                 lance2.setPos(this.getEyePosition());
 
                 lance2.secondary = true;
+                if (this.triggered){
+                    lance2.triggered = true;
+                }
                 lance2.pickup = Pickup.DISALLOWED;
                 entity.getLevel().addFreshEntity(lance);
                 entity.getLevel().addFreshEntity(lance2);
             }
         }
+        super.tick();
     }
 }

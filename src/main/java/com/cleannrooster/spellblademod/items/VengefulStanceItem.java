@@ -28,12 +28,8 @@ public class VengefulStanceItem extends Wardlock{
             Player player = (Player) p_43406_;
             PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
 
-            if (playerMana.getMana() > 39 && !player.hasEffect(StatusEffectsModded.WARD_DRAIN.get())) {
-                if (player.getEffect(StatusEffectsModded.WARDLOCKED.get()) != null){
-                    if (player.getEffect(StatusEffectsModded.WARDLOCKED.get()).getAmplifier() == 1){
-                        return InteractionResultHolder.fail(itemstack);
-                    }
-                }
+            if (playerMana.getMana() > 39 ) {
+                player.getCooldowns().addCooldown(this,160);
                 player.addEffect(new MobEffectInstance(StatusEffectsModded.VENGEFUL_STANCE.get(), 160, 0));
                 player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDLOCKED.get(), 160, 1));
             }

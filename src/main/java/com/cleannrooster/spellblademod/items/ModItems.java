@@ -1,7 +1,6 @@
 package com.cleannrooster.spellblademod.items;
 
 import com.cleannrooster.spellblademod.ModBlocks;
-import com.cleannrooster.spellblademod.blocks.WardingTotemBlock;
 import com.cleannrooster.spellblademod.setup.ModSetup;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
@@ -69,6 +68,18 @@ public class ModItems {
             () -> new EffigyOfUnity( new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
     public static final RegistryObject<Item> FLUXITEM = ITEMS.register("flux_item",
             () -> new FluxItem( new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
+    public static final RegistryObject<Item> ENDERSEYE = ITEMS.register("enders_eye",
+            () -> new EndersEye( new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
+    public static final RegistryObject<Item> ENDERSEEKER = ITEMS.register("ender_seeker",
+            () -> new EnderSeeker( new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
+    public static final RegistryObject<Item> WARDLIGHT = ITEMS.register("wardlight",
+            () -> new WardlightItem(ModBlocks.WARDLIGHT_BLOCK.get(),new Item.Properties().tab(ModSetup.ITEM_GROUP)));
+    public static final RegistryObject<Item> WARDLOOP = ITEMS.register("wardloop",
+            () -> new Wardloop(new Item.Properties().tab(ModSetup.ITEM_GROUP)));
+    public static final RegistryObject<Item> FRIENDSHIP = ITEMS.register("friendshipbracelet",
+            () -> new FriendshipBracelet(new Item.Properties().tab(ModSetup.ITEM_GROUP)));
+
+
 
     //public static final RegistryObject<Item> NETHERITE_WARDING_HELMET = ITEMS.register("netherite_warding_helmet",
     //        () -> new WardArmorItem(ModArmorMaterials.NETHERITE_WARDING, EquipmentSlot.HEAD, new Item.Properties().tab(CreativeModeTab.TAB_COMBAT)));

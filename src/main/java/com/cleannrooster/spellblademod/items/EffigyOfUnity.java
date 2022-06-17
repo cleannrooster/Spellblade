@@ -46,10 +46,11 @@ public class EffigyOfUnity extends Item {
         PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
         ItemStack itemstack = p_41433_.getItemInHand(p_41434_);
 
-        if(playerMana.getMana()< 159 && !player.hasEffect(StatusEffectsModded.WARD_DRAIN.get())){
+        if(playerMana.getMana()< 159 ){
             return InteractionResultHolder.fail(itemstack);
         }
         else {
+            player.getCooldowns().addCooldown(this,20);
             player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(),5, 3));
             p_41433_.startUsingItem(p_41434_);
             return InteractionResultHolder.consume(itemstack);
@@ -60,6 +61,9 @@ public class EffigyOfUnity extends Item {
     public void onUsingTick(ItemStack stack, LivingEntity player, int count)
     {
         List players = player.getLevel().players().stream().toList();
+        if(count%20 == 0 && count <= 80){
+            ((Player)(player)).displayClientMessage(Component.nullToEmpty("Teleporting in " + (80-count)/20), true);
+        }
         for(int i = 0; i < players.toArray().length; i++){
             Player teleportee = (Player)players.get(i);
             if (Objects.equals(((Player) players.get(i)).getGameProfile().getName(), stack.getOrCreateTag().getString("UnitedWith")) &&  count == 80 && player.level == teleportee.level){

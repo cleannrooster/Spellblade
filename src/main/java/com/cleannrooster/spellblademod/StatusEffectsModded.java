@@ -26,6 +26,9 @@ public class StatusEffectsModded extends MobEffect {
     public static final RegistryObject<MobEffect> WARDLOCKED = EFFECTS.register("wardlocked", ()-> new Wardlocked(MobEffectCategory.NEUTRAL, 0xffff54));
     public static final RegistryObject<MobEffect> FLUXED = EFFECTS.register("fluxed", ()-> new Flux(MobEffectCategory.HARMFUL, 0xffff54));
     public static final RegistryObject<MobEffect> OVERLOAD = EFFECTS.register("overload", ()-> new Overload(MobEffectCategory.NEUTRAL, 0xffff54));
+    public static final RegistryObject<MobEffect> ENDERSGAZE = EFFECTS.register("endersgaze", ()-> new EndersGaze(MobEffectCategory.BENEFICIAL, 0xffff54));
+    public static final RegistryObject<MobEffect> WATCHYOURHEAD = EFFECTS.register("watchyourhead", ()-> new watchyourhead(MobEffectCategory.HARMFUL, 0xffff54));
+    public static final RegistryObject<MobEffect> ECHOES = EFFECTS.register("echoes", ()-> new Echoes(MobEffectCategory.HARMFUL, 0xffff54));
 
 
 

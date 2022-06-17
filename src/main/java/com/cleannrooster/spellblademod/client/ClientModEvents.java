@@ -3,6 +3,10 @@ package com.cleannrooster.spellblademod.client;
 import com.cleannrooster.spellblademod.entity.HammerModel;
 import com.cleannrooster.spellblademod.entity.HammerRenderer;
 import com.cleannrooster.spellblademod.entity.ModEntities;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.EnderEyeItem;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -18,5 +22,8 @@ public class ClientModEvents {
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event){
         event.registerEntityRenderer(ModEntities.TRIDENT.get(), HammerRenderer::new);
+        event.registerEntityRenderer(ModEntities.ENDERS_EYE.get(), (p_174088_) -> {
+            return new ThrownItemRenderer<>(p_174088_, 1.0F, true);
+        });
     }
 }

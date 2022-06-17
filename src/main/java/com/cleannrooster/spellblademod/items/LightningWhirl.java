@@ -23,7 +23,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-public class LightningWhirl extends Tier2{
+public class LightningWhirl extends Spell{
 
     public LightningWhirl(Properties p_41383_) {
         super(p_41383_);
@@ -72,7 +72,8 @@ public class LightningWhirl extends Tier2{
             Player player = (Player) p_43406_;
             if (!player.getMainHandItem().isEdible()) {
                 PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-                if (playerMana.getMana() > 79 && !player.hasEffect(StatusEffectsModded.WARD_DRAIN.get())) {
+                if (playerMana.getMana() > 79) {
+                    player.getCooldowns().addCooldown(this,10);
                     player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(), 5, 1));
 
                     float f7 = player.getYRot();
@@ -106,5 +107,37 @@ public class LightningWhirl extends Tier2{
             }
         }
             return InteractionResultHolder.fail(itemstack);
+    }
+    public void trigger(Level level, Player player, float modifier) {
+/*
+        PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
+        playerMana.addMana(modifier*80);
+        float f7 = player.getYRot();
+        float f = player.getXRot();
+        float f1 = -Mth.sin(f7 * ((float) Math.PI / 180F)) * Mth.cos(f * ((float) Math.PI / 180F));
+        float f2 = -Mth.sin(f * ((float) Math.PI / 180F));
+        float f3 = Mth.cos(f7 * ((float) Math.PI / 180F)) * Mth.cos(f * ((float) Math.PI / 180F));
+        float f4 = Mth.sqrt(f1 * f1 + f2 * f2 + f3 * f3);
+        float f5 = 3.0F * ((1.0F + (float) 4) / 4.0F);
+        f1 *= f5 / f4;
+        f2 *= f5 / f4;
+        f3 *= f5 / f4;
+        player.push((double) f1, (double) f2, (double) f3);
+        player.startAutoSpinAttack(20);
+        if (player.isOnGround()) {
+            float f6 = 1.1999999F;
+            player.move(MoverType.SELF, new Vec3(0.0D, (double) 1.1999999F, 0.0D));
+        }
+        SoundEvent soundevent;
+        if (4 >= 3) {
+            soundevent = SoundEvents.TRIDENT_RIPTIDE_3;
+        } else if (4 == 2) {
+            soundevent = SoundEvents.TRIDENT_RIPTIDE_2;
+        } else {
+            soundevent = SoundEvents.TRIDENT_RIPTIDE_1;
+        }
+
+        level.playSound((Player) null, player, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
+*/
     }
 }

@@ -67,12 +67,12 @@ public class manatick {
         if (playerMana == null){
             return;
         }
-        if (playerMana.getMana() > minWard && !event.player.hasEffect(StatusEffectsModded.WARDLOCKED.get())){
+        if (!event.player.hasEffect(StatusEffectsModded.WARDLOCKED.get())){
             playerMana.addMana((float) -(((float)(playerMana.getMana())*0.01856026932)));
         }
-        if (playerMana.getMana() < minWard && !event.player.hasEffect(StatusEffectsModded.WARDLOCKED.get())){
+        /*if (!event.player.hasEffect(StatusEffectsModded.WARDLOCKED.get())){
             playerMana.setMana(minWard);
-        }
+        }*/
     }
 }
 

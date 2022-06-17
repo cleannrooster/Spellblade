@@ -18,7 +18,7 @@ public class ManaOverlay {
 
     static int color2 = TextColor.fromRgb(0x000000).getValue();
     public static final IIngameOverlay HUD_MANA = (gui, poseStack, partialTicks, width, height) -> {
-        String toDisplay = (String.valueOf((((int)ClientManaData.getPlayerMana())+1)*100/160) + "%");
+        String toDisplay = (String.valueOf((((int)ClientManaData.getPlayerMana()))*100/160) + "%");
         int x = 10;
         int y = height-20;
         if (ClientManaData.getPlayerMana() < 39)
@@ -72,7 +72,7 @@ public class ManaOverlay {
             int hex = (a << 24) + (r << 16) + (g << 8) + (b);
             color = hex;
         }
-        if (x >= 0 && y >= 0) {
+        if (x >= 0 && y >= 0 && Math.abs(ClientManaData.getPlayerMana()) >= 1.6) {
             gui.getFont().draw(poseStack, toDisplay, x, y, color);
         }
     };
