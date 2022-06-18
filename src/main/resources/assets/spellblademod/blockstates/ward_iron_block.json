@@ -1,0 +1,9 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "spellblademod:block/ward_iron_block"
+      }
+    ]
+  }
+}

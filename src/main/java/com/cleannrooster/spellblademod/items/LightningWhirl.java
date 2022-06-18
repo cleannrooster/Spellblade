@@ -10,6 +10,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -72,9 +73,12 @@ public class LightningWhirl extends Spell{
             Player player = (Player) p_43406_;
             if (!player.getMainHandItem().isEdible()) {
                 PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-                if (playerMana.getMana() > 79) {
-                    player.getCooldowns().addCooldown(this,10);
-                    player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(), 5, 1));
+                playerMana.addMana(-40);
+
+                if (playerMana.getMana() < -1.6) {
+                    p_43406_.hurt(DamageSource.MAGIC,2);
+                }
+                    player.getCooldowns().addCooldown(this,20);
 
                     float f7 = player.getYRot();
                     float f = player.getXRot();
@@ -103,7 +107,6 @@ public class LightningWhirl extends Spell{
 
                     p_43405_.playSound((Player) null, player, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
                     return InteractionResultHolder.consume(itemstack);
-                }
             }
         }
             return InteractionResultHolder.fail(itemstack);

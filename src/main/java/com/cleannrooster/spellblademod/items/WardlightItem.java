@@ -11,6 +11,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -37,15 +38,13 @@ public class WardlightItem extends BlockItem {
     public InteractionResult useOn(UseOnContext p_40581_) {
         Player player = (Player) p_40581_.getPlayer();
         PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-        if(playerMana.getMana() < 39){
-            return InteractionResult.FAIL;
+        playerMana.addMana(-40);
+        if (playerMana.getMana() < -1.6) {
+            player.hurt(DamageSource.MAGIC,2);
         }
-        else {
             InteractionResult interactionresult = this.place(new BlockPlaceContext(p_40581_));
-            player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(),5,0));
-            player.getCooldowns().addCooldown(this,10);
+            player.getCooldowns().addCooldown(this,20);
             return interactionresult;
-        }
 
     }
     @Override

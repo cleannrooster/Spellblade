@@ -63,15 +63,14 @@ public class FluxItem extends Spell {
                 return InteractionResult.FAIL;
             }
         }
-        if (playerMana.getMana() > 39) {
-            FluxFlux(player, entity, player.level, list);
-            player.getCooldowns().addCooldown(this, 10);
-            player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(), 5, 0));
-            return net.minecraft.world.InteractionResult.SUCCESS;
-        } else {
-            return InteractionResult.FAIL;
-        }
+        playerMana.addMana(-40);
 
+        if (playerMana.getMana() < -1.6) {
+            player.hurt(DamageSource.MAGIC,2);
+        }
+            FluxFlux(player, entity, player.level, list);
+            player.getCooldowns().addCooldown(this, 20);
+            return net.minecraft.world.InteractionResult.SUCCESS;
     }
 
     @Override

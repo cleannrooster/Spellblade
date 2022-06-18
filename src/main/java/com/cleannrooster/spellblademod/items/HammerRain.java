@@ -13,6 +13,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
@@ -49,9 +50,12 @@ public class HammerRain extends Spell {
                 return InteractionResultHolder.success(itemstack);
             }
         }
-        if (playerMana.getMana() > 79) {
-            p_43406_.getCooldowns().addCooldown(this,10);
-            p_43406_.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(), 5, 1));
+        playerMana.addMana(-80);
+
+        if (playerMana.getMana() < -1.6) {
+            p_43406_.hurt(DamageSource.MAGIC,2);
+        }
+            p_43406_.getCooldowns().addCooldown(this,20);
             HammerEntity hammer1 = new HammerEntity(ModEntities.TRIDENT.get(),p_43406_.getLevel());
             hammer1.setPos(p_43406_.getEyePosition());
             hammer1.setOwner(p_43406_);
@@ -59,11 +63,6 @@ public class HammerRain extends Spell {
             hammer1.shootFromRotation(p_43406_, p_43406_.getXRot(), p_43406_.getYRot(), 0.0F, 1.6F, 1.0F);
             p_43405_.addFreshEntity(hammer1);
             return InteractionResultHolder.success(itemstack);
-
-        }
-        else{
-            return InteractionResultHolder.fail(itemstack);
-        }
     }
     public void trigger(Level level, Player player, float modifier){
         super.trigger(level, player, modifier);
@@ -72,25 +71,25 @@ public class HammerRain extends Spell {
 
         HammerEntity hammer1 = new HammerEntity(ModEntities.TRIDENT.get(),player.getLevel());
         hammer1.triggered = true;
-        hammer1.setPos(player.position().add(rand.nextDouble(-6,6), 6, rand.nextDouble(-6,6)));
+        hammer1.setPos(player.position().add(rand.nextDouble(-6,6), rand.nextDouble(3,6), rand.nextDouble(-6,6)));
         hammer1.setOwner(player);
         hammer1.pickup = AbstractArrow.Pickup.DISALLOWED;
         hammer1.secondary = true;
         HammerEntity hammer2 = new HammerEntity(ModEntities.TRIDENT.get(),player.getLevel());
         hammer2.triggered = true;
-        hammer2.setPos(player.position().add(rand.nextDouble(-6,6), 6, rand.nextDouble(-6,6)));
+        hammer2.setPos(player.position().add(rand.nextDouble(-6,6), rand.nextDouble(3,6), rand.nextDouble(-6,6)));
         hammer2.setOwner(player);
         hammer2.pickup = AbstractArrow.Pickup.DISALLOWED;
         hammer2.secondary = true;
         HammerEntity hammer3 = new HammerEntity(ModEntities.TRIDENT.get(),player.getLevel());
         hammer3.triggered = true;
-        hammer3.setPos(player.position().add(rand.nextDouble(-6,6), 6, rand.nextDouble(-6,6)));
+        hammer3.setPos(player.position().add(rand.nextDouble(-6,6), rand.nextDouble(3,6), rand.nextDouble(-6,6)));
         hammer3.setOwner(player);
         hammer3.pickup = AbstractArrow.Pickup.DISALLOWED;
         hammer3.secondary = true;
         HammerEntity hammer4 = new HammerEntity(ModEntities.TRIDENT.get(),player.getLevel());
         hammer4.triggered = true;
-        hammer4.setPos(player.position().add(rand.nextDouble(-6,6), 6, rand.nextDouble(-6,6)));
+        hammer4.setPos(player.position().add(rand.nextDouble(-6,6), rand.nextDouble(3,6), rand.nextDouble(-6,6)));
         hammer4.setOwner(player);
         hammer4.pickup = AbstractArrow.Pickup.DISALLOWED;
         hammer4.secondary = true;

@@ -13,6 +13,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
@@ -37,11 +38,14 @@ public class EnderSeeker extends Item {
         PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
         PlayerEnderChestContainer playerenderchestcontainer = p_41433_.getEnderChestInventory();
         ItemStack itemStack = p_41433_.getItemInHand(p_41434_);
-        if (playerenderchestcontainer != null && playerMana.getMana() >= 79) {
+        if (playerenderchestcontainer != null) {
+            playerMana.addMana(-80);
+            if (playerMana.getMana() < -1.6) {
+                player.hurt(DamageSource.MAGIC,2);
+            }
             if (p_41432_.isClientSide) {
                 return InteractionResultHolder.success(itemStack);
             } else {
-                player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(),5,1));
                 p_41433_.openMenu(new SimpleMenuProvider((p_53124_, p_53125_, p_53126_) -> {
                     return ChestMenu.threeRows(p_53124_, p_53125_, playerenderchestcontainer);
                 }, CONTAINER_TITLE));

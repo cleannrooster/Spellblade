@@ -1,6 +1,7 @@
 package com.cleannrooster.spellblademod.items;
 
 import com.cleannrooster.spellblademod.ModBlocks;
+import com.cleannrooster.spellblademod.blocks.WardIronBlock;
 import com.cleannrooster.spellblademod.setup.ModSetup;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
@@ -80,6 +81,9 @@ public class ModItems {
             () -> new FriendshipBracelet(new Item.Properties().tab(ModSetup.ITEM_GROUP)));
     public static final RegistryObject<Item> VOLATILE = ITEMS.register("volatile",
             () -> new Volatile(new Item.Properties().tab(ModSetup.ITEM_GROUP)));
+    public static final RegistryObject<Item> WARD_IRON_BLOCK = ITEMS.register("ward_iron_block",
+            () -> new WardIronBlockItem(ModBlocks.WARD_IRON_BLOCK.get(),new Item.Properties().tab(ModSetup.ITEM_GROUP)));
+
 
 
 

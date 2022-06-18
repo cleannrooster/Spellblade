@@ -16,6 +16,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
@@ -60,13 +61,16 @@ public class Volatile extends Spell{
         }
         if (!player.getMainHandItem().isEdible()) {
             PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-            if (playerMana.getMana() > 79) {
+            playerMana.addMana(-80);
+
+            if (playerMana.getMana() < -1.6) {
+                player.hurt(DamageSource.MAGIC,2);
+            }
                 VolatileEntity volatile1 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
                 VolatileEntity volatile2 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
                 VolatileEntity volatile3 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
 
-                player.getCooldowns().addCooldown(this, 10);
-                player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(), 5, 1));
+                player.getCooldowns().addCooldown(this, 20);
 
                 List entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(player.getX() - 6, player.getY() - 6, player.getZ() - 6, player.getX() + 6, player.getY() + 6, player.getZ() + 6));
                 Object[] entitiesarray = entities.toArray();
@@ -144,7 +148,7 @@ public class Volatile extends Spell{
                         level.addFreshEntity(volatile3);
                     }
 
-                }
+
 
              }
 

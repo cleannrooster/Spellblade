@@ -12,6 +12,7 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.NeutralMob;
@@ -56,8 +57,11 @@ public class EndersEye extends Spell {
                 return InteractionResultHolder.success(itemstack);
             }
         }
-        if (playerMana.getMana() > 79) {
-            player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(), 5, 1));
+        playerMana.addMana(-80);
+
+        if (playerMana.getMana() < -1.6) {
+            p_43406_.hurt(DamageSource.MAGIC,2);
+        }
             player.addEffect(new MobEffectInstance(StatusEffectsModded.ENDERSGAZE.get(), 120, 0));
             player.getCooldowns().addCooldown(this, 160);
 
@@ -67,10 +71,6 @@ public class EndersEye extends Spell {
             p_43405_.addFreshEntity(eye);
             return InteractionResultHolder.success(itemstack);
 
-        }
-        else{
-            return InteractionResultHolder.fail(itemstack);
-        }
     }
     public void trigger(Level level, Player player, float modifier){
         PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
