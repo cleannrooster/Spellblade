@@ -51,6 +51,9 @@ public class WardGainHandler {
         if (player.hasEffect(StatusEffectsModded.WARD_DRAIN.get()) && !player.hasEffect(StatusEffectsModded.WARDLOCKED.get())){
             playerMana.addMana(-8*(1+player.getEffect(StatusEffectsModded.WARD_DRAIN.get()).getAmplifier()));
         }
+        if (player.hasEffect(StatusEffectsModded.SPELLWEAVING.get())){
+            playerMana.addMana(-1*(1+player.getEffect(StatusEffectsModded.SPELLWEAVING.get()).getAmplifier()));
+        }
         if (player.hasEffect(StatusEffectsModded.TOTEMIC_ZEAL.get()) && !player.hasEffect(StatusEffectsModded.WARDLOCKED.get())){
             playerMana.addMana((float) (1+0.25*player.getEffect(StatusEffectsModded.TOTEMIC_ZEAL.get()).getAmplifier()));
         }

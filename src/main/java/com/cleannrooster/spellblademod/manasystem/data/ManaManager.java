@@ -63,7 +63,7 @@ public class ManaManager extends SavedData {
     public void tick(Level level) {
         counter--;
         if (counter <= 0) {
-            counter = 10;
+            counter = 1;
             // Synchronize the mana to the players in this world
             // todo expansion: keep the previous data that was sent to the player and only send if changed
             level.players().forEach(player -> {

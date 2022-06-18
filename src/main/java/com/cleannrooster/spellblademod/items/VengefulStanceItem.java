@@ -3,6 +3,7 @@ package com.cleannrooster.spellblademod.items;
 import com.cleannrooster.spellblademod.StatusEffectsModded;
 import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
 import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -23,21 +24,18 @@ public class VengefulStanceItem extends Wardlock{
     }
     public InteractionResultHolder<ItemStack> use(Level p_43405_, Player p_43406_, InteractionHand p_43407_) {
         ItemStack itemstack = p_43406_.getItemInHand(p_43407_);
-        if (p_43406_ instanceof Player) {
+        Player player = (Player) p_43406_;
+        PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
 
-            Player player = (Player) p_43406_;
-            PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-
-            if (playerMana.getMana() > 39 ) {
-                player.getCooldowns().addCooldown(this,160);
-                player.addEffect(new MobEffectInstance(StatusEffectsModded.VENGEFUL_STANCE.get(), 160, 0));
-                player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDLOCKED.get(), 160, 1));
-            }
-            else{
-                return InteractionResultHolder.fail(itemstack);
-            }
-
+        if (playerMana.getMana() > 39 ) {
+            player.getCooldowns().addCooldown(this,160);
+            player.addEffect(new MobEffectInstance(StatusEffectsModded.VENGEFUL_STANCE.get(), 160, 0));
+            player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDLOCKED.get(), 160, 1));
         }
+        else{
+            return InteractionResultHolder.fail(itemstack);
+        }
+
         return InteractionResultHolder.consume(itemstack);
     }
 }

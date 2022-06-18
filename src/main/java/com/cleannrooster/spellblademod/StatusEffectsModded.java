@@ -29,6 +29,7 @@ public class StatusEffectsModded extends MobEffect {
     public static final RegistryObject<MobEffect> ENDERSGAZE = EFFECTS.register("endersgaze", ()-> new EndersGaze(MobEffectCategory.BENEFICIAL, 0xffff54));
     public static final RegistryObject<MobEffect> WATCHYOURHEAD = EFFECTS.register("watchyourhead", ()-> new watchyourhead(MobEffectCategory.HARMFUL, 0xffff54));
     public static final RegistryObject<MobEffect> ECHOES = EFFECTS.register("echoes", ()-> new Echoes(MobEffectCategory.HARMFUL, 0xffff54));
+    public static final RegistryObject<MobEffect> SPELLWEAVING = EFFECTS.register("spellweaving", ()-> new Spellweaving(MobEffectCategory.HARMFUL, 0xffff54));
 
 
 

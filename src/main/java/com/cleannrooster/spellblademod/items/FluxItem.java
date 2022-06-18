@@ -141,7 +141,6 @@ public class FluxItem extends Spell {
                 if (target.hasEffect(StatusEffectsModded.FLUXED.get())) {
                     List entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(target.getX() - 4, target.getY() + 0.5 - 4, target.getZ() - 4, target.getX() + 4, target.getY() + 4, target.getZ() + 4));
                     Object[] entitiesarray = entities.toArray();
-                    System.out.println(target.getLevel());
                     int entityamount = entitiesarray.length;
                     for (int ii = 0; ii < entityamount; ii = ii + 1) {
 
@@ -161,7 +160,6 @@ public class FluxItem extends Spell {
         PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
         List<LivingEntity> list = new ArrayList<>();
 
-        playerMana.addMana(-10);
         boolean flag1 = false;
         if (player.getInventory().contains(ModItems.FRIENDSHIP.get().getDefaultInstance())){
             flag1 = true;

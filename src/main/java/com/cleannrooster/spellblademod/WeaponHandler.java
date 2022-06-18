@@ -163,9 +163,6 @@ public class WeaponHandler {
                     }
 
                 }
-                System.out.println(validentities);
-
-                System.out.println(entities);
                 LivingEntity chained = player.getLevel().getNearestEntity(validentities, TargetingConditions.forNonCombat().ignoreLineOfSight(), living, living.getX(), living.getY(), living.getZ());
                 if (chained != null) {
                     int num_pts_line = 50;

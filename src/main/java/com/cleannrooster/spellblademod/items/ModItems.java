@@ -78,6 +78,9 @@ public class ModItems {
             () -> new Wardloop(new Item.Properties().tab(ModSetup.ITEM_GROUP)));
     public static final RegistryObject<Item> FRIENDSHIP = ITEMS.register("friendshipbracelet",
             () -> new FriendshipBracelet(new Item.Properties().tab(ModSetup.ITEM_GROUP)));
+    public static final RegistryObject<Item> VOLATILE = ITEMS.register("volatile",
+            () -> new Volatile(new Item.Properties().tab(ModSetup.ITEM_GROUP)));
+
 
 
 

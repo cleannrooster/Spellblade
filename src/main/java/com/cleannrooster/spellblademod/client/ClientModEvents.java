@@ -25,5 +25,8 @@ public class ClientModEvents {
         event.registerEntityRenderer(ModEntities.ENDERS_EYE.get(), (p_174088_) -> {
             return new ThrownItemRenderer<>(p_174088_, 1.0F, true);
         });
+        event.registerEntityRenderer(ModEntities.VOLATILE_ENTITY.get(), (p_174086_) -> {
+            return new ThrownItemRenderer<>(p_174086_, 3.0F, true);
+        });
     }
 }

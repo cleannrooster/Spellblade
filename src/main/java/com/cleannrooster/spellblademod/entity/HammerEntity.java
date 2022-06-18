@@ -40,12 +40,23 @@ public boolean secondary = false;
             LivingEntity livingentity = (LivingEntity)entity;
             f += EnchantmentHelper.getDamageBonus(this.tridentItem, livingentity.getMobType());
         }
-
+        float multi;
+        if (!this.triggered){
+            multi = 1;
+        }
+        else {
+            multi = 0.5F;
+        }
         Entity entity1 = this.getOwner();
+        if (entity1 == p_37573_.getEntity()){
+            this.discard();
+            return;
+        }
         DamageSource damagesource = DamageSource.trident(this, (Entity)(entity1 == null ? this : entity1));
         this.dealtDamage = true;
         SoundEvent soundevent = SoundEvents.TRIDENT_HIT;
-        if (entity.hurt(damagesource, f)) {
+        entity.invulnerableTime = 0;
+        if (entity.hurt(damagesource, f*multi)) {
             if (entity.getType() == EntityType.ENDERMAN) {
                 return;
             }
@@ -56,10 +67,10 @@ public boolean secondary = false;
                     EnchantmentHelper.doPostHurtEffects(livingentity1, entity1);
                     EnchantmentHelper.doPostDamageEffects((LivingEntity)entity1, livingentity1);
                 }
-
                 this.doPostHurtEffects(livingentity1);
             }
         }
+        entity.invulnerableTime = 0;
 
         this.setDeltaMovement(this.getDeltaMovement().multiply(-0.01D, -0.1D, -0.01D));
         float f1 = 1.0F;
@@ -76,6 +87,7 @@ public boolean secondary = false;
         }
 
         this.playSound(soundevent, f1, 1.0F);
+
     }
     protected void onHit(HitResult p_36913_) {
         super.onHit(p_36913_);
@@ -84,7 +96,7 @@ public boolean secondary = false;
             return;
         }
             float multi;
-            if (!triggered){
+            if (!this.triggered){
                 multi = 1;
             }
             else{
@@ -215,6 +227,9 @@ public boolean secondary = false;
 
         Entity entity = this.getOwner();
         if (this.tickCount > 80){
+            this.discard();
+        }
+        if (this.dealtDamage){
             this.discard();
         }
         if (tickCount%5 == 0 && !secondary && !this.inGround) {

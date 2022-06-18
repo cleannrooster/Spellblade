@@ -6,6 +6,7 @@ import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -13,7 +14,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-public class Wardloop extends Spell{
+public class Wardloop extends Item{
     public Wardloop(Properties p_41383_) {
         super(p_41383_);
     }
@@ -42,18 +43,31 @@ public class Wardloop extends Spell{
     }
     public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_) {
         if (p_41406_ instanceof Player) {
+            int ii = 0;
             Player player = (Player) p_41406_;
             PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
             if (p_41404_.getTag() != null){
-                if (p_41404_.getTag().get("CustomModelData") != null)
-                for(int i = 0; i <= 9; i++){
-                    if (player.getInventory().getItem(i).getItem() != this && player.getInventory().getItem(i).getItem() instanceof Spell && !player.getCooldowns().isOnCooldown(player.getInventory().getItem(i).getItem())){
-                        if (player.getInventory().getItem(i).hasTag()){
-                            if(player.getInventory().getItem(i).getTag().getInt("Triggerable") == 1){
-                                ((Spell) player.getInventory().getItem(i).getItem()).trigger(p_41405_, player,(float)1/8);
-                                player.getCooldowns().addCooldown(player.getInventory().getItem(i).getItem(), 10);                            }
+                if (p_41404_.getTag().get("CustomModelData") != null) {
+                    for (int i = 0; i <= 9; i++) {
+                        if (player.getInventory().getItem(i).getItem() != this && player.getInventory().getItem(i).getItem() instanceof Spell) {
+                            if (player.getInventory().getItem(i).hasTag()) {
+                                if (player.getInventory().getItem(i).getTag().getInt("Triggerable") == 1) {
+                                    if (!player.getCooldowns().isOnCooldown(player.getInventory().getItem(i).getItem())) {
+                                        if (playerMana.getMana() < -2) {
+                                            player.invulnerableTime = 0;
+                                            player.hurt(DamageSource.MAGIC, 1);
+                                            player.invulnerableTime = 0;
+                                        }
+                                        ((Spell) player.getInventory().getItem(i).getItem()).trigger(p_41405_, player, (float) 1 / 8);
+                                        player.getCooldowns().addCooldown(player.getInventory().getItem(i).getItem(), 10);
+                                    }
+                                    ii++;
+                                }
+                            }
+
                         }
                     }
+                    player.addEffect(new MobEffectInstance(StatusEffectsModded.SPELLWEAVING.get(), 5, ii-1));
                 }
             }
         }

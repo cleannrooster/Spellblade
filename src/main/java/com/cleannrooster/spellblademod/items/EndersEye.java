@@ -74,7 +74,6 @@ public class EndersEye extends Spell {
     }
     public void trigger(Level level, Player player, float modifier){
         PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-        playerMana.addMana(-80*modifier);
         boolean flag1 = false;
         if (player.getInventory().contains(ModItems.FRIENDSHIP.get().getDefaultInstance())){
             flag1 = true;

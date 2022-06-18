@@ -23,6 +23,8 @@ import net.minecraft.world.item.TridentItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.Random;
+
 public class HammerRain extends Spell {
     public HammerRain(Properties p_41383_) {
         super(p_41383_);
@@ -66,15 +68,50 @@ public class HammerRain extends Spell {
     public void trigger(Level level, Player player, float modifier){
         super.trigger(level, player, modifier);
         PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-        playerMana.addMana(-80*modifier);
+        Random rand = new Random();
+
         HammerEntity hammer1 = new HammerEntity(ModEntities.TRIDENT.get(),player.getLevel());
         hammer1.triggered = true;
-        hammer1.setPos(player.getEyePosition());
+        hammer1.setPos(player.position().add(rand.nextDouble(-6,6), 6, rand.nextDouble(-6,6)));
         hammer1.setOwner(player);
         hammer1.pickup = AbstractArrow.Pickup.DISALLOWED;
+        hammer1.secondary = true;
+        HammerEntity hammer2 = new HammerEntity(ModEntities.TRIDENT.get(),player.getLevel());
+        hammer2.triggered = true;
+        hammer2.setPos(player.position().add(rand.nextDouble(-6,6), 6, rand.nextDouble(-6,6)));
+        hammer2.setOwner(player);
+        hammer2.pickup = AbstractArrow.Pickup.DISALLOWED;
+        hammer2.secondary = true;
+        HammerEntity hammer3 = new HammerEntity(ModEntities.TRIDENT.get(),player.getLevel());
+        hammer3.triggered = true;
+        hammer3.setPos(player.position().add(rand.nextDouble(-6,6), 6, rand.nextDouble(-6,6)));
+        hammer3.setOwner(player);
+        hammer3.pickup = AbstractArrow.Pickup.DISALLOWED;
+        hammer3.secondary = true;
+        HammerEntity hammer4 = new HammerEntity(ModEntities.TRIDENT.get(),player.getLevel());
+        hammer4.triggered = true;
+        hammer4.setPos(player.position().add(rand.nextDouble(-6,6), 6, rand.nextDouble(-6,6)));
+        hammer4.setOwner(player);
+        hammer4.pickup = AbstractArrow.Pickup.DISALLOWED;
+        hammer4.secondary = true;
+        hammer1.setXRot(90);
+        hammer1.setYRot(0);
+        hammer2.setXRot(90);
+        hammer2.setYRot(0);
+        hammer3.setXRot(90);
+        hammer3.setYRot(0);
+        hammer4.setXRot(90);
+        hammer4.setYRot(0);
+        Vec3 vec3 = player.getViewVector(1F);
+        hammer1.shoot(0, -1, 0, 1.6F, 0);
+        hammer2.shoot(0,-1,0, 1.6F, 0);
+        hammer3.shoot(0,-1,0, 1.6F, 0);
+        hammer4.shoot(0,-1,0, 1.6F, 0);
 
-        hammer1.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.6F, 1.0F);
         level.addFreshEntity(hammer1);
+        level.addFreshEntity(hammer2);
+        level.addFreshEntity(hammer3);
+
     }
     @Override
     public boolean isFoil(ItemStack p_41453_) {

@@ -21,6 +21,7 @@
   "item.spellblademod.wardlight": "Wardlight",
   "item.spellblademod.wardloop": "Spellweaver's Orb",
   "item.spellblademod.friendshipbracelet": "Band of Friendship",
+  "item.spellblademod.volatile": "Volatile Orb",
   "entity.spellblademod.splitting_trident": "Splitting Trident",
   "entity.spellblademod.enderseyeentity": "Ender's Watchful Eye",
   "block.spellblademod.warding_totem_block": "Warding Totem",
@@ -35,9 +36,11 @@
   "effect.spellblademod.wardlocked": "Wardlocked",
   "effect.spellblademod.endersgaze": "Ender's Watchful Gaze",
   "effect.spellblademod.echoes": "Echoes",
+  "effect.spellblademod.spellweaving": "Spellweaver's Focus",
   "itemGroup.spellblade": "Spellblade",
   "death.attack.fluxed": "%1$s got fluxed",
   "death.attack.fluxed.player": "%2$s fluxed %1$s",
   "death.attack.eyelaser": "%1$s fell under Ender's Gaze",
+  "death.attack.echoes": "%1$s felt the reverb",
   "death.attack.eyelaser.player": "%1$s fell under Ender's Gaze"
 }

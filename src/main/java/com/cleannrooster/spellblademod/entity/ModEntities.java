@@ -23,6 +23,8 @@ public class ModEntities {
             () -> EntityType.Builder.of(HammerEntity::new, MobCategory.MISC).sized(1.5F, 1.5F).setTrackingRange(100).setUpdateInterval(1).fireImmune().setShouldReceiveVelocityUpdates(true).build(new ResourceLocation("spellblademod","hammer").toString()));
     public static final RegistryObject<EntityType<EndersEyeEntity>> ENDERS_EYE = ENTITIES.register("enderseyeentity",
             () -> EntityType.Builder.<EndersEyeEntity>of(EndersEyeEntity::new, MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "enderseye").toString()));
+    public static final RegistryObject<EntityType<VolatileEntity>> VOLATILE_ENTITY = ENTITIES.register("volatile_entity",
+            () -> EntityType.Builder.<VolatileEntity>of(VolatileEntity::new, MobCategory.MISC).sized(1, 1).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "volatileentity").toString()));
 
 
 }
