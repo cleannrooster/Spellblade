@@ -50,12 +50,14 @@ public class HammerRain extends Spell {
                 return InteractionResultHolder.success(itemstack);
             }
         }
-        playerMana.addMana(-80);
+        playerMana.addMana(-40);
 
         if (playerMana.getMana() < -1.6) {
             p_43406_.hurt(DamageSource.MAGIC,2);
         }
-            p_43406_.getCooldowns().addCooldown(this,20);
+        if (!p_43406_.isShiftKeyDown()) {
+            p_43406_.getCooldowns().addCooldown(this, 20);
+        }
             HammerEntity hammer1 = new HammerEntity(ModEntities.TRIDENT.get(),p_43406_.getLevel());
             hammer1.setPos(p_43406_.getEyePosition());
             hammer1.setOwner(p_43406_);
@@ -66,6 +68,8 @@ public class HammerRain extends Spell {
     }
     public void trigger(Level level, Player player, float modifier){
         super.trigger(level, player, modifier);
+        player.getCooldowns().addCooldown(this,10);
+
         PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
         Random rand = new Random();
 
@@ -110,7 +114,12 @@ public class HammerRain extends Spell {
         level.addFreshEntity(hammer1);
         level.addFreshEntity(hammer2);
         level.addFreshEntity(hammer3);
+        if (playerMana.getMana() < -5) {
 
+            player.invulnerableTime = 0;
+            player.hurt(DamageSource.MAGIC, 1);
+            player.invulnerableTime = 0;
+        }
     }
     @Override
     public boolean isFoil(ItemStack p_41453_) {

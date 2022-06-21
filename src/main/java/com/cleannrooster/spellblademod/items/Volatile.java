@@ -61,16 +61,11 @@ public class Volatile extends Spell{
         }
         if (!player.getMainHandItem().isEdible()) {
             PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-            playerMana.addMana(-80);
 
-            if (playerMana.getMana() < -1.6) {
-                player.hurt(DamageSource.MAGIC,2);
-            }
                 VolatileEntity volatile1 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
                 VolatileEntity volatile2 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
                 VolatileEntity volatile3 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
 
-                player.getCooldowns().addCooldown(this, 20);
 
                 List entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(player.getX() - 6, player.getY() - 6, player.getZ() - 6, player.getX() + 6, player.getY() + 6, player.getZ() + 6));
                 Object[] entitiesarray = entities.toArray();
@@ -86,14 +81,21 @@ public class Volatile extends Spell{
                     if (target.getClassification(false).isFriendly() || target instanceof Player || (target instanceof NeutralMob)) {
                         flag2 = true;
                     }
-                    if (target != player && !(flag1 && flag2)) {
-                        target.invulnerableTime = 0;
+                    if (target != player && !(flag1 && flag2) && target.hasLineOfSight(player)) {
                         validtargets.add(target);
-                        target.invulnerableTime = 0;
 
                     }
                 }
                 if (!validtargets.isEmpty()){
+                    playerMana.addMana(-40);
+
+                    if (playerMana.getMana() < -1.6) {
+                        player.hurt(DamageSource.MAGIC,2);
+                    }
+                    if (!player.isShiftKeyDown()) {
+
+                        player.getCooldowns().addCooldown(this, 20);
+                    }
                     Random rand = new Random();
                     volatile1.setPos(player.position().add( new Vec3(rand.nextDouble(-1, 1),rand.nextDouble(-1, 1),rand.nextDouble(-1, 1))));
                     volatile2.setPos(player.position().add( new Vec3(rand.nextDouble(-1, 1),rand.nextDouble(-1, 1),rand.nextDouble(-1, 1))));
@@ -104,7 +106,7 @@ public class Volatile extends Spell{
                     if(validtargets.toArray().length == 1){
                         volatile1.target = validtargets.get(0);
 
-                        level.addFreshEntity(volatile2);
+                        level.addFreshEntity(volatile1);
 
                     }
                     if(validtargets.toArray().length == 2){
@@ -148,11 +150,9 @@ public class Volatile extends Spell{
                         level.addFreshEntity(volatile3);
                     }
 
-
-
+                    return InteractionResultHolder.sidedSuccess(itemstack, level.isClientSide());
              }
 
-            return InteractionResultHolder.consume(itemstack);
         }
 
         return InteractionResultHolder.fail(itemstack);
@@ -170,12 +170,8 @@ public class Volatile extends Spell{
 
     @Override
     public void trigger(Level level, Player player, float modifier) {
-        VolatileEntity volatile1 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
-        VolatileEntity volatile2 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
-        VolatileEntity volatile3 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
-        PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
 
-        player.getCooldowns().addCooldown(this, 10);
+
         List entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(player.getX() - 6, player.getY() - 6, player.getZ() - 6, player.getX() + 6, player.getY() + 6, player.getZ() + 6));
         Object[] entitiesarray = entities.toArray();
         boolean flag1 = false;
@@ -190,15 +186,17 @@ public class Volatile extends Spell{
             if (target.getClassification(false).isFriendly() || target instanceof Player || (target instanceof NeutralMob)) {
                 flag2 = true;
             }
-            if (target != player && !(flag1 && flag2)) {
-                target.invulnerableTime = 0;
+            if (target != player && !(flag1 && flag2) && target.hasLineOfSight(player)) {
                 validtargets.add(target);
-                target.invulnerableTime = 0;
-
             }
         }
         if (!validtargets.isEmpty()){
+            VolatileEntity volatile1 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
+            VolatileEntity volatile2 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
+            VolatileEntity volatile3 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
+            PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
             Random rand = new Random();
+            player.getCooldowns().addCooldown(this, 10);
             volatile1.setPos(player.position().add( new Vec3(rand.nextDouble(-1, 1),rand.nextDouble(-1, 1),rand.nextDouble(-1, 1))));
             volatile2.setPos(player.position().add( new Vec3(rand.nextDouble(-1, 1),rand.nextDouble(-1, 1),rand.nextDouble(-1, 1))));
             volatile3.setPos(player.position().add( new Vec3(rand.nextDouble(-1, 1),rand.nextDouble(-1, 1),rand.nextDouble(-1, 1))));
@@ -259,6 +257,12 @@ public class Volatile extends Spell{
                 level.addFreshEntity(volatile2);
                 level.addFreshEntity(volatile3);
 
+            }
+            if (playerMana.getMana() < -5) {
+
+                player.invulnerableTime = 0;
+                player.hurt(DamageSource.MAGIC, 1);
+                player.invulnerableTime = 0;
             }
         }
 

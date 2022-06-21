@@ -62,7 +62,7 @@ public class VolatileEntity extends Fireball {
             waiting++;
             return;
         }
-        if(this.target != null){
+        if(this.target != null && target.hasLineOfSight(this)){
             super.tick();
             this.noPhysics = true;
             Vec3 vec3 = target.getBoundingBox().getCenter().subtract(this.position());

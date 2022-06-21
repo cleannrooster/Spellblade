@@ -32,6 +32,14 @@ public class WardArmorItem extends ArmorItem{
     public WardArmorItem(ArmorMaterial p_40386_, EquipmentSlot p_40387_, Properties p_40388_) {
         super(p_40386_, p_40387_, p_40388_);
     }
+    public static boolean isWarding(Item item) {
+        if (item instanceof WardArmorItem){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 }
 
 

@@ -61,12 +61,12 @@ public class EffigyOfUnity extends Item {
     public void onUsingTick(ItemStack stack, LivingEntity player, int count)
     {
         List players = player.getLevel().players().stream().toList();
-        if(count%20 == 0 && count <= 80){
-            ((Player)(player)).displayClientMessage(Component.nullToEmpty("Teleporting in " + (80-count)/20), true);
+        if(count%20 == 0 && count >= 120){
+            ((Player)(player)).displayClientMessage(Component.nullToEmpty("Teleporting in " + (count-120)/20), true);
         }
         for(int i = 0; i < players.toArray().length; i++){
             Player teleportee = (Player)players.get(i);
-            if (Objects.equals(((Player) players.get(i)).getGameProfile().getName(), stack.getOrCreateTag().getString("UnitedWith")) &&  count == 80 && player.level == teleportee.level){
+            if (Objects.equals(((Player) players.get(i)).getGameProfile().getName(), stack.getOrCreateTag().getString("UnitedWith")) &&  count == 120 && player.level == teleportee.level){
                 player.teleportTo(teleportee.getX(),teleportee.getY(), teleportee.getZ());
             }
         }

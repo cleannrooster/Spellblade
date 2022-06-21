@@ -72,7 +72,7 @@ public class EndersEyeEntity extends Projectile implements ItemSupplier {
                             if (target.getClassification(false).isFriendly() || target instanceof Player || (target instanceof NeutralMob)){
                                 flag2 = true;
                             }
-                            if (target != this.getOwner() && !Objects.requireNonNullElse(this.blacklist, new ArrayList()).contains(target) && !(flag1 && flag2)) {
+                            if (target != this.getOwner() && !Objects.requireNonNullElse(this.blacklist, new ArrayList()).contains(target) && !(flag1 && flag2) && target.hasLineOfSight(this)) {
                                 int i = 0;
                                 int num_pts = 100;
                                 int num_pts_line = 25;

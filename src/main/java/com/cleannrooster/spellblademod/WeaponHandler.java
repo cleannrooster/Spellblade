@@ -182,7 +182,7 @@ public class WeaponHandler {
                         if (target.getClassification(false).isFriendly()|| target instanceof Player || (target instanceof NeutralMob)){
                             flag3 = true;
                         }
-                        if (target != player && target != living && target != chained && !(flag1 && flag3)) {
+                        if (target != player && target != living && target != chained  && !(flag1 && flag3)) {
                             validentities2.add(target);
                         }
 

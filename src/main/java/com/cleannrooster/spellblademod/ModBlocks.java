@@ -3,15 +3,10 @@ package com.cleannrooster.spellblademod;
 import com.cleannrooster.spellblademod.blocks.WardIronBlock;
 import com.cleannrooster.spellblademod.blocks.WardingTotemBlock;
 import com.cleannrooster.spellblademod.blocks.Wardlight;
-import com.cleannrooster.spellblademod.items.ModItems;
-import net.minecraft.core.Direction;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LightBlock;
-import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
@@ -39,4 +34,5 @@ public class ModBlocks {
             () -> new Wardlight(BlockBehaviour.Properties.of(Material.AIR).strength(-1.0F, 3600000.8F).noDrops().noOcclusion().lightLevel(LightBlock.LIGHT_EMISSION)));
     public static final RegistryObject<Block> WARD_IRON_BLOCK = registerBlock("ward_iron_block",
             () -> new WardIronBlock(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL)));
+
 }

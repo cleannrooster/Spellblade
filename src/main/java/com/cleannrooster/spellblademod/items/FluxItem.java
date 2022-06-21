@@ -124,6 +124,7 @@ public class FluxItem extends Spell {
                 target.hurt(DamageSource.MAGIC, 1);
                 list.add(target);
                 int num_pts = 100;
+                Vec3 targetcenter = target.getBoundingBox().getCenter();
                 for (int i = 0; i <= num_pts; i = i + 1) {
                     double[] indices = IntStream.rangeClosed(0, (int) ((num_pts - 0) / 1))
                             .mapToDouble(x -> x * 1 + 0).toArray();
@@ -133,7 +134,7 @@ public class FluxItem extends Spell {
                     double x = cos(theta) * sin(phi);
                     double y = Math.sin(theta) * sin(phi);
                     double z = cos(phi);
-                    level.addParticle(ParticleTypes.DRAGON_BREATH.getType(), true, target.getX() + random.nextDouble(-0.1, 0.1), target.getY() + random.nextDouble(-0.1, 0.1), target.getZ() + random.nextDouble(-0.1, 0.1), x * 0.2, y * 0.2, z * 0.2);
+                    level.addParticle(ParticleTypes.DRAGON_BREATH.getType(), true, targetcenter.x + random.nextDouble(-0.1, 0.1), targetcenter.y + random.nextDouble(-0.1, 0.1), targetcenter.z + random.nextDouble(-0.1, 0.1), x * 0.2, y * 0.2, z * 0.2);
 
                 }
 
@@ -174,7 +175,7 @@ public class FluxItem extends Spell {
             if (target.getClassification(false).isFriendly()|| target instanceof Player || (target instanceof NeutralMob)){
                 flag2 = true;
             }
-            if (target != player && !(flag1 && flag2)) {
+            if (target != player && !(flag1 && flag2)&& target.hasLineOfSight(player)) {
                 validentities.add(target);
             }
 
@@ -182,6 +183,7 @@ public class FluxItem extends Spell {
 
         LivingEntity chained = player.getLevel().getNearestEntity(validentities, TargetingConditions.forNonCombat().ignoreLineOfSight(), player, player.getX(), player.getY(), player.getZ());
         if (chained != null) {
+            player.getCooldowns().addCooldown(this,10);
             int num_pts_line = 50;
             for (int iii = 0; iii < num_pts_line; iii++) {
                 double X = player.getBoundingBox().getCenter().x + (chained.getBoundingBox().getCenter().x - player.getBoundingBox().getCenter().x) * ((double) iii / (num_pts_line));
@@ -202,6 +204,12 @@ public class FluxItem extends Spell {
             }*/
             FluxFlux(player, chained, player.level, list);
             player.getCooldowns().addCooldown(this, 10);
+            if (playerMana.getMana() < -5) {
+
+                player.invulnerableTime = 0;
+                player.hurt(DamageSource.MAGIC, 1);
+                player.invulnerableTime = 0;
+            }
         }
     }
 

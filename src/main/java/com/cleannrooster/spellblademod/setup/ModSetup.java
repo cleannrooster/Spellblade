@@ -1,12 +1,13 @@
 package com.cleannrooster.spellblademod.setup;
 
 
+import com.cleannrooster.spellblademod.enchants.ModEnchants;
 import com.cleannrooster.spellblademod.items.ModItems;
 import com.cleannrooster.spellblademod.manasystem.data.ManaEvents;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.Registry;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -20,12 +21,13 @@ public class ModSetup {
 
     public static final String TAB_NAME = "spellblade";
 
-    public static final CreativeModeTab ITEM_GROUP = new CreativeModeTab(TAB_NAME) {
+    public static final CreativeModeTab ITEM_GROUP = (new CreativeModeTab(TAB_NAME) {
         @Override
         public ItemStack makeIcon() {
             return new ItemStack(ModItems.SPELLBLADE.get());
         }
-    };
+
+    }).setEnchantmentCategories(ModEnchants.category, ModEnchants.category);
 
     public static void setup() {
         IEventBus bus = MinecraftForge.EVENT_BUS;

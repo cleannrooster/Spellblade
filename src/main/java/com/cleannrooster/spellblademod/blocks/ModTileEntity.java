@@ -2,7 +2,9 @@ package com.cleannrooster.spellblademod.blocks;
 
 import com.cleannrooster.spellblademod.ModBlocks;
 import com.cleannrooster.spellblademod.items.ModItems;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -16,6 +18,8 @@ public class ModTileEntity {
             BLOCK_ENTITIES.register("warding_totem_block_entity", () ->
                     BlockEntityType.Builder.of(WardingTotemBlockEntity::new,
                             ModBlocks.WARDING_TOTEM_BLOCK.get()).build(null));
+
+
 
 
     public static void register(IEventBus eventBus) {

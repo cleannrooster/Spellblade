@@ -129,7 +129,7 @@ public boolean secondary = false;
             int entityamount = entitiesarray.length;
             for (int ii = 0; ii < entityamount; ii = ii + 1) {
                 LivingEntity target = (LivingEntity) entities.get(ii);
-                if (target != this.getOwner()) {
+                if (target != this.getOwner() && target.hasLineOfSight(this)) {
                     target.invulnerableTime = 0;
                     target.hurt(DamageSource.trident(this, this.getOwner()), 8*multi);
                     target.invulnerableTime = 0;

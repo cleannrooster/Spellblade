@@ -73,7 +73,7 @@ public class WardingTotem extends BlockItem {
         if (nearest == null){
             return BlockPlaceContext.at(context,context.getClickedPos(),Direction.UP);
         }
-        if (context.getLevel().getBlockState(context.getClickedPos().below()).getBlock() instanceof WardingTotemBlock) {
+        if (context.getLevel().getBlockState(context.getClickedPos().below()).getBlock() instanceof WardingTotemBlock  || context.getLevel().getBlockState(context.getClickedPos().above()).getBlock() instanceof WardingTotemBlock) {
 
             return BlockPlaceContext.at(context,context.getClickedPos(),Direction.UP);
         }

@@ -8,6 +8,7 @@ import net.minecraft.client.resources.sounds.Sound;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -41,6 +42,14 @@ public class ArmorHandler {
             {
                 flagd = flagd + 1;
             }
+
+
+            if (player.getInventory().getArmor(0).isEnchanted()) {
+                if (player.getInventory().getArmor(0).getEnchantmentTags().contains("greaterwarding")) {
+                    flagd = flagd + 1;
+                }
+            }
+
             /*if (player.getInventory().getArmor(0).getItem() == ModItems.GOLD_WARDING_BOOTS.get())
             {
                 flagg = flagg + 1;
@@ -59,6 +68,7 @@ public class ArmorHandler {
             }*/
             double multiplier = (double) Math.pow(0.5,(double)(playerMana.getMana()+0)/80);
             event.setAmount((float)(event.getAmount()*multiplier));
+            System.out.println(multiplier);
 
             int threshold = 160;
             if (flagd >= 1){

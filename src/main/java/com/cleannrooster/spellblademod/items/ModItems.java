@@ -17,6 +17,8 @@ public class ModItems {
     public static final RegistryObject<Item> WARDING_MAIL = ITEMS.register("wardiron",
             () -> new WardingMail(
                     new Item.Properties().tab(ModSetup.ITEM_GROUP)));
+    public static final RegistryObject<Item> WARD_IRON_BLOCK = ITEMS.register("ward_iron_block",
+            () -> new WardIronBlockItem(ModBlocks.WARD_IRON_BLOCK.get(),new Item.Properties().tab(ModSetup.ITEM_GROUP)));
     /*public static final RegistryObject<Item> WARDING_HELMET = ITEMS.register("warding_helmet",
             () -> new WardArmorItem(ModArmorMaterials.WARDING_MAIL, EquipmentSlot.HEAD, new Item.Properties().tab(CreativeModeTab.TAB_COMBAT)));
     public static final RegistryObject<Item> WARDING_CHEST = ITEMS.register("warding_chest",
@@ -69,20 +71,19 @@ public class ModItems {
             () -> new EffigyOfUnity( new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
     public static final RegistryObject<Item> FLUXITEM = ITEMS.register("flux_item",
             () -> new FluxItem( new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
+    public static final RegistryObject<Item> WARDLIGHT = ITEMS.register("wardlight",
+            () -> new WardlightItem(ModBlocks.WARDLIGHT_BLOCK.get(),new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
     public static final RegistryObject<Item> ENDERSEYE = ITEMS.register("enders_eye",
             () -> new EndersEye( new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
     public static final RegistryObject<Item> ENDERSEEKER = ITEMS.register("ender_seeker",
             () -> new EnderSeeker( new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
-    public static final RegistryObject<Item> WARDLIGHT = ITEMS.register("wardlight",
-            () -> new WardlightItem(ModBlocks.WARDLIGHT_BLOCK.get(),new Item.Properties().tab(ModSetup.ITEM_GROUP)));
     public static final RegistryObject<Item> WARDLOOP = ITEMS.register("wardloop",
-            () -> new Wardloop(new Item.Properties().tab(ModSetup.ITEM_GROUP)));
+            () -> new Wardloop(new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
     public static final RegistryObject<Item> FRIENDSHIP = ITEMS.register("friendshipbracelet",
-            () -> new FriendshipBracelet(new Item.Properties().tab(ModSetup.ITEM_GROUP)));
+            () -> new FriendshipBracelet(new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
     public static final RegistryObject<Item> VOLATILE = ITEMS.register("volatile",
-            () -> new Volatile(new Item.Properties().tab(ModSetup.ITEM_GROUP)));
-    public static final RegistryObject<Item> WARD_IRON_BLOCK = ITEMS.register("ward_iron_block",
-            () -> new WardIronBlockItem(ModBlocks.WARD_IRON_BLOCK.get(),new Item.Properties().tab(ModSetup.ITEM_GROUP)));
+            () -> new Volatile(new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
+
 
 
 

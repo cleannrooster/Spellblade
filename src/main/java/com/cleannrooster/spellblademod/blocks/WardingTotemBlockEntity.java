@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
@@ -25,15 +26,15 @@ public class WardingTotemBlockEntity extends BlockEntity {
     }
 
     public static void tick(Level pLevel, BlockPos pPos, BlockState pState, WardingTotemBlockEntity pBlockEntity) {
-        for (int i = 1; i < pLevel.getMaxBuildHeight() - pPos.getY(); i++){
+        /*for (int i = 1; i < pLevel.getMaxBuildHeight() - pPos.getY(); i++){
             boolean airblock = pLevel.getBlockState(pPos.above(i)).getBlock() instanceof AirBlock;
             boolean totemblock = pLevel.getBlockState(pPos.above(i)).getBlock() instanceof WardingTotemBlock;
             if(!(airblock) && !(totemblock)){
                 pLevel.destroyBlock(pPos, true);
                 return;
             }
-        }
-        List entities = pLevel.getEntitiesOfClass(Player.class,new AABB(pPos.getX()+0.5-32, pLevel.getMinBuildHeight(),pPos.getZ()+0.5-32,pPos.getX()+0.5+32,pLevel.getMaxBuildHeight(),pPos.getZ()+0.5+32 ));
+        }*/
+        List entities = pLevel.getEntitiesOfClass(Player.class,new AABB(pPos.getX()+0.5-32, pPos.getY()+0.5-32,pPos.getZ()+0.5-32,pPos.getX()+0.5+32,pPos.getY()+0.5+32,pPos.getZ()+0.5+32 ));
         Object[] entitiesarray = entities.toArray();
         int entityamount = entitiesarray.length;
         int ceiling = 0;
@@ -59,4 +60,5 @@ public class WardingTotemBlockEntity extends BlockEntity {
             }
         }
     }
+
 }

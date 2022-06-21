@@ -1,6 +1,7 @@
 package com.cleannrooster.spellblademod;
 
 import com.cleannrooster.spellblademod.blocks.ModTileEntity;
+import com.cleannrooster.spellblademod.enchants.ModEnchants;
 import com.cleannrooster.spellblademod.entity.ModEntities;
 import com.cleannrooster.spellblademod.items.ModItems;
 import com.cleannrooster.spellblademod.setup.Config;
@@ -43,6 +44,7 @@ public class SpellbladeMod
         ModBlocks.register(eventBus);
         ModTileEntity.register(eventBus);
         ModItems.register(eventBus);
+        ModEnchants.register(eventBus);
         ModEntities.ENTITIES.register(eventBus);
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);

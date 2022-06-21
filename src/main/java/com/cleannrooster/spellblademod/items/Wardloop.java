@@ -53,13 +53,8 @@ public class Wardloop extends Item{
                             if (player.getInventory().getItem(i).hasTag()) {
                                 if (player.getInventory().getItem(i).getTag().getInt("Triggerable") == 1) {
                                     if (!player.getCooldowns().isOnCooldown(player.getInventory().getItem(i).getItem())) {
-                                        if (playerMana.getMana() < -2) {
-                                            player.invulnerableTime = 0;
-                                            player.hurt(DamageSource.MAGIC, 1);
-                                            player.invulnerableTime = 0;
-                                        }
                                         ((Spell) player.getInventory().getItem(i).getItem()).trigger(p_41405_, player, (float) 1 / 8);
-                                        player.getCooldowns().addCooldown(player.getInventory().getItem(i).getItem(), 10);
+
                                     }
                                     ii++;
                                 }
