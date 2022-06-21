@@ -34,7 +34,7 @@ public class HammerRain extends Spell {
         ItemStack itemstack = p_43406_.getItemInHand(p_43407_);
 
         PlayerMana playerMana = p_43406_.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-        if (!p_43405_.isClientSide() && p_43406_.isShiftKeyDown()) {
+        if (p_43406_.isShiftKeyDown()) {
             CompoundTag nbt;
             if (itemstack.hasTag())
             {

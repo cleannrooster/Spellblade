@@ -63,6 +63,9 @@ public class FluxItem extends Spell {
                 return InteractionResult.FAIL;
             }
         }
+        if (player.getCooldowns().isOnCooldown(this)){
+            return InteractionResult.FAIL;
+        }
         playerMana.addMana(-40);
 
         if (playerMana.getMana() < -1.6) {
@@ -78,7 +81,7 @@ public class FluxItem extends Spell {
         Player player = p_41433_;
         PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
         ItemStack itemstack = p_41433_.getItemInHand(p_41434_);
-        if (!p_41432_.isClientSide() && player.isShiftKeyDown()) {
+        if (player.isShiftKeyDown()) {
             CompoundTag nbt;
             if (itemstack.hasTag())
             {

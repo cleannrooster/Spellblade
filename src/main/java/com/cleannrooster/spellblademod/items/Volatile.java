@@ -43,7 +43,7 @@ public class Volatile extends Spell{
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
-        if (!level.isClientSide() && player.isShiftKeyDown()) {
+        if (player.isShiftKeyDown()) {
             CompoundTag nbt;
             if (itemstack.hasTag())
             {

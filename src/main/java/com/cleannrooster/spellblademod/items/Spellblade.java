@@ -1,6 +1,7 @@
 package com.cleannrooster.spellblademod.items;
 
 import com.cleannrooster.spellblademod.StatusEffectsModded;
+import com.cleannrooster.spellblademod.manasystem.client.ManaOverlay;
 import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
 import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
 import com.google.common.collect.ImmutableMultimap;
@@ -44,7 +45,7 @@ public class Spellblade extends SwordItem{
         PlayerMana playerMana = playa.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
         if ( player.getEffect((StatusEffectsModded.WARDLOCKED.get())) == null) {
 
-            playerMana.addMana(1);
+            player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(),5,1));
         }
     }
     public void releaseUsing(ItemStack p_43394_, Level p_43395_, LivingEntity p_43396_, int p_43397_) {

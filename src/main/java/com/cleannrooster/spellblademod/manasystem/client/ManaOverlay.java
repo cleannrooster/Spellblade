@@ -7,7 +7,13 @@ import net.minecraftforge.client.gui.IIngameOverlay;
 import java.awt.*;
 
 public class ManaOverlay {
+    public static float basestep;
+    public static float basewaving;
     static int color = TextColor.fromRgb(0x9966cc).getValue();
+    public static float basearmor;
+    public static float basewarding;
+    public static float basetotem;
+
     static float hue = 0;
     static int i = 0;
     static int state = 0;
@@ -18,7 +24,8 @@ public class ManaOverlay {
 
     static int color2 = TextColor.fromRgb(0x000000).getValue();
     public static final IIngameOverlay HUD_MANA = (gui, poseStack, partialTicks, width, height) -> {
-        String toDisplay = (String.valueOf((((int)ClientManaData.getPlayerMana()))*100/160) + "%");
+        float base = basestep + basewaving + basearmor + basewarding + basetotem;
+        String toDisplay = (String.valueOf((((int)ClientManaData.getPlayerMana()))*100/160) + " / " + (int) (33.3333333333F*(base)) );
         int x = 10;
         int y = height-20;
         if (ClientManaData.getPlayerMana() < 39)

@@ -14,7 +14,9 @@ public class KeyBindings {
     public static KeyMapping gatherManaKeyMapping;
 
     public static void init() {
+/*
         gatherManaKeyMapping = new KeyMapping(KEY_GATHER_MANA, KeyConflictContext.IN_GAME, InputConstants.getKey("key.keyboard.period"), KEY_CATEGORIES_TUTORIAL);
         ClientRegistry.registerKeyBinding(gatherManaKeyMapping);
+*/
     }
 }

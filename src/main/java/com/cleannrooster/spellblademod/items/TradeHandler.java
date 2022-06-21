@@ -46,9 +46,9 @@ public class TradeHandler {
          ItemStack lightninginstance = new ItemStack(ModItems.LIGHTNING_EFFIGY.get());
          ItemStack iceinstance = new ItemStack(ModItems.ICE_EFFIGY.get());
         ItemStack lesserwarding = new ItemStack(Items.ENCHANTED_BOOK);
-        lesserwarding.enchant(ModEnchants.LESSERWARDING.get(),0);
+        lesserwarding.enchant(ModEnchants.LESSERWARDING.get(),1);
         ItemStack greaterwarding = new ItemStack(Items.ENCHANTED_BOOK);
-        greaterwarding.enchant(ModEnchants.GREATERWARDING.get(),0);
+        greaterwarding.enchant(ModEnchants.GREATERWARDING.get(),1);
 
         if (VillagerProfession.CLERIC.equals(profession)) {
             event.getTrades().get(3).add(new ItemTrades(lightninginstance,  4, 1, 2, 20));

@@ -5,6 +5,7 @@ import com.cleannrooster.spellblademod.StatusEffectsModded;
 import com.cleannrooster.spellblademod.items.ModArmorMaterials;
 import com.cleannrooster.spellblademod.items.ModItems;
 import com.cleannrooster.spellblademod.items.WardArmorItem;
+import com.cleannrooster.spellblademod.manasystem.client.ManaOverlay;
 import com.cleannrooster.spellblademod.manasystem.data.Mana;
 import com.cleannrooster.spellblademod.manasystem.data.ManaManager;
 import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
@@ -47,16 +48,29 @@ public class manatick {
         }
 
         if (event.player.hasEffect(StatusEffectsModded.WARDING.get()) && !event.player.hasEffect(StatusEffectsModded.WARDLOCKED.get())){
-            playerMana.addMana(2);
+            playerMana.addMana((1 + event.player.getEffect(StatusEffectsModded.WARDING.get()).getAmplifier()));
+            ManaOverlay.basewarding = (1 + event.player.getEffect(StatusEffectsModded.WARDING.get()).getAmplifier());
+        }
+        else{
+            ManaOverlay.basewarding = 0;
         }
         if (event.player.hasEffect(StatusEffectsModded.WARD_DRAIN.get()) && !event.player.hasEffect(StatusEffectsModded.WARDLOCKED.get())){
             playerMana.addMana(-8*(1+event.player.getEffect(StatusEffectsModded.WARD_DRAIN.get()).getAmplifier()));
         }
         if (event.player.hasEffect(StatusEffectsModded.SPELLWEAVING.get())){
             playerMana.addMana(-1*(1+event.player.getEffect(StatusEffectsModded.SPELLWEAVING.get()).getAmplifier()));
+            ManaOverlay.basewaving = -1*(1+event.player.getEffect(StatusEffectsModded.SPELLWEAVING.get()).getAmplifier());
+        }
+        else{
+            ManaOverlay.basewaving = 0;
         }
         if (event.player.hasEffect(StatusEffectsModded.TOTEMIC_ZEAL.get()) && !event.player.hasEffect(StatusEffectsModded.WARDLOCKED.get())){
             playerMana.addMana((float) (1+0.25*event.player.getEffect(StatusEffectsModded.TOTEMIC_ZEAL.get()).getAmplifier()));
+            ManaOverlay.basetotem = (float) (1+0.25*event.player.getEffect(StatusEffectsModded.TOTEMIC_ZEAL.get()).getAmplifier());
+        }
+        else{
+            ManaOverlay.basetotem = 0;
+
         }
         if (event.player.getInventory().getArmor(1).getItem() instanceof WardArmorItem)
         {
@@ -128,6 +142,7 @@ public class manatick {
         if (!event.player.hasEffect(StatusEffectsModded.WARDLOCKED.get())){
             playerMana.addMana( ((float)flagd*(float)0.25));
         }
+        ManaOverlay.basearmor = (float) (0.25*flagd);
 
 
         /*if (!event.player.hasEffect(StatusEffectsModded.WARDLOCKED.get())){

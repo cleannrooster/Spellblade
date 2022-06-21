@@ -26,7 +26,9 @@ public class ClientSetup {
 
     public static void init(FMLClientSetupEvent event) {
 
+/*
         MinecraftForge.EVENT_BUS.addListener(KeyInputHandler::onKeyInput);
+*/
         KeyBindings.init();
         OverlayRegistry.registerOverlayAbove(HOTBAR_ELEMENT, "name", ManaOverlay.HUD_MANA);
     }

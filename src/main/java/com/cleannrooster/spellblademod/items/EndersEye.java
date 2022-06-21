@@ -41,7 +41,7 @@ public class EndersEye extends Spell {
         Player player = (Player) p_43406_;
         PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
 
-        if (!p_43405_.isClientSide() && player.isShiftKeyDown()) {
+        if (player.isShiftKeyDown()) {
             CompoundTag nbt;
             if (itemstack.hasTag())
             {
