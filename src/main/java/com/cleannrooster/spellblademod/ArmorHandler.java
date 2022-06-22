@@ -68,7 +68,6 @@ public class ArmorHandler {
             }*/
             double multiplier = (double) Math.pow(0.5,(double)(playerMana.getMana()+0)/80);
             event.setAmount((float)(event.getAmount()*multiplier));
-            System.out.println(multiplier);
 
             int threshold = 160;
             if (flagd >= 1){

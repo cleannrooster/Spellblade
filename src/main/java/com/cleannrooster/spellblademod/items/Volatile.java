@@ -97,9 +97,12 @@ public class Volatile extends Spell{
                         player.getCooldowns().addCooldown(this, 20);
                     }
                     Random rand = new Random();
-                    volatile1.setPos(player.position().add( new Vec3(rand.nextDouble(-1, 1),rand.nextDouble(-1, 1),rand.nextDouble(-1, 1))));
-                    volatile2.setPos(player.position().add( new Vec3(rand.nextDouble(-1, 1),rand.nextDouble(-1, 1),rand.nextDouble(-1, 1))));
-                    volatile3.setPos(player.position().add( new Vec3(rand.nextDouble(-1, 1),rand.nextDouble(-1, 1),rand.nextDouble(-1, 1))));
+                    volatile1.setPos(player.position().add( new Vec3(rand.nextDouble(-1, 1),rand.nextDouble(0, 1),rand.nextDouble(-1, 1))));
+                    volatile2.setPos(player.position().add( new Vec3(rand.nextDouble(-1, 1),rand.nextDouble(0, 1),rand.nextDouble(-1, 1))));
+                    volatile3.setPos(player.position().add( new Vec3(rand.nextDouble(-1, 1),rand.nextDouble(0, 1),rand.nextDouble(-1, 1))));
+                    volatile1.explosionPower = 3;
+                    volatile3.explosionPower = 3;
+                    volatile2.explosionPower = 3;
                     volatile1.setOwner(player);
                     volatile2.setOwner(player);
                     volatile3.setOwner(player);
@@ -142,7 +145,6 @@ public class Volatile extends Spell{
                             if (iii < 3) {
                                 volatilelist.get(iii).target = validtargets.get(list.get(toadd)-1);
                             }
-                            System.out.println(list.remove(toadd));
                             iii++;
                         }
                         level.addFreshEntity(volatile1);
@@ -194,12 +196,15 @@ public class Volatile extends Spell{
             VolatileEntity volatile1 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
             VolatileEntity volatile2 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
             VolatileEntity volatile3 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
+            volatile1.explosionPower = 2;
+            volatile3.explosionPower = 2;
+            volatile2.explosionPower = 2;
             PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
             Random rand = new Random();
             player.getCooldowns().addCooldown(this, 10);
-            volatile1.setPos(player.position().add( new Vec3(rand.nextDouble(-1, 1),rand.nextDouble(-1, 1),rand.nextDouble(-1, 1))));
-            volatile2.setPos(player.position().add( new Vec3(rand.nextDouble(-1, 1),rand.nextDouble(-1, 1),rand.nextDouble(-1, 1))));
-            volatile3.setPos(player.position().add( new Vec3(rand.nextDouble(-1, 1),rand.nextDouble(-1, 1),rand.nextDouble(-1, 1))));
+            volatile1.setPos(player.position().add( new Vec3(rand.nextDouble(-1, 1),rand.nextDouble(0, 1),rand.nextDouble(-1, 1))));
+            volatile2.setPos(player.position().add( new Vec3(rand.nextDouble(-1, 1),rand.nextDouble(0, 1),rand.nextDouble(-1, 1))));
+            volatile3.setPos(player.position().add( new Vec3(rand.nextDouble(-1, 1),rand.nextDouble(0, 1),rand.nextDouble(-1, 1))));
             volatile1.setOwner(player);
             volatile2.setOwner(player);
             volatile3.setOwner(player);
@@ -249,7 +254,6 @@ public class Volatile extends Spell{
                     if (iii < 3) {
                         volatilelist.get(iii).target = validtargets.get(list.get(toadd)-1);
                     }
-                    System.out.println(list.remove(toadd));
                     iii++;
 
                 }

@@ -14,7 +14,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class VolatileEntity extends Fireball {
-    private float explosionPower = 1.5F;
+    public float explosionPower = 2F;
     public LivingEntity target;
     boolean flag = false;
     int waiting = 0;
@@ -62,7 +62,7 @@ public class VolatileEntity extends Fireball {
             waiting++;
             return;
         }
-        if(this.target != null && target.hasLineOfSight(this)){
+        if(this.target != null){
             super.tick();
             this.noPhysics = true;
             Vec3 vec3 = target.getBoundingBox().getCenter().subtract(this.position());
@@ -73,7 +73,7 @@ public class VolatileEntity extends Fireball {
 
             double d0 = 0.05D * (double)2;
             this.setDeltaMovement(this.getDeltaMovement().scale(0.95D).add(vec3.normalize().scale(d0)));
-            if(vec3.length() < 0.5){
+            if(vec3.length() < 0.3){
                 this.flag = true;
             }
         }

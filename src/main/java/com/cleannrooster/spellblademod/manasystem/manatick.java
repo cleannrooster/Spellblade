@@ -6,10 +6,7 @@ import com.cleannrooster.spellblademod.items.ModArmorMaterials;
 import com.cleannrooster.spellblademod.items.ModItems;
 import com.cleannrooster.spellblademod.items.WardArmorItem;
 import com.cleannrooster.spellblademod.manasystem.client.ManaOverlay;
-import com.cleannrooster.spellblademod.manasystem.data.Mana;
-import com.cleannrooster.spellblademod.manasystem.data.ManaManager;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
+import com.cleannrooster.spellblademod.manasystem.data.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -22,20 +19,23 @@ import net.minecraftforge.fml.common.Mod;
 public class manatick {
     @SubscribeEvent
     public static void manatickevent(TickEvent.PlayerTickEvent event){
-        int wardeff = 0;
-        int flagd = 0;
-        int minWard = 0;
         if(event.phase != TickEvent.Phase.START) {
             return;
         }
-        PlayerMana playerMana = event.player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
+        basemana.baseadditional = basemana.sum();
+        float base = basemana.basestep + basemana.basewaving + basemana.basearmor + basemana.basewarding + basemana.basetotem + basemana.baseadditional;
+        float baseWard = 1.6F*base/(0.03F);
+        int wardeff = 0;
+        int flagd = 0;
+        int minWard = 0;
 
+        PlayerMana playerMana = event.player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
 
         if (playerMana == null){
             return;
         }
         if (!event.player.hasEffect(StatusEffectsModded.WARDLOCKED.get())){
-            playerMana.addMana((float) -(((float)(playerMana.getMana())*0.01856026932)));
+            playerMana.addMana((float) ((baseWard-playerMana.getMana())*0.01856026932));
         }
 
         if (event.player.getInventory().getArmor(0).getItem() instanceof WardArmorItem)
@@ -48,28 +48,28 @@ public class manatick {
         }
 
         if (event.player.hasEffect(StatusEffectsModded.WARDING.get()) && !event.player.hasEffect(StatusEffectsModded.WARDLOCKED.get())){
-            playerMana.addMana((1 + event.player.getEffect(StatusEffectsModded.WARDING.get()).getAmplifier()));
-            ManaOverlay.basewarding = (1 + event.player.getEffect(StatusEffectsModded.WARDING.get()).getAmplifier());
+            //playerMana.addMana((1 + event.player.getEffect(StatusEffectsModded.WARDING.get()).getAmplifier()));
+            basemana.basewarding = (1 + event.player.getEffect(StatusEffectsModded.WARDING.get()).getAmplifier());
         }
         else{
-            ManaOverlay.basewarding = 0;
+            basemana.basewarding = 0;
         }
         if (event.player.hasEffect(StatusEffectsModded.WARD_DRAIN.get()) && !event.player.hasEffect(StatusEffectsModded.WARDLOCKED.get())){
-            playerMana.addMana(-8*(1+event.player.getEffect(StatusEffectsModded.WARD_DRAIN.get()).getAmplifier()));
+            //playerMana.addMana(-8*(1+event.player.getEffect(StatusEffectsModded.WARD_DRAIN.get()).getAmplifier()));
         }
         if (event.player.hasEffect(StatusEffectsModded.SPELLWEAVING.get())){
-            playerMana.addMana(-1*(1+event.player.getEffect(StatusEffectsModded.SPELLWEAVING.get()).getAmplifier()));
-            ManaOverlay.basewaving = -1*(1+event.player.getEffect(StatusEffectsModded.SPELLWEAVING.get()).getAmplifier());
+            //playerMana.addMana(-1*(1+event.player.getEffect(StatusEffectsModded.SPELLWEAVING.get()).getAmplifier()));
+            basemana.basewaving = -1*(1+event.player.getEffect(StatusEffectsModded.SPELLWEAVING.get()).getAmplifier());
         }
         else{
-            ManaOverlay.basewaving = 0;
+            basemana.basewaving = 0;
         }
         if (event.player.hasEffect(StatusEffectsModded.TOTEMIC_ZEAL.get()) && !event.player.hasEffect(StatusEffectsModded.WARDLOCKED.get())){
-            playerMana.addMana((float) (1+0.25*event.player.getEffect(StatusEffectsModded.TOTEMIC_ZEAL.get()).getAmplifier()));
-            ManaOverlay.basetotem = (float) (1+0.25*event.player.getEffect(StatusEffectsModded.TOTEMIC_ZEAL.get()).getAmplifier());
+            //playerMana.addMana((float) (1+0.25*event.player.getEffect(StatusEffectsModded.TOTEMIC_ZEAL.get()).getAmplifier()));
+            basemana.basetotem = (float) (1+0.25*event.player.getEffect(StatusEffectsModded.TOTEMIC_ZEAL.get()).getAmplifier());
         }
         else{
-            ManaOverlay.basetotem = 0;
+            basemana.basetotem = 0;
 
         }
         if (event.player.getInventory().getArmor(1).getItem() instanceof WardArmorItem)
@@ -140,9 +140,9 @@ public class manatick {
 
 
         if (!event.player.hasEffect(StatusEffectsModded.WARDLOCKED.get())){
-            playerMana.addMana( ((float)flagd*(float)0.25));
+            //playerMana.addMana( ((float)flagd*(float)0.25));
         }
-        ManaOverlay.basearmor = (float) (0.25*flagd);
+        basemana.basearmor = (float) (0.25*flagd);
 
 
         /*if (!event.player.hasEffect(StatusEffectsModded.WARDLOCKED.get())){

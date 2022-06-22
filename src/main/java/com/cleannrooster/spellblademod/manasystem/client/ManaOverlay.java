@@ -1,18 +1,15 @@
 package com.cleannrooster.spellblademod.manasystem.client;
 
 import com.cleannrooster.spellblademod.manasystem.ManaConfig;
+import com.cleannrooster.spellblademod.manasystem.data.basemana;
 import net.minecraft.network.chat.TextColor;
 import net.minecraftforge.client.gui.IIngameOverlay;
 
 import java.awt.*;
 
 public class ManaOverlay {
-    public static float basestep;
-    public static float basewaving;
+
     static int color = TextColor.fromRgb(0x9966cc).getValue();
-    public static float basearmor;
-    public static float basewarding;
-    public static float basetotem;
 
     static float hue = 0;
     static int i = 0;
@@ -24,8 +21,8 @@ public class ManaOverlay {
 
     static int color2 = TextColor.fromRgb(0x000000).getValue();
     public static final IIngameOverlay HUD_MANA = (gui, poseStack, partialTicks, width, height) -> {
-        float base = basestep + basewaving + basearmor + basewarding + basetotem;
-        String toDisplay = (String.valueOf((((int)ClientManaData.getPlayerMana()))*100/160) + " / " + (int) (33.3333333333F*(base)) );
+        float base = basemana.basestep + basemana.basewaving + basemana.basearmor + basemana.basewarding + basemana.basetotem + basemana.baseadditional;
+        String toDisplay = String.valueOf(Math.round(ClientManaData.getPlayerMana()/1.6F) + " / " + Math.round(base/0.03F) );
         int x = 10;
         int y = height-20;
         if (ClientManaData.getPlayerMana() < 39)

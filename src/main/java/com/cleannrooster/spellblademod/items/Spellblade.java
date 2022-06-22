@@ -45,14 +45,14 @@ public class Spellblade extends SwordItem{
         PlayerMana playerMana = playa.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
         if ( player.getEffect((StatusEffectsModded.WARDLOCKED.get())) == null) {
 
-            player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(),5,1));
+            player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(),30,1));
         }
     }
-    public void releaseUsing(ItemStack p_43394_, Level p_43395_, LivingEntity p_43396_, int p_43397_) {
+    /*public void releaseUsing(ItemStack p_43394_, Level p_43395_, LivingEntity p_43396_, int p_43397_) {
         if ( p_43396_.getEffect((StatusEffectsModded.WARDLOCKED.get())) == null) {
             p_43396_.addEffect(new MobEffectInstance(StatusEffectsModded.WARDLOCKED.get(), 30, 0));
         }
-    }
+    }*/
     public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_) {
         if (p_41406_ instanceof Player){
             Player player = (Player) p_41406_;
@@ -102,7 +102,7 @@ public class Spellblade extends SwordItem{
         });
 
         if (p_43280_ instanceof Player){
-            p_43280_.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(),40,1));
+            p_43280_.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(),80,1));
         }
 
         return true;
