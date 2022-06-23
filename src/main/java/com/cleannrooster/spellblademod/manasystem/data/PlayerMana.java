@@ -1,5 +1,8 @@
 package com.cleannrooster.spellblademod.manasystem.data;
 
+import com.google.gson.JsonSerializer;
+import net.minecraft.data.structures.NbtToSnbt;
+import net.minecraft.data.structures.SnbtToNbt;
 import net.minecraft.nbt.CompoundTag;
 
 import java.util.Arrays;
@@ -65,10 +68,13 @@ public class PlayerMana {
     public void saveNBTData(CompoundTag compound) {
         compound.putFloat("mana", mana);
         compound.putFloat("basemana", basemana);
+        compound.put("basemodifiers", basemodifiers);
+
     }
 
     public void loadNBTData(CompoundTag compound) {
         mana = compound.getFloat("mana");
-        mana = compound.getFloat("basemana");
+        basemana = compound.getFloat("basemana");
+        basemodifiers = compound.getCompound("basemodifiers");
     }
 }

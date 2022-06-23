@@ -160,7 +160,6 @@ public class manatick {
             //playerMana.addMana( ((float)flagd*(float)0.25));
         }
         basearmor = (float) (0.25*flagd);
-
         float base = basestep + basewaving + basearmor + basewarding + basetotem + playerMana.sumBasemodifiers();
         float baseWard = base/(0.025F);
         playerMana.setBasemana(baseWard);
