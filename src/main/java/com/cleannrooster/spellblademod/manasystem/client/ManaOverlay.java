@@ -22,10 +22,14 @@ public class ManaOverlay {
     static int color2 = TextColor.fromRgb(0x000000).getValue();
     public static final IIngameOverlay HUD_MANA = (gui, poseStack, partialTicks, width, height) -> {
         float base = basemana.basestep + basemana.basewaving + basemana.basearmor + basemana.basewarding + basemana.basetotem + basemana.baseadditional;
-        String toDisplay = String.valueOf(Math.round(ClientManaData.getPlayerMana()/1.6F) + " / " + Math.round(base/0.03F) );
+        String toDisplay = String.valueOf(Math.round(ClientManaData.getPlayerMana()) + " / " + Math.round(base/0.025F) );
         int x = 10;
         int y = height-20;
-        if (ClientManaData.getPlayerMana() < 39)
+        if (ClientManaData.getPlayerMana() < -21)
+        {
+            color = TextColor.fromRgb(0xFF0000).getValue();
+        }
+        if (ClientManaData.getPlayerMana() >= -21 && ClientManaData.getPlayerMana() < 39)
         {
             color = TextColor.fromRgb(0x9966cc).getValue();
         }
@@ -76,7 +80,7 @@ public class ManaOverlay {
             int hex = (a << 24) + (r << 16) + (g << 8) + (b);
             color = hex;
         }
-        if (x >= 0 && y >= 0 && Math.abs(ClientManaData.getPlayerMana()) >= 1.6) {
+        if (x >= 0 && y >= 0 && Math.abs(ClientManaData.getPlayerMana()) >= 0.5) {
             gui.getFont().draw(poseStack, toDisplay, x, y, color);
         }
     };

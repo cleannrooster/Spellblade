@@ -92,8 +92,8 @@ public class WeaponHandler {
                     event.getEntityLiving().addEffect(new MobEffectInstance(StatusEffectsModded.SHOCKED.get(), 80, 0));
                 }
             }
-            if (player.getOffhandItem().getItem() instanceof IceEffigy && playerMana.getMana() >= 39 && player.getMainHandItem().getItem() instanceof Spellblade){
-                player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(),5,0));
+            if (player.getOffhandItem().getItem() instanceof IceEffigy && player.getMainHandItem().getItem() instanceof Spellblade){
+                player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(),80,0));
                 event.getEntityLiving().addEffect(new MobEffectInstance(StatusEffectsModded.ECHOES.get(),10, (int) Math.floor(event.getAmount())));
             }
         }
@@ -114,12 +114,10 @@ public class WeaponHandler {
             if (((Player)event.getSource().getEntity()).getOffhandItem().getItem() instanceof FireEffigy){
                 Player player = (Player) event.getSource().getEntity();
                 PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-                if (playerMana.getMana() >= 39) {
-                    player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(), 5, 0));
+                    player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(), 80, 0));
                     if (!event.getEntityLiving().getLevel().isClientSide()) {
                         event.getEntityLiving().getLevel().explode(event.getSource().getEntity(), event.getEntityLiving().getX(), event.getEntityLiving().getY(), event.getEntityLiving().getZ(), 3, false, Explosion.BlockInteraction.NONE);
                     }
-                }
             }
         }
 
@@ -142,8 +140,8 @@ public class WeaponHandler {
             Player player = (Player) event.getSource().getDirectEntity();
             LivingEntity living = event.getEntityLiving();
             PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-            if (player.getOffhandItem().getItem() instanceof LightningEffigy && playerMana.getMana() >= 39 && player.getMainHandItem().getItem() instanceof Spellblade) {
-                player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(), 5, 0));
+            if (player.getOffhandItem().getItem() instanceof LightningEffigy && player.getMainHandItem().getItem() instanceof Spellblade) {
+                player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(), 80, 0));
                 List entities = player.level.getEntitiesOfClass(LivingEntity.class, new AABB(living.getX() - 4, living.getY() + 0.5 - 4, living.getZ() - 4, living.getX() + 4, living.getY() + 4, living.getZ() + 4));
                 List<LivingEntity> validentities = new ArrayList<>();
                 Object[] entitiesarray = entities.toArray();

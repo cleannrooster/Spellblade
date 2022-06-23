@@ -35,7 +35,7 @@ public class TradeHandler {
 
         event.getGenericTrades().add(new ItemTrades(lightninginstance,  4, 1, 2, 20));
         event.getGenericTrades().add(new ItemTrades(lesserwarding,  4, 1, 4, 20));
-        event.getRareTrades().add(new ItemTrades(greaterwarding,  4, 1, 4, 20));
+        event.getRareTrades().add(new ItemTrades(greaterwarding,  12, 1, 4, 20));
 
 
     }
@@ -55,7 +55,7 @@ public class TradeHandler {
             event.getTrades().get(3).add(new ItemTrades(fireinstance,  4, 1, 2, 20));
             event.getTrades().get(3).add(new ItemTrades(iceinstance,  4, 1, 2, 20));
             event.getTrades().get(4).add(new ItemTrades(lesserwarding,  4, 1, 4, 20));
-            event.getTrades().get(5).add(new ItemTrades(greaterwarding,  4, 1, 4, 20));
+            event.getTrades().get(5).add(new ItemTrades(greaterwarding,  12, 1, 4, 20));
 
 
         }

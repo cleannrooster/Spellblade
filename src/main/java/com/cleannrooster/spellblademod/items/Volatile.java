@@ -28,6 +28,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -89,7 +90,7 @@ public class Volatile extends Spell{
                 if (!validtargets.isEmpty()){
                     playerMana.addMana(-40);
 
-                    if (playerMana.getMana() < -1.6) {
+                    if (playerMana.getMana() < -21) {
                         player.hurt(DamageSource.MAGIC,2);
                     }
                     if (!player.isShiftKeyDown()) {
@@ -171,7 +172,7 @@ public class Volatile extends Spell{
     }
 
     @Override
-    public void trigger(Level level, Player player, float modifier) {
+    public boolean trigger(Level level, Player player, float modifier) {
 
 
         List entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(player.getX() - 6, player.getY() - 6, player.getZ() - 6, player.getX() + 6, player.getY() + 6, player.getZ() + 6));
@@ -193,13 +194,18 @@ public class Volatile extends Spell{
             }
         }
         if (!validtargets.isEmpty()){
+            PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
+
+            if(playerMana.getMana() < -1 && player.getHealth() <= 2)
+            {
+                return true;
+            }
             VolatileEntity volatile1 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
             VolatileEntity volatile2 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
             VolatileEntity volatile3 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
             volatile1.explosionPower = 2;
             volatile3.explosionPower = 2;
             volatile2.explosionPower = 2;
-            PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
             Random rand = new Random();
             player.getCooldowns().addCooldown(this, 10);
             volatile1.setPos(player.position().add( new Vec3(rand.nextDouble(-1, 1),rand.nextDouble(0, 1),rand.nextDouble(-1, 1))));
@@ -262,13 +268,14 @@ public class Volatile extends Spell{
                 level.addFreshEntity(volatile3);
 
             }
-            if (playerMana.getMana() < -5) {
+            if (playerMana.getMana() < -1 && player.getHealth() > 2) {
 
                 player.invulnerableTime = 0;
-                player.hurt(DamageSource.MAGIC, 1);
+                player.hurt(DamageSource.MAGIC, 2);
                 player.invulnerableTime = 0;
             }
-        }
 
+        }
+        return false;
     }
 }

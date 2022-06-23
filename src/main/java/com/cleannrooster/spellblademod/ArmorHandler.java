@@ -21,6 +21,7 @@ public class ArmorHandler {
     @SubscribeEvent
     public static void damageevent(LivingHurtEvent event){
         Random rand = new Random();
+
         if (event.getEntityLiving() instanceof Player){
             Player player = (Player) event.getEntityLiving();
             int flagd = 0;
@@ -66,7 +67,10 @@ public class ArmorHandler {
             {
                 flagg = flagg + 1;
             }*/
-            double multiplier = (double) Math.pow(0.5,(double)(playerMana.getMana()+0)/80);
+            double multiplier = (double) Math.pow(0.5,(double)(playerMana.getMana()+0)/50);
+            if (event.getSource().isMagic()){
+                multiplier = 1;
+            }
             event.setAmount((float)(event.getAmount()*multiplier));
 
             int threshold = 160;

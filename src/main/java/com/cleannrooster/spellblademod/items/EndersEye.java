@@ -19,6 +19,7 @@ import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
@@ -59,7 +60,7 @@ public class EndersEye extends Spell {
         }
         playerMana.addMana(-80);
 
-        if (playerMana.getMana() < -1.6) {
+        if (playerMana.getMana() < -21) {
             p_43406_.hurt(DamageSource.MAGIC,2);
         }
             player.addEffect(new MobEffectInstance(StatusEffectsModded.ENDERSGAZE.get(), 120, 0));
@@ -75,7 +76,7 @@ public class EndersEye extends Spell {
             return InteractionResultHolder.success(itemstack);
 
     }
-    public void trigger(Level level, Player player, float modifier){
+    public boolean trigger(Level level, Player player, float modifier){
         PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
         boolean flag1 = false;
         if (player.getInventory().contains(ModItems.FRIENDSHIP.get().getDefaultInstance())){
@@ -85,6 +86,10 @@ public class EndersEye extends Spell {
         Object[] entitiesarray = entities.toArray();
         int entityamount = entitiesarray.length;
         if(entityamount>1) {
+            if(playerMana.getMana() < -1 && player.getHealth() <= 2)
+            {
+                return true;
+            }
             player.getCooldowns().addCooldown(this,10);
             for (int ii = 0; ii < entityamount; ii = ii + 1) {
                 LivingEntity target = (LivingEntity) entities.get(ii);
@@ -119,13 +124,16 @@ public class EndersEye extends Spell {
 
                 }
             }
-            if (playerMana.getMana() < -5) {
+            if (playerMana.getMana() < -1 && player.getHealth() > 2) {
 
                 player.invulnerableTime = 0;
-                player.hurt(DamageSource.MAGIC, 1);
+                player.hurt(DamageSource.MAGIC, 2);
                 player.invulnerableTime = 0;
+
             }
+
         }
+        return false;
     }
     @Override
     public boolean isFoil(ItemStack p_41453_) {

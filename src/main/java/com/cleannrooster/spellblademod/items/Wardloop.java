@@ -53,8 +53,15 @@ public class Wardloop extends Item{
                             if (player.getInventory().getItem(i).hasTag()) {
                                 if (player.getInventory().getItem(i).getTag().getInt("Triggerable") == 1) {
                                     if (!player.getCooldowns().isOnCooldown(player.getInventory().getItem(i).getItem())) {
-                                        ((Spell) player.getInventory().getItem(i).getItem()).trigger(p_41405_, player, (float) 1 / 8);
+                                        if (((Spell) player.getInventory().getItem(i).getItem()).trigger(p_41405_, player, (float) 1 / 8)){
+                                            if (p_41404_.hasTag())
+                                            {
+                                                CompoundTag nbt;
+                                                nbt = p_41404_.getTag();
+                                                nbt.remove("CustomModelData");
 
+                                            }
+                                        }
                                     }
                                     ii++;
                                 }

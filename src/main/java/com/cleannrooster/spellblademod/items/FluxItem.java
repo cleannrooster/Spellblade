@@ -68,7 +68,7 @@ public class FluxItem extends Spell {
         }
         playerMana.addMana(-40);
 
-        if (playerMana.getMana() < -1.6) {
+        if (playerMana.getMana() < -21) {
             player.hurt(DamageSource.MAGIC,2);
         }
             FluxFlux(player, entity, player.level, list);
@@ -159,7 +159,7 @@ public class FluxItem extends Spell {
         }
     }
 
-    public void trigger(Level level, Player player, float modifier) {
+    public boolean trigger(Level level, Player player, float modifier) {
         PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
         List<LivingEntity> list = new ArrayList<>();
 
@@ -168,7 +168,7 @@ public class FluxItem extends Spell {
             flag1 = true;
         }
 
-        List entities = player.level.getEntitiesOfClass(LivingEntity.class, new AABB(player.getX() - 4, player.getY() + 0.5 - 4, player.getZ() - 4, player.getX() + 4, player.getY() + 4, player.getZ() + 4));
+        List entities = player.level.getEntitiesOfClass(LivingEntity.class, new AABB(player.getX() - 6, player.getY() + 0.5 - 6, player.getZ() - 6, player.getX() + 6, player.getY() + 6, player.getZ() + 6));
         List<LivingEntity> validentities = new ArrayList<>();
         Object[] entitiesarray = entities.toArray();
         int entityamount = entitiesarray.length;
@@ -186,6 +186,10 @@ public class FluxItem extends Spell {
 
         LivingEntity chained = player.getLevel().getNearestEntity(validentities, TargetingConditions.forNonCombat().ignoreLineOfSight(), player, player.getX(), player.getY(), player.getZ());
         if (chained != null) {
+            if(playerMana.getMana() < -1 && player.getHealth() <= 2)
+            {
+                return true;
+            }
             player.getCooldowns().addCooldown(this,10);
             int num_pts_line = 50;
             for (int iii = 0; iii < num_pts_line; iii++) {
@@ -207,13 +211,14 @@ public class FluxItem extends Spell {
             }*/
             FluxFlux(player, chained, player.level, list);
             player.getCooldowns().addCooldown(this, 10);
-            if (playerMana.getMana() < -5) {
+            if (playerMana.getMana() < -1 && player.getHealth() > 2) {
 
                 player.invulnerableTime = 0;
-                player.hurt(DamageSource.MAGIC, 1);
+                player.hurt(DamageSource.MAGIC, 2);
                 player.invulnerableTime = 0;
             }
         }
+        return false;
     }
 
     @Override

@@ -69,7 +69,7 @@ public class FluxHandler {
                         living.removeEffect(MobEffects.GLOWING);
                     }
                     living.hurt(DamageSourceModded.fluxed(player), (float) (amount * 2.5));
-                    player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(), 40, 1));
+                    player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(), 80, 1));
                     int num_pts = 100;
                     for (i = 0; i <= num_pts; i = i + 1) {
                         double[] indices = IntStream.rangeClosed(0, (int) ((num_pts - 0) / 1))

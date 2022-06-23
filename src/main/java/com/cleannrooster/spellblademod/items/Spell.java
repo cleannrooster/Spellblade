@@ -14,7 +14,8 @@ public class Spell extends Item {
     public Spell(Properties p_41383_) {
         super(p_41383_);
     }
-    public void trigger(Level level, Player player, float modifier){
+    public boolean trigger(Level level, Player player, float modifier){
+        return false;
     }
 
 }

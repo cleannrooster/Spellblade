@@ -52,7 +52,7 @@ public class HammerRain extends Spell {
         }
         playerMana.addMana(-40);
 
-        if (playerMana.getMana() < -1.6) {
+        if (playerMana.getMana() < -21) {
             p_43406_.hurt(DamageSource.MAGIC,2);
         }
         if (!p_43406_.isShiftKeyDown()) {
@@ -66,11 +66,15 @@ public class HammerRain extends Spell {
             p_43405_.addFreshEntity(hammer1);
             return InteractionResultHolder.success(itemstack);
     }
-    public void trigger(Level level, Player player, float modifier){
-        super.trigger(level, player, modifier);
+    @Override
+    public boolean trigger(Level level, Player player, float modifier){
+        PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
+        if(playerMana.getMana() < -1 && player.getHealth() <= 2)
+        {
+            return true;
+        }
         player.getCooldowns().addCooldown(this,10);
 
-        PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
         Random rand = new Random();
 
         HammerEntity hammer1 = new HammerEntity(ModEntities.TRIDENT.get(),player.getLevel());
@@ -114,12 +118,14 @@ public class HammerRain extends Spell {
         level.addFreshEntity(hammer1);
         level.addFreshEntity(hammer2);
         level.addFreshEntity(hammer3);
-        if (playerMana.getMana() < -5) {
+        if (playerMana.getMana() < -1 && player.getHealth() > 2) {
 
             player.invulnerableTime = 0;
-            player.hurt(DamageSource.MAGIC, 1);
+            player.hurt(DamageSource.MAGIC, 2);
             player.invulnerableTime = 0;
+
         }
+        return false;
     }
     @Override
     public boolean isFoil(ItemStack p_41453_) {

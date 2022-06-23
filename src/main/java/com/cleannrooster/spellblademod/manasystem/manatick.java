@@ -22,21 +22,30 @@ public class manatick {
         if(event.phase != TickEvent.Phase.START) {
             return;
         }
-        basemana.baseadditional = basemana.sum();
-        float base = basemana.basestep + basemana.basewaving + basemana.basearmor + basemana.basewarding + basemana.basetotem + basemana.baseadditional;
-        float baseWard = 1.6F*base/(0.03F);
-        int wardeff = 0;
-        int flagd = 0;
-        int minWard = 0;
-
         PlayerMana playerMana = event.player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
 
         if (playerMana == null){
             return;
         }
+        basemana.baseadditional = basemana.sum();
+        float base = basemana.basestep + basemana.basewaving + basemana.basearmor + basemana.basewarding + basemana.basetotem + basemana.baseadditional;
+        float baseWard = base/(0.025F);
+        int wardeff = 0;
+        float flagd = 0;
+        int minWard = 0;
+
+
+
         if (!event.player.hasEffect(StatusEffectsModded.WARDLOCKED.get())){
             playerMana.addMana((float) ((baseWard-playerMana.getMana())*0.01856026932));
         }
+        if (event.player.hasEffect(StatusEffectsModded.WARD_DRAIN.get())){
+            basemana.addBaseadditional("drain", -(1F+(float)event.player.getEffect(StatusEffectsModded.WARD_DRAIN.get()).getAmplifier()));
+        }
+        else{
+            basemana.addBaseadditional("drain", 0F);
+        }
+
 
         if (event.player.getInventory().getArmor(0).getItem() instanceof WardArmorItem)
         {
@@ -98,42 +107,42 @@ public class manatick {
         }
         if (event.player.getInventory().getArmor(0).isEnchanted()) {
             if (event.player.getInventory().getArmor(0).getEnchantmentTags().toString().contains("lesserwarding")) {
-                flagd = flagd + 1;
+                flagd = flagd + 0.5F;
             }
         }
         if (event.player.getInventory().getArmor(1).isEnchanted()) {
             if (event.player.getInventory().getArmor(1).getEnchantmentTags().toString().contains("lesserwarding")) {
-                flagd = flagd + 1;
+                flagd = flagd + 0.5F;
             }
         }
         if (event.player.getInventory().getArmor(2).isEnchanted()) {
             if (event.player.getInventory().getArmor(2).getEnchantmentTags().toString().contains("lesserwarding")) {
-                flagd = flagd + 1;
+                flagd = flagd + 0.5F;
             }
         }
         if (event.player.getInventory().getArmor(3).isEnchanted()) {
-            if (event.player.getInventory().getArmor(3).getEnchantmentTags().toString().contains("greaterwarding")) {
-                flagd = flagd + 1;
+            if (event.player.getInventory().getArmor(3).getEnchantmentTags().toString().contains("lesserwarding")) {
+                flagd = flagd + 0.5F;
             }
         }
         if (event.player.getInventory().getArmor(0).isEnchanted()) {
             if (event.player.getInventory().getArmor(0).getEnchantmentTags().toString().contains("greaterwarding")) {
-                flagd = flagd + 2;
+                flagd = flagd + 1.5F;
             }
         }
         if (event.player.getInventory().getArmor(1).isEnchanted()) {
             if (event.player.getInventory().getArmor(1).getEnchantmentTags().toString().contains("greaterwarding")) {
-                flagd = flagd + 2;
+                flagd = flagd + 1.5F;
             }
         }
         if (event.player.getInventory().getArmor(2).isEnchanted()) {
             if (event.player.getInventory().getArmor(2).getEnchantmentTags().toString().contains("greaterwarding")) {
-                flagd = flagd + 2;
+                flagd = flagd + 1.5F;
             }
         }
         if (event.player.getInventory().getArmor(3).isEnchanted()) {
             if (event.player.getInventory().getArmor(3).getEnchantmentTags().toString().contains("greaterwarding")) {
-                flagd = flagd + 2;
+                flagd = flagd + 1.5F;
             }
         }
 

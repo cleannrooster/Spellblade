@@ -75,7 +75,7 @@ public class LightningWhirl extends Spell{
                 PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
                 playerMana.addMana(-40);
 
-                if (playerMana.getMana() < -1.6) {
+                if (playerMana.getMana() < -21) {
                     p_43406_.hurt(DamageSource.MAGIC,2);
                 }
                     player.getCooldowns().addCooldown(this,20);
@@ -111,7 +111,9 @@ public class LightningWhirl extends Spell{
         }
             return InteractionResultHolder.fail(itemstack);
     }
+/*
     public void trigger(Level level, Player player, float modifier) {
+*/
 /*
         PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
         playerMana.addMana(modifier*80);
@@ -142,5 +144,5 @@ public class LightningWhirl extends Spell{
 
         level.playSound((Player) null, player, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
 */
-    }
+    //}
 }

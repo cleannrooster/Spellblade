@@ -39,7 +39,7 @@ public class WardlightItem extends BlockItem {
         Player player = (Player) p_40581_.getPlayer();
         PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
         playerMana.addMana(-40);
-        if (playerMana.getMana() < -1.6) {
+        if (playerMana.getMana() < -21) {
             player.hurt(DamageSource.MAGIC,2);
         }
             InteractionResult interactionresult = this.place(new BlockPlaceContext(p_40581_));

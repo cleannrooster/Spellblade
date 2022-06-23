@@ -27,7 +27,7 @@ public class VengefulStanceItem extends Wardlock{
         ItemStack itemstack = p_43406_.getItemInHand(p_43407_);
         Player player = (Player) p_43406_;
         PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-        if (playerMana.getMana() < -1.6) {
+        if (playerMana.getMana() < -21) {
             p_43406_.hurt(DamageSource.MAGIC,2);
         }
             player.getCooldowns().addCooldown(this,320);
