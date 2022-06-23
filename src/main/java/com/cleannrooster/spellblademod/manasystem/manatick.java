@@ -160,12 +160,7 @@ public class manatick {
             //playerMana.addMana( ((float)flagd*(float)0.25));
         }
         basearmor = (float) (0.25*flagd);
-        if (event.player.isCrouching()) {
-            playerMana.addBasemodifiers("Shift", 1F);
-        }
-        else {
-            playerMana.addBasemodifiers("Shift", 0F);
-        }
+
         float base = basestep + basewaving + basearmor + basewarding + basetotem + playerMana.sumBasemodifiers();
         float baseWard = base/(0.025F);
         playerMana.setBasemana(baseWard);
