@@ -40,7 +40,7 @@ public class EnderSeeker extends Item {
         ItemStack itemStack = p_41433_.getItemInHand(p_41434_);
         if (playerenderchestcontainer != null) {
             playerMana.addMana(-80);
-            if (playerMana.getMana() < -1.6) {
+            if (playerMana.getMana() < -21) {
                 player.hurt(DamageSource.MAGIC,2);
             }
             if (p_41432_.isClientSide) {

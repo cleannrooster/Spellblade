@@ -15,6 +15,7 @@ import javax.annotation.Nullable;
 public class PlayerManaProvider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
 
     public static Capability<PlayerMana> PLAYER_MANA = CapabilityManager.get(new CapabilityToken<>(){});
+    public static Capability<PlayerMana> PLAYER_BASE_MANA = CapabilityManager.get(new CapabilityToken<>(){});
 
     private PlayerMana playerMana = null;
     private final LazyOptional<PlayerMana> opt = LazyOptional.of(this::createPlayerMana);
@@ -53,4 +54,5 @@ public class PlayerManaProvider implements ICapabilityProvider, INBTSerializable
     public void deserializeNBT(CompoundTag nbt) {
         createPlayerMana().loadNBTData(nbt);
     }
+
 }

@@ -70,9 +70,15 @@ public class ManaManager extends SavedData {
                 if (player instanceof ServerPlayer serverPlayer) {
                     float playerMana = serverPlayer.getCapability(PlayerManaProvider.PLAYER_MANA)
                             .map(PlayerMana::getMana)
-                            .orElse((float)-1);
+                            .orElse((float)0);
+                    float playerBaseMana = serverPlayer.getCapability(PlayerManaProvider.PLAYER_MANA)
+                            .map(PlayerMana::getBasemana)
+                            .orElse((float)0);
+                    CompoundTag playerBaseModifiers = serverPlayer.getCapability(PlayerManaProvider.PLAYER_MANA)
+                            .map(PlayerMana::getBasemodifiers)
+                            .orElse(new CompoundTag());
                     float chunkMana = getMana(serverPlayer.blockPosition());
-                    Messages.sendToPlayer(new PacketSyncManaToClient(playerMana, chunkMana), serverPlayer);
+                    Messages.sendToPlayer(new PacketSyncManaToClient(playerMana, playerBaseMana, playerBaseModifiers, chunkMana), serverPlayer);
                 }
             });
 

@@ -21,8 +21,7 @@ public class ManaOverlay {
 
     static int color2 = TextColor.fromRgb(0x000000).getValue();
     public static final IIngameOverlay HUD_MANA = (gui, poseStack, partialTicks, width, height) -> {
-        float base = basemana.basestep + basemana.basewaving + basemana.basearmor + basemana.basewarding + basemana.basetotem + basemana.baseadditional;
-        String toDisplay = String.valueOf(Math.round(ClientManaData.getPlayerMana()) + " / " + Math.round(base/0.025F) );
+        String toDisplay = String.valueOf(Math.round(ClientManaData.getPlayerMana()) + " / " + Math.round(ClientManaData.getPlayerBaseMana()) );
         int x = 10;
         int y = height-20;
         if (ClientManaData.getPlayerMana() < -21)

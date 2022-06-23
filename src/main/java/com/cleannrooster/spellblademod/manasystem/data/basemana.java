@@ -7,11 +7,7 @@ import java.sql.Array;
 import java.util.Arrays;
 
 public class basemana {
-    public static float basestep;
-    public static float basewaving;
-    public static float basearmor;
-    public static float basewarding;
-    public static float basetotem;
+
     public static float baseadditional = 0;
     static CompoundTag compound = new CompoundTag();
 
