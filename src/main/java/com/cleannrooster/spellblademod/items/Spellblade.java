@@ -1,6 +1,7 @@
 package com.cleannrooster.spellblademod.items;
 
 import com.cleannrooster.spellblademod.StatusEffectsModded;
+import com.cleannrooster.spellblademod.enchants.ModEnchants;
 import com.cleannrooster.spellblademod.manasystem.client.ManaOverlay;
 import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
 import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
@@ -10,6 +11,7 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -21,6 +23,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -30,6 +33,7 @@ public class Spellblade extends SwordItem{
     private final Multimap<Attribute, AttributeModifier> defaultModifiers;
 
     public int tier = 0;
+    public int tier1 = 0;
     public Spellblade(Tier p_43269_, int p_43270_, float p_43271_, Properties p_43272_) {
         super(p_43269_, p_43270_, p_43271_, p_43272_);
         this.attackDamage = (float) (((float)p_43270_ + p_43269_.getAttackDamageBonus())*Math.pow(1.25,this.tier));
@@ -45,7 +49,7 @@ public class Spellblade extends SwordItem{
         PlayerMana playerMana = playa.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
         if ( player.getEffect((StatusEffectsModded.WARDLOCKED.get())) == null) {
 
-            player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(),30,1));
+            player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(),30,1+EnchantmentHelper.getItemEnchantmentLevel(ModEnchants.WARDTEMPERED.get(),stack)));
         }
     }
     /*public void releaseUsing(ItemStack p_43394_, Level p_43395_, LivingEntity p_43396_, int p_43397_) {
@@ -53,6 +57,54 @@ public class Spellblade extends SwordItem{
             p_43396_.addEffect(new MobEffectInstance(StatusEffectsModded.WARDLOCKED.get(), 30, 0));
         }
     }*/
+
+    @Override
+    public InteractionResult interactLivingEntity(ItemStack p_41398_, Player p_41399_, LivingEntity p_41400_, InteractionHand p_41401_) {
+        ItemStack itemstack = p_41398_;
+        if (p_41399_.isShiftKeyDown()) {
+            p_41399_.startUsingItem(p_41401_);
+            return InteractionResult.SUCCESS;
+        } else {
+            int ii = 0;
+            PlayerMana playerMana = p_41399_.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
+            if (p_41399_.getMainHandItem().getItem() instanceof Spellblade && !(p_41399_.getOffhandItem().getItem() instanceof LightningWhirl)) {
+                for (int i = 0; i <= p_41399_.getInventory().getContainerSize(); i++) {
+                    if (p_41399_.getInventory().getItem(i).getItem() instanceof Spell) {
+                        if (p_41399_.getInventory().getItem(i).hasTag()) {
+                            if (p_41399_.getInventory().getItem(i).getTag().getInt("Triggerable") == 1) {
+                                if (!p_41399_.getCooldowns().isOnCooldown(p_41399_.getInventory().getItem(i).getItem())) {
+                                    if (((Spell)p_41399_.getInventory().getItem(i).getItem()).isTargeted()) {
+                                        if (((Spell) p_41399_.getInventory().getItem(i).getItem()).triggeron(p_41399_.level, p_41399_, p_41400_, (float) 1 / 8)) {
+                                        }
+                                    }
+                                    else{
+                                        if (((Spell) p_41399_.getInventory().getItem(i).getItem()).trigger(p_41399_.level, p_41399_, (float) 1 / 8)) {
+
+                                        }
+
+                                    }
+                                }
+                                ii++;
+                            }
+                        }
+
+                    }
+
+                }
+                if (ii > 0) {
+                    p_41399_.addEffect(new MobEffectInstance(StatusEffectsModded.SPELLWEAVING.get(), 80, ii - 1));
+                    return InteractionResult.SUCCESS;
+                }
+                else{
+                    return InteractionResult.FAIL;
+                }
+            }
+            return InteractionResult.FAIL;
+        }
+
+
+    }
+
     public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_) {
         if (p_41406_ instanceof Player){
             Player player = (Player) p_41406_;
@@ -69,30 +121,28 @@ public class Spellblade extends SwordItem{
             }
             if (playerMana.getMana() > 39 && playerMana.getMana() < 79){
                 nbt = stack.getOrCreateTag();
-                tier = 1;
-                nbt.putInt("CustomModelData", tier);
+                tier1 = 1;
+
             }
             if (playerMana.getMana() > 79 && playerMana.getMana() < 119){
                 nbt = stack.getOrCreateTag();
-                tier = 2;
-                nbt.putInt("CustomModelData", tier);
+                tier1 = 2;
             }
              if (playerMana.getMana() >= 119 && playerMana.getMana() < 159){
                  nbt = stack.getOrCreateTag();
-                 tier = 3;
-                nbt.putInt("CustomModelData", tier);
+                 tier1 = 3;
             }
             if (playerMana.getMana() >= 159){
                 nbt = stack.getOrCreateTag();
-                tier = 4;
-                nbt.putInt("CustomModelData", tier);
+                tier1 = 4;
             }
             if (playerMana.getMana() < 39)
             {
                 nbt = stack.getOrCreateTag();
-                tier = 0;
-                nbt.putInt("CustomModelData", tier);
+                tier1 = 0;
             }
+            tier = tier1;
+            nbt.putInt("CustomModelData", tier1);
         }
     }
     public boolean hurtEnemy(ItemStack p_43278_, LivingEntity p_43279_, LivingEntity p_43280_) {
@@ -102,7 +152,7 @@ public class Spellblade extends SwordItem{
         });
 
         if (p_43280_ instanceof Player){
-            p_43280_.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(),80,1));
+            p_43280_.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(),80,1+EnchantmentHelper.getItemEnchantmentLevel(ModEnchants.WARDTEMPERED.get(),p_43278_)));
         }
 
         return true;
@@ -115,12 +165,49 @@ public class Spellblade extends SwordItem{
     }
 
     public InteractionResultHolder<ItemStack> use(Level p_41432_, Player p_41433_, InteractionHand p_41434_) {
+        ItemStack itemstack = p_41433_.getItemInHand(p_41434_);
         if (p_41433_.isShiftKeyDown()) {
-            ItemStack itemstack = p_41433_.getItemInHand(p_41434_);
             p_41433_.startUsingItem(p_41434_);
             return InteractionResultHolder.consume(itemstack);
         } else {
-            return InteractionResultHolder.pass(p_41433_.getItemInHand(p_41434_));
+            int ii = 0;
+            PlayerMana playerMana = p_41433_.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
+            if (p_41433_.getMainHandItem().getItem() instanceof Spellblade && !(p_41433_.getOffhandItem().getItem() instanceof LightningWhirl)) {
+                for (int i = 0; i <= p_41433_.getInventory().getContainerSize() ; i++) {
+                    if (p_41433_.getInventory().getItem(i).getItem() instanceof Spell) {
+                        if (p_41433_.getInventory().getItem(i).hasTag()) {
+                            if (p_41433_.getInventory().getItem(i).getTag().getInt("Triggerable") == 1) {
+                                if (!p_41433_.getCooldowns().isOnCooldown(p_41433_.getInventory().getItem(i).getItem())) {
+                                    if (((Spell) p_41433_.getInventory().getItem(i).getItem()).trigger(p_41433_.level, p_41433_, (float) 1 / 8)) {
+                                        return InteractionResultHolder.success(itemstack);
+                                    }
+                                }
+                                ii++;
+                            }
+                        }
+
+
+                    }
+                }
+                if (ii > 0) {
+                    p_41433_.addEffect(new MobEffectInstance(StatusEffectsModded.SPELLWEAVING.get(), 80, ii - 1));
+                    return InteractionResultHolder.success(itemstack);
+                }
+                else{
+                    return InteractionResultHolder.fail(itemstack);
+                }
+            }
+            return InteractionResultHolder.fail(itemstack);
+        }
+
+    }
+
+    public static boolean isSpellblade(Item item) {
+        if (item instanceof Spellblade){
+            return true;
+        }
+        else{
+            return false;
         }
     }
 }

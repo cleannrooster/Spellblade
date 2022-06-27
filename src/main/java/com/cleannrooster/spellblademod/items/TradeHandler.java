@@ -28,6 +28,9 @@ public class TradeHandler {
         lesserwarding.enchant(ModEnchants.LESSERWARDING.get(),1);
         ItemStack greaterwarding = new ItemStack(Items.ENCHANTED_BOOK);
         greaterwarding.enchant(ModEnchants.GREATERWARDING.get(),1);
+        ItemStack wardtempered1 = new ItemStack(Items.ENCHANTED_BOOK);
+        wardtempered1.enchant(ModEnchants.WARDTEMPERED.get(),1);
+
 
         event.getGenericTrades().add(new ItemTrades(fireinstance,  4, 1, 2, 20));
 
@@ -35,7 +38,10 @@ public class TradeHandler {
 
         event.getGenericTrades().add(new ItemTrades(lightninginstance,  4, 1, 2, 20));
         event.getGenericTrades().add(new ItemTrades(lesserwarding,  4, 1, 4, 20));
+
         event.getRareTrades().add(new ItemTrades(greaterwarding,  12, 1, 4, 20));
+        event.getGenericTrades().add(new ItemTrades(wardtempered1,  8, 1, 2, 20));
+
 
 
     }
@@ -49,7 +55,8 @@ public class TradeHandler {
         lesserwarding.enchant(ModEnchants.LESSERWARDING.get(),1);
         ItemStack greaterwarding = new ItemStack(Items.ENCHANTED_BOOK);
         greaterwarding.enchant(ModEnchants.GREATERWARDING.get(),1);
-
+        ItemStack wardtempered1 = new ItemStack(Items.ENCHANTED_BOOK);
+        wardtempered1.enchant(ModEnchants.WARDTEMPERED.get(),1);
         if (VillagerProfession.CLERIC.equals(profession)) {
             event.getTrades().get(3).add(new ItemTrades(lightninginstance,  4, 1, 2, 20));
             event.getTrades().get(3).add(new ItemTrades(fireinstance,  4, 1, 2, 20));
@@ -59,5 +66,9 @@ public class TradeHandler {
 
 
         }
-    }
+        if (VillagerProfession.WEAPONSMITH.equals(profession)) {
+            event.getTrades().get(3).add(new ItemTrades(wardtempered1,  8, 1, 2, 20));
+        }
+
+        }
 }

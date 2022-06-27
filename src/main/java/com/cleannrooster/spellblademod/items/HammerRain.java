@@ -38,17 +38,23 @@ public class HammerRain extends Spell {
             CompoundTag nbt;
             if (itemstack.hasTag())
             {
-                nbt = itemstack.getTag();
-                nbt.remove("Triggerable");
-                return InteractionResultHolder.success(itemstack);
+                if(itemstack.getTag().get("Triggerable") != null) {
+                    nbt = itemstack.getTag();
+                    nbt.remove("Triggerable");
+                }
+                else{
+                    nbt = itemstack.getOrCreateTag();
+                    nbt.putInt("Triggerable", 1);
+                }
 
             }
             else
             {
                 nbt = itemstack.getOrCreateTag();
                 nbt.putInt("Triggerable", 1);
-                return InteractionResultHolder.success(itemstack);
             }
+            return InteractionResultHolder.success(itemstack);
+
         }
         playerMana.addMana(-40);
 

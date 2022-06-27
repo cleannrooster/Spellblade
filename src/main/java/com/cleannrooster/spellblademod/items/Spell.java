@@ -5,6 +5,7 @@ import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -14,7 +15,14 @@ public class Spell extends Item {
     public Spell(Properties p_41383_) {
         super(p_41383_);
     }
+    public boolean targeted = false;
     public boolean trigger(Level level, Player player, float modifier){
+        return false;
+    }
+    public boolean triggeron(Level level, Player player, LivingEntity target, float modifier){
+        return false;
+    }
+    public boolean isTargeted(){
         return false;
     }
 

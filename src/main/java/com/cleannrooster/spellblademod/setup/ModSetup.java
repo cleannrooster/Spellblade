@@ -27,7 +27,7 @@ public class ModSetup {
             return new ItemStack(ModItems.SPELLBLADE.get());
         }
 
-    }).setEnchantmentCategories(ModEnchants.category, ModEnchants.category);
+    }).setEnchantmentCategories(ModEnchants.category, ModEnchants.category2);
 
     public static void setup() {
         IEventBus bus = MinecraftForge.EVENT_BUS;

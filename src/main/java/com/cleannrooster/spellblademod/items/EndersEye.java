@@ -38,99 +38,73 @@ public class EndersEye extends Spell {
     public InteractionResultHolder<ItemStack> use(Level p_43405_, Player p_43406_, InteractionHand p_43407_) {
 
         ItemStack itemstack = p_43406_.getItemInHand(p_43407_);
+        Player player = p_43406_;
+        PlayerMana playerMana = ((Player) p_43406_).getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
 
-        Player player = (Player) p_43406_;
-        PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-
-        if (player.isShiftKeyDown()) {
+        if (((Player) p_43406_).isShiftKeyDown()) {
             CompoundTag nbt;
             if (itemstack.hasTag())
             {
-                nbt = itemstack.getTag();
-                nbt.remove("Triggerable");
-                return InteractionResultHolder.success(itemstack);
+                if(itemstack.getTag().get("Triggerable") != null) {
+                    nbt = itemstack.getTag();
+                    nbt.remove("Triggerable");
+                    player.getInventory().setChanged();
+                }
+                else{
+                    nbt = itemstack.getOrCreateTag();
+                    nbt.putInt("Triggerable", 1);
+                    player.getInventory().setChanged();
+                }
 
             }
             else
             {
                 nbt = itemstack.getOrCreateTag();
                 nbt.putInt("Triggerable", 1);
-                return InteractionResultHolder.success(itemstack);
+                player.getInventory().setChanged();
             }
+            return InteractionResultHolder.success(itemstack);
+
         }
         playerMana.addMana(-80);
 
         if (playerMana.getMana() < -21) {
             p_43406_.hurt(DamageSource.MAGIC,2);
         }
-            player.addEffect(new MobEffectInstance(StatusEffectsModded.ENDERSGAZE.get(), 120, 0));
-        if (!player.isShiftKeyDown()) {
+            ((Player) p_43406_).addEffect(new MobEffectInstance(StatusEffectsModded.ENDERSGAZE.get(), 120, 0));
+        if (!((Player) p_43406_).isShiftKeyDown()) {
 
-            player.getCooldowns().addCooldown(this, 160);
+            ((Player) p_43406_).getCooldowns().addCooldown(this, 160);
         }
 
-            EndersEyeEntity eye = new EndersEyeEntity(ModEntities.ENDERS_EYE.get(),p_43405_);
-            eye.setPos(player.getEyePosition());
-            eye.setOwner(player);
+            EndersEyeEntity eye = new EndersEyeEntity(ModEntities.ENDERS_EYE.get(),p_43406_.getLevel());
+            eye.setPos(((Player) p_43406_).getEyePosition());
+            eye.setOwner((Player) p_43406_);
+            eye.shootFromRotation(p_43406_,0,0,0,0,0);
             p_43405_.addFreshEntity(eye);
             return InteractionResultHolder.success(itemstack);
 
     }
     public boolean trigger(Level level, Player player, float modifier){
         PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-        boolean flag1 = false;
-        if (player.getInventory().contains(ModItems.FRIENDSHIP.get().getDefaultInstance())){
-            flag1 = true;
+
+        if(playerMana.getMana() < -1 && player.getHealth() <= 2)
+        {
+            return true;
         }
-        List entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(player.getX() - 6, player.getY() - 6, player.getZ() - 6, player.getX() + 6, player.getY() + 6, player.getZ() + 6));
-        Object[] entitiesarray = entities.toArray();
-        int entityamount = entitiesarray.length;
-        if(entityamount>1) {
-            if(playerMana.getMana() < -1 && player.getHealth() <= 2)
-            {
-                return true;
-            }
-            player.getCooldowns().addCooldown(this,10);
-            for (int ii = 0; ii < entityamount; ii = ii + 1) {
-                LivingEntity target = (LivingEntity) entities.get(ii);
-                boolean flag2 = false;
-                if (target.getClassification(false).isFriendly() || target instanceof Player || (target instanceof NeutralMob)) {
-                    flag2 = true;
-                }
-                if (target != player && !(flag1 && flag2) && target.hasLineOfSight(player)/*&& !Objects.requireNonNullElse(this.blacklist, new ArrayList()).contains(target)*/) {
-                    int i = 0;
-                    int num_pts = 100;
-                    int num_pts_line = 25;
-                    for (int iii = 0; iii < num_pts_line; iii++) {
-                        double X = player.getEyePosition().x + (target.getEyePosition().x - player.getEyePosition().x) * ((double) iii / (num_pts_line));
-                        double Y = player.getEyePosition().y + (target.getEyePosition().y - player.getEyePosition().y) * ((double) iii / (num_pts_line));
-                        double Z = player.getEyePosition().z + (target.getEyePosition().z - player.getEyePosition().z) * ((double) iii / (num_pts_line));
-                        level.addParticle(DustParticleOptions.REDSTONE, X, Y, Z, 0, 0, 0);
-                    }
-                    for (i = 0; i <= num_pts; i = i + 1) {
-                        double[] indices = IntStream.rangeClosed(0, (int) ((1000 - 0) / 1))
-                                .mapToDouble(x -> x * 1 + 0).toArray();
+        EndersEyeEntity eye = new EndersEyeEntity(ModEntities.ENDERS_EYE.get(),player.getLevel());
+        eye.setPos(player.getEyePosition());
+        eye.setOwner(player);
+        eye.shootFromRotation(player,0,0,0,0,0);
+        level.addFreshEntity(eye);
+        player.getCooldowns().addCooldown(this, 160);
+        if (playerMana.getMana() < -1 && player.getHealth() > 2) {
 
-                        double phi = Math.acos(1 - 2 * indices[i] / num_pts);
-                        double theta = Math.PI * (1 + Math.pow(5, 0.5) * indices[i]);
-                        double x = cos(theta) * sin(phi);
-                        double y = Math.sin(theta) * sin(phi);
-                        double z = cos(phi);
-                        level.addParticle((ParticleOptions) DustParticleOptions.REDSTONE, target.getEyePosition().x + 1.5 * x, target.getEyePosition().y + 1.5 * y, target.getEyePosition().z + 1.5 * z, 0, 0, 0);
-                    }
-                    target.invulnerableTime = 0;
-                    target.hurt(DamageSourceModded.eyelaser((Player) player), 4);
-                    target.invulnerableTime = 0;
+            player.invulnerableTime = 0;
+            player.hurt(DamageSource.MAGIC, 2);
+            player.invulnerableTime = 0;
 
-                }
-            }
-            if (playerMana.getMana() < -1 && player.getHealth() > 2) {
 
-                player.invulnerableTime = 0;
-                player.hurt(DamageSource.MAGIC, 2);
-                player.invulnerableTime = 0;
-
-            }
 
         }
         return false;

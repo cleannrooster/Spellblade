@@ -24,12 +24,12 @@ public class StatusEffectsModded extends MobEffect {
     public static final RegistryObject<MobEffect> LIGHTNING_WHIRL_EFFECT = EFFECTS.register("lightning_whirl_effect", ()-> new LightningWhirlEffect(MobEffectCategory.BENEFICIAL, 0xffff54));
     public static final RegistryObject<MobEffect> VENGEFUL_STANCE = EFFECTS.register("vengeful_stance", ()-> new VengefulStance(MobEffectCategory.BENEFICIAL, 0xffff54));
     public static final RegistryObject<MobEffect> WARDLOCKED = EFFECTS.register("wardlocked", ()-> new Wardlocked(MobEffectCategory.NEUTRAL, 0xffff54));
-    public static final RegistryObject<MobEffect> FLUXED = EFFECTS.register("fluxed", ()-> new Flux(MobEffectCategory.HARMFUL, 0xffff54));
+    public static final RegistryObject<MobEffect> FLUXED = EFFECTS.register("fluxed", ()-> new Flux(MobEffectCategory.HARMFUL, 0x0F52BA));
     public static final RegistryObject<MobEffect> OVERLOAD = EFFECTS.register("overload", ()-> new Overload(MobEffectCategory.NEUTRAL, 0xffff54));
     public static final RegistryObject<MobEffect> ENDERSGAZE = EFFECTS.register("endersgaze", ()-> new EndersGaze(MobEffectCategory.BENEFICIAL, 0xffff54));
     public static final RegistryObject<MobEffect> WATCHYOURHEAD = EFFECTS.register("watchyourhead", ()-> new watchyourhead(MobEffectCategory.HARMFUL, 0xffff54));
     public static final RegistryObject<MobEffect> ECHOES = EFFECTS.register("echoes", ()-> new Echoes(MobEffectCategory.HARMFUL, 0xffff54));
-    public static final RegistryObject<MobEffect> SPELLWEAVING = EFFECTS.register("spellweaving", ()-> new Spellweaving(MobEffectCategory.HARMFUL, 0xffff54));
+    public static final RegistryObject<MobEffect> SPELLWEAVING = EFFECTS.register("spellweaving", ()-> new Spellweaving(MobEffectCategory.HARMFUL, 0x0F52BA));
 
 
 

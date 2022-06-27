@@ -25,6 +25,10 @@ public class ModEntities {
             () -> EntityType.Builder.<EndersEyeEntity>of(EndersEyeEntity::new, MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "enderseye").toString()));
     public static final RegistryObject<EntityType<VolatileEntity>> VOLATILE_ENTITY = ENTITIES.register("volatile_entity",
             () -> EntityType.Builder.<VolatileEntity>of(VolatileEntity::new, MobCategory.MISC).sized(1, 1).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "volatileentity").toString()));
+    public static final RegistryObject<EntityType<FluxEntity>> FLUX_ENTITY = ENTITIES.register("flux_entity",
+            () -> EntityType.Builder.<FluxEntity>of(FluxEntity::new, MobCategory.MISC).sized(0.1F, 0.1F).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "fluxentity").toString()));
+    public static final RegistryObject<EntityType<ReverberatingRay>> REVERBERATING_RAY_ORB = ENTITIES.register("reverberatingrayorb",
+            () -> EntityType.Builder.<ReverberatingRay>of(ReverberatingRay::new, MobCategory.MISC).sized(0.1F, 0.1F).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "reverberatingrayorb").toString()));
 
 
 }

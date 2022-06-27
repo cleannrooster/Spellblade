@@ -1,11 +1,14 @@
 package com.cleannrooster.spellblademod.entity;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.Fireball;
-import net.minecraft.world.entity.projectile.LargeFireball;
+import net.minecraft.world.entity.projectile.*;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
@@ -13,13 +16,12 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-public class VolatileEntity extends Fireball {
+public class VolatileEntity extends AbstractArrow implements ItemSupplier{
     public float explosionPower = 2F;
     public LivingEntity target;
     boolean flag = false;
     int waiting = 0;
-
-    public VolatileEntity(EntityType<? extends Fireball> p_37006_, Level p_37007_) {
+    public  VolatileEntity(EntityType<? extends AbstractArrow> p_37006_, Level p_37007_) {
         super(p_37006_, p_37007_);
     }
     @Override
@@ -33,6 +35,11 @@ public class VolatileEntity extends Fireball {
     }
 
     @Override
+    protected ItemStack getPickupItem() {
+        return null;
+    }
+
+    @Override
     protected void onHitEntity(EntityHitResult p_37259_) {
 
     }
@@ -40,6 +47,8 @@ public class VolatileEntity extends Fireball {
     @Override
     public void tick() {
         this.setSecondsOnFire(5);
+        this.pickup = Pickup.DISALLOWED;
+        this.noPhysics = true;
         if(tickCount > 200){
             if (!this.level.isClientSide) {
                 boolean flag = false;
@@ -73,9 +82,31 @@ public class VolatileEntity extends Fireball {
 
             double d0 = 0.05D * (double)2;
             this.setDeltaMovement(this.getDeltaMovement().scale(0.95D).add(vec3.normalize().scale(d0)));
-            if(vec3.length() < 0.3){
+            if(vec3.length() < 0.5){
                 this.flag = true;
             }
         }
+    }
+
+    @Override
+    public boolean hurt(DamageSource p_36839_, float p_36840_) {
+        return false;
+    }
+    @Override
+    public boolean mayInteract(Level p_150167_, BlockPos p_150168_) {
+        return false;
+    }
+    @Override
+    public boolean isAttackable() {
+        return false;
+    }
+    @Override
+    public boolean skipAttackInteraction(Entity p_20357_) {
+        return true;
+    }
+
+    @Override
+    public ItemStack getItem() {
+        return new ItemStack(Items.FIRE_CHARGE);
     }
 }

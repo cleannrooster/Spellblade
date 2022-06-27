@@ -46,7 +46,6 @@ public class EndersEyeEntity extends Projectile implements ItemSupplier {
     public EndersEyeEntity(EntityType<? extends EndersEyeEntity> p_19870_, Level p_19871_) {
         super(p_19870_, p_19871_);
     }
-
     @Override
     protected void defineSynchedData() {
 
@@ -54,9 +53,13 @@ public class EndersEyeEntity extends Projectile implements ItemSupplier {
 
     @Override
     public void tick() {
+        super.tick();
+        this.noPhysics = true;
+        if (this.tickCount > 120){
+            this.discard();
+        }
         if(this.getOwner()!=null){
             if(this.getOwner().isAlive()){
-                if(((Player)this.getOwner()).hasEffect(StatusEffectsModded.ENDERSGAZE.get())) {
                     this.setPos(this.getOwner().position().add(new Vec3(0, 2.5, 0)));
                     boolean flag1 = false;
                     if (((Player)this.getOwner()).getInventory().contains(ModItems.FRIENDSHIP.get().getDefaultInstance())){
@@ -94,25 +97,18 @@ public class EndersEyeEntity extends Projectile implements ItemSupplier {
                                     this.level.addParticle((ParticleOptions) DustParticleOptions.REDSTONE, target.getEyePosition().x + 1.5 * x, target.getEyePosition().y + 1.5 * y, target.getEyePosition().z + 1.5 * z, 0, 0, 0);
                                 }
                                 target.invulnerableTime = 0;
-                                target.hurt(DamageSourceModded.eyelaser((Player) this.getOwner()), 6);
+                                target.hurt(new EntityDamageSource("spell",(Player) this.getOwner()), 6);
                                 target.invulnerableTime = 0;
                             }
                         }
                     }
-                }
-                else {
-                    this.discard();
                 }
             }
             else {
                 this.discard();
             }
         }
-        else {
-            this.discard();
-        }
 
-    }
     @Override
     public ItemStack getItem() {
         return ModItems.ENDERSEYE.get().getDefaultInstance();

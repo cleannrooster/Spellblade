@@ -28,5 +28,11 @@ public class ClientModEvents {
         event.registerEntityRenderer(ModEntities.VOLATILE_ENTITY.get(), (p_174086_) -> {
             return new ThrownItemRenderer<>(p_174086_, 3.0F, true);
         });
+        event.registerEntityRenderer(ModEntities.FLUX_ENTITY.get(), (p_174086_) -> {
+            return new ThrownItemRenderer<>(p_174086_, 2.0F, true);
+        });
+        event.registerEntityRenderer(ModEntities.REVERBERATING_RAY_ORB.get(), (p_174086_) -> {
+            return new ThrownItemRenderer<>(p_174086_, 2.0F, true);
+        });
     }
 }

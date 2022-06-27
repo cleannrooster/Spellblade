@@ -84,6 +84,8 @@ public class ModItems {
     public static final RegistryObject<Item> VOLATILE = ITEMS.register("volatile",
             () -> new Volatile(new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
 
+    public static final RegistryObject<Item> REVERBERATING_RAY = ITEMS.register("reverberating_ray",
+            () -> new ReverberatingRayItem(new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
 
 
 

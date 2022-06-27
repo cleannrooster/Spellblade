@@ -48,10 +48,10 @@ public class manatick {
             basestep = 0;
         }
         if (event.player.hasEffect(StatusEffectsModded.WARD_DRAIN.get())){
-            basemana.addBaseadditional("drain", -(1F+(float)event.player.getEffect(StatusEffectsModded.WARD_DRAIN.get()).getAmplifier()));
+            playerMana.addBasemodifiers("drain", -(1F+(float)event.player.getEffect(StatusEffectsModded.WARD_DRAIN.get()).getAmplifier()));
         }
         else{
-            basemana.addBaseadditional("drain", 0F);
+            playerMana.addBasemodifiers("drain", 0F);
         }
 
 

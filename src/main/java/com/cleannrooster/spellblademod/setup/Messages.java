@@ -1,7 +1,7 @@
 package com.cleannrooster.spellblademod.setup;
 
 
-import com.cleannrooster.spellblademod.manasystem.network.PacketGatherMana;
+import com.cleannrooster.spellblademod.manasystem.network.ClickSpell;
 import com.cleannrooster.spellblademod.manasystem.network.PacketSyncManaToClient;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,10 +29,10 @@ public class Messages {
 
         INSTANCE = net;
 
-        net.messageBuilder(PacketGatherMana.class, id(), NetworkDirection.PLAY_TO_SERVER)
-                .decoder(PacketGatherMana::new)
-                .encoder(PacketGatherMana::toBytes)
-                .consumer(PacketGatherMana::handle)
+        net.messageBuilder(ClickSpell.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(ClickSpell::new)
+                .encoder(ClickSpell::toBytes)
+                .consumer(ClickSpell::handle)
                 .add();
         net.messageBuilder(PacketSyncManaToClient.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(PacketSyncManaToClient::new)

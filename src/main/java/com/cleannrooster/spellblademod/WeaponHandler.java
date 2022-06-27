@@ -4,8 +4,13 @@ import com.cleannrooster.spellblademod.items.*;
 import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
 import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
 import com.mojang.math.Vector3f;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stat;
+import net.minecraft.util.ParticleUtils;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.effect.MobEffect;
@@ -24,11 +29,19 @@ import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.apache.logging.log4j.core.jmx.Server;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.IntStream;
+
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 
 @Mod.EventBusSubscriber(modid = "spellblademod", bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class WeaponHandler {
@@ -70,10 +83,10 @@ public class WeaponHandler {
 
     @SubscribeEvent
     public static void SpellbladeHandler(LivingHurtEvent event){
-        if (event.getSource().getEntity() instanceof Player) {
+        if (event.getSource().getDirectEntity() instanceof Player) {
             Player player = (Player) event.getSource().getEntity();
             PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-            if (((Player) event.getSource().getEntity()).getMainHandItem().getItem() instanceof Spellblade  && event.getSource().msgId != "eyelaser") {
+            if (((Player) event.getSource().getEntity()).getMainHandItem().getItem() instanceof Spellblade  && event.getSource().msgId != "spell") {
                 Spellblade spellblade = (Spellblade) ((Player) event.getSource().getEntity()).getMainHandItem().getItem();
                 event.setAmount((float) (event.getAmount()*Math.pow(1.25, spellblade.tier)));
             }
@@ -136,13 +149,13 @@ public class WeaponHandler {
     }
     @SubscribeEvent
     public static void EffigyOfChaining(LivingAttackEvent event){
-        if (event.getSource().getDirectEntity() instanceof Player && ((DamageSource)event.getSource()).msgId != "chain" && ((DamageSource)event.getSource()).msgId != "fluxed") {
+        if (event.getSource().getDirectEntity() instanceof Player && ((DamageSource)event.getSource()).msgId != "chain" && ((DamageSource)event.getSource()).msgId != "fluxed" && ((DamageSource)event.getSource()).msgId != "fluxed1") {
             Player player = (Player) event.getSource().getDirectEntity();
             LivingEntity living = event.getEntityLiving();
             PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
             if (player.getOffhandItem().getItem() instanceof LightningEffigy && player.getMainHandItem().getItem() instanceof Spellblade) {
                 player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(), 80, 0));
-                List entities = player.level.getEntitiesOfClass(LivingEntity.class, new AABB(living.getX() - 4, living.getY() + 0.5 - 4, living.getZ() - 4, living.getX() + 4, living.getY() + 4, living.getZ() + 4));
+                List entities = player.getLevel().getEntitiesOfClass(LivingEntity.class, living.getBoundingBox().inflate(3));
                 List<LivingEntity> validentities = new ArrayList<>();
                 Object[] entitiesarray = entities.toArray();
                 int entityamount = entitiesarray.length;
@@ -163,14 +176,14 @@ public class WeaponHandler {
                 }
                 LivingEntity chained = player.getLevel().getNearestEntity(validentities, TargetingConditions.forNonCombat().ignoreLineOfSight(), living, living.getX(), living.getY(), living.getZ());
                 if (chained != null) {
-                    int num_pts_line = 50;
+                    /*int num_pts_line = 50;
                     for (int iii = 0; iii < num_pts_line; iii++) {
                         double X = living.getBoundingBox().getCenter().x + (chained.getBoundingBox().getCenter().x -living.getBoundingBox().getCenter().x) * ((double)iii / (num_pts_line));
                         double Y = living.getBoundingBox().getCenter().y + (chained.getBoundingBox().getCenter().y - living.getBoundingBox().getCenter().y) * ((double)iii / (num_pts_line));
                         double Z = living.getBoundingBox().getCenter().z + (chained.getBoundingBox().getCenter().z - living.getBoundingBox().getCenter().z) * ((double)iii / (num_pts_line));
-                        chained.level.addParticle(new DustParticleOptions(new Vector3f(Vec3.fromRGB24(65535)), 1F), X, Y, Z, 0, 0, 0);
-                    }
-                    List entities2 = player.level.getEntitiesOfClass(LivingEntity.class, new AABB(chained.getX() - 4, chained.getY() + 0.5 - 4, chained.getZ() - 4, chained.getX() + 4, chained.getY() + 4, chained.getZ() + 4));
+                        player.getLevel().addParticle(new DustParticleOptions(new Vector3f(Vec3.fromRGB24(65535)), 1F), X, Y, Z, 0, 0, 0);
+                    }*/
+                    List entities2 = player.getLevel().getEntitiesOfClass(LivingEntity.class, chained.getBoundingBox().inflate(3));
                     List<LivingEntity> validentities2 = new ArrayList<>();
                     Object[] entitiesarray2 = entities2.toArray();
                     int entityamount2 = entitiesarray2.length;
@@ -189,14 +202,14 @@ public class WeaponHandler {
 
                     LivingEntity chained2 = player.getLevel().getNearestEntity(validentities2, TargetingConditions.forNonCombat().ignoreLineOfSight(), chained, chained.getX(), chained.getY(), chained.getZ());
                     if (chained2 != null) {
-                        int num_pts_line2 = 50;
+                        /*int num_pts_line2 = 50;
                         for (int iii = 0; iii < num_pts_line2; iii++) {
                             double X = chained.getBoundingBox().getCenter().x + (chained2.getBoundingBox().getCenter().x -chained.getBoundingBox().getCenter().x) * ((double)iii / (num_pts_line));
                             double Y = chained.getBoundingBox().getCenter().y + (chained2.getBoundingBox().getCenter().y - chained.getBoundingBox().getCenter().y) * ((double)iii / (num_pts_line));
                             double Z = chained.getBoundingBox().getCenter().z + (chained2.getBoundingBox().getCenter().z - chained.getBoundingBox().getCenter().z) * ((double)iii / (num_pts_line));
-                            chained2.level.addParticle(new DustParticleOptions(new Vector3f(Vec3.fromRGB24(65535)),1F), X, Y, Z, 0, 0, 0);
+                            player.getLevel().addParticle(new DustParticleOptions(new Vector3f(Vec3.fromRGB24(65535)),1F), X, Y, Z, 0, 0, 0);
 
-                        }
+                        }*/
                         chained2.hurt(new EntityDamageSource("chain", player), event.getAmount());
 
                     }
@@ -205,4 +218,71 @@ public class WeaponHandler {
             }
         }
     }
+    /*@SubscribeEvent
+    public static void SpellbladeTrigger(PlayerInteractEvent event) {
+
+        if (event.getSource().getDirectEntity() instanceof Player) {
+            int ii = 0;
+            Player player = (Player) event.getSource().getDirectEntity();
+            PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
+            if (player.getMainHandItem().getItem() instanceof Spellblade) {
+                for (int i = 0; i <= 9; i++) {
+                    if (player.getInventory().getItem(i).getItem() instanceof Spell) {
+                        if (player.getInventory().getItem(i).hasTag()) {
+                            if (player.getInventory().getItem(i).getTag().getInt("Triggerable") == 1) {
+                                if (!player.getCooldowns().isOnCooldown(player.getInventory().getItem(i).getItem())) {
+                                    if (((Spell) player.getInventory().getItem(i).getItem()).trigger(player.level, player, (float) 1 / 8)) {
+
+                                    }
+                                }
+                                ii++;
+                            }
+                        }
+                        player.addEffect(new MobEffectInstance(StatusEffectsModded.SPELLWEAVING.get(), 80, ii - 1));
+                    }
+                }
+            }
+        }
+
+    }*/
+    /*@SubscribeEvent
+    public static void Particles(LivingAttackEvent event){
+
+        System.out.println(event.getEntityLiving().getLevel());
+        if (event.getSource().msgId.equals("fluxed1")) {
+            Random random = new Random();
+            int num_pts = 100;
+            LivingEntity living2 = event.getEntityLiving();
+
+            Vec3 living = event.getEntityLiving().getBoundingBox().getCenter();
+            for (int i = 0; i <= num_pts; i = i + 1) {
+                double[] indices = IntStream.rangeClosed(0, (int) ((num_pts - 0) / 1))
+                        .mapToDouble(x -> x * 1 + 0).toArray();
+
+                double phi = Math.acos(1 - 2 * indices[i] / num_pts);
+                double theta = Math.PI * (1 + Math.pow(5, 0.5) * indices[i]);
+                double x = cos(theta) * sin(phi);
+                double y = Math.sin(theta) * sin(phi);
+                double z = cos(phi);
+                ((event.getEntityLiving().getLevel())).addParticle(ParticleTypes.GLOW_SQUID_INK.getType(), living.x + random.nextDouble(-0.1, 0.1), living.y + random.nextDouble(-0.1, 0.1), living.z + random.nextDouble(-0.1, 0.1), x * 0.5, y * 0.5, z * 0.5);
+            }
+        }
+        if (event.getSource().msgId.equals("fluxed")) {
+            int num_pts = 100;
+            Random random = new Random();
+            Vec3 living = event.getEntityLiving().getBoundingBox().getCenter();
+            for (int i = 0; i <= num_pts; i = i + 1) {
+                double[] indices = IntStream.rangeClosed(0, (int) ((num_pts - 0) / 1))
+                        .mapToDouble(x -> x * 1 + 0).toArray();
+
+                double phi = Math.acos(1 - 2 * indices[i] / num_pts);
+                double theta = Math.PI * (1 + Math.pow(5, 0.5) * indices[i]);
+                double x = cos(theta) * sin(phi);
+                double y = Math.sin(theta) * sin(phi);
+                double z = cos(phi);
+                ((event.getEntityLiving().getLevel())).gameEvent(ParticleTypes.GLOW_SQUID_INK.getType(), living.x + random.nextDouble(-0.1, 0.1), living.y + random.nextDouble(-0.1, 0.1), living.z + random.nextDouble(-0.1, 0.1), x * 0.5, y * 0.5, z * 0.5);
+            }
+        }
+    }*/
+
 }
