@@ -1,6 +1,7 @@
 package com.cleannrooster.spellblademod.setup;
 
 
+import com.cleannrooster.spellblademod.items.ParticlePacket;
 import com.cleannrooster.spellblademod.manasystem.network.ClickSpell;
 import com.cleannrooster.spellblademod.manasystem.network.PacketSyncManaToClient;
 import net.minecraft.resources.ResourceLocation;
@@ -38,6 +39,11 @@ public class Messages {
                 .decoder(PacketSyncManaToClient::new)
                 .encoder(PacketSyncManaToClient::toBytes)
                 .consumer(PacketSyncManaToClient::handle)
+                .add();
+        net.messageBuilder(ParticlePacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(ParticlePacket::new)
+                .encoder(ParticlePacket::toBytes)
+                .consumer(ParticlePacket::handle)
                 .add();
     }
 

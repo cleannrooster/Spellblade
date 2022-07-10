@@ -1,5 +1,6 @@
 package com.cleannrooster.spellblademod;
 
+import com.cleannrooster.spellblademod.blocks.SentinelTotemBlock;
 import com.cleannrooster.spellblademod.blocks.WardIronBlock;
 import com.cleannrooster.spellblademod.blocks.WardingTotemBlock;
 import com.cleannrooster.spellblademod.blocks.Wardlight;
@@ -34,5 +35,7 @@ public class ModBlocks {
             () -> new Wardlight(BlockBehaviour.Properties.of(Material.AIR).strength(-1.0F, 3600000.8F).noDrops().noOcclusion().lightLevel(LightBlock.LIGHT_EMISSION)));
     public static final RegistryObject<Block> WARD_IRON_BLOCK = registerBlock("ward_iron_block",
             () -> new WardIronBlock(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.METAL).requiresCorrectToolForDrops().strength(5.0F, 6.0F).sound(SoundType.METAL)));
+    public static final RegistryObject<Block> SENTINEL_TOTEM_BLOCK = registerBlock("sentinel_totem_block",
+            () -> new SentinelTotemBlock(BlockBehaviour.Properties.of(Material.WOOD).strength(2F,3).requiresCorrectToolForDrops().sound(SoundType.WOOD)));
 
 }

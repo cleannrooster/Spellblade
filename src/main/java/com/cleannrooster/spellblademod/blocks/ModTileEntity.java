@@ -19,6 +19,11 @@ public class ModTileEntity {
                     BlockEntityType.Builder.of(WardingTotemBlockEntity::new,
                             ModBlocks.WARDING_TOTEM_BLOCK.get()).build(null));
 
+    public static final RegistryObject<BlockEntityType<SentinelTotemBlockEntity>> SENTINEL_TOTEM_BLOCK_ENTITY =
+            BLOCK_ENTITIES.register("sentinel_totem_block_entity", () ->
+                    BlockEntityType.Builder.of(SentinelTotemBlockEntity::new,
+                            ModBlocks.SENTINEL_TOTEM_BLOCK.get()).build(null));
+
 
 
 

@@ -98,9 +98,9 @@ public class ReverberatingRay extends AbstractArrow implements ItemSupplier {
             orb1.secondary = true;
             orb1.noPhysics = true;
                 this.setPos(this.getOwner().getEyePosition().add(f1, f2, f3));
-            Position pos1 = (this.getOwner().getEyePosition().add(f1 * 40, f2 * 40, f3 * 40)).add(rand.nextDouble(-5/Math.sqrt(tickCount),5/Math.sqrt(tickCount)),rand.nextDouble(-5/Math.sqrt(tickCount),5/Math.sqrt(tickCount)),rand.nextDouble(-5/Math.sqrt(tickCount),5/Math.sqrt(tickCount)));
-            Position pos2 = (this.getOwner().getEyePosition().add(f1 * 40, f2 * 40, f3 * 40)).add(rand.nextDouble(-5/Math.sqrt(tickCount),5/Math.sqrt(tickCount)),rand.nextDouble(-5/Math.sqrt(tickCount),5/Math.sqrt(tickCount)),rand.nextDouble(-5/Math.sqrt(tickCount),5/Math.sqrt(tickCount)));
-            Position pos3 = (this.getOwner().getEyePosition().add(f1 * 40, f2 * 40, f3 * 40)).add(rand.nextDouble(-5/Math.sqrt(tickCount),5/Math.sqrt(tickCount)),rand.nextDouble(-5/Math.sqrt(tickCount),5/Math.sqrt(tickCount)),rand.nextDouble(-5/Math.sqrt(tickCount),5/Math.sqrt(tickCount)));
+            Position pos1 = (this.getOwner().getEyePosition().add(f1 * 40, f2 * 40, f3 * 40)).add(rand.nextDouble(-10/Math.sqrt(tickCount),10/Math.sqrt(tickCount)),rand.nextDouble(-10/Math.sqrt(tickCount),10/Math.sqrt(tickCount)),rand.nextDouble(-10/Math.sqrt(tickCount),10/Math.sqrt(tickCount)));
+            Position pos2 = (this.getOwner().getEyePosition().add(f1 * 40, f2 * 40, f3 * 40)).add(rand.nextDouble(-10/Math.sqrt(tickCount),10/Math.sqrt(tickCount)),rand.nextDouble(-10/Math.sqrt(tickCount),10/Math.sqrt(tickCount)),rand.nextDouble(-10/Math.sqrt(tickCount),10/Math.sqrt(tickCount)));
+            Position pos3 = (this.getOwner().getEyePosition().add(f1 * 40, f2 * 40, f3 * 40)).add(rand.nextDouble(-10/Math.sqrt(tickCount),10/Math.sqrt(tickCount)),rand.nextDouble(-10/Math.sqrt(tickCount),10/Math.sqrt(tickCount)),rand.nextDouble(-10/Math.sqrt(tickCount),10/Math.sqrt(tickCount)));
             if (this.triggered && tickCount > 10){
                  pos1 = (this.getOwner().getEyePosition().add(f1 * 40, f2 * 40, f3 * 40));
                  pos2 = (this.getOwner().getEyePosition().add(f1 * 40, f2 * 40, f3 * 40));
@@ -154,29 +154,29 @@ public class ReverberatingRay extends AbstractArrow implements ItemSupplier {
 
                         }
                     }
-                List<Entity> list = this.level.getEntities(this, new AABB((double)this.getEyePosition().x(), (double)this.getEyePosition().y(), (double)this.getEyePosition().z(), (double)pos1.x(), (double)pos1.y(), (double)pos1.z()));
-                List<Entity> list2 = this.level.getEntities(this, new AABB((double)this.getEyePosition().x(), (double)this.getEyePosition().y(), (double)this.getEyePosition().z(), (double)pos2.x(), (double)pos2.y(), (double)pos2.z()));
-                List<Entity> list3 = this.level.getEntities(this, new AABB((double)this.getEyePosition().x(), (double)this.getEyePosition().y(), (double)this.getEyePosition().z(), (double)pos3.x(), (double)pos3.y(), (double)pos3.z()));
+                List<Entity> list = this.level.getEntities(this, new AABB((double)this.getOwner().getEyePosition().x(), (double)this.getOwner().getEyePosition().y(), (double)this.getOwner().getEyePosition().z(), (double)pos1.x(), (double)pos1.y(), (double)pos1.z()));
+                List<Entity> list2 = this.level.getEntities(this, new AABB((double)this.getOwner().getEyePosition().x(), (double)this.getOwner().getEyePosition().y(), (double)this.getOwner().getEyePosition().z(), (double)pos2.x(), (double)pos2.y(), (double)pos2.z()));
+                List<Entity> list3 = this.level.getEntities(this, new AABB((double)this.getOwner().getEyePosition().x(), (double)this.getOwner().getEyePosition().y(), (double)this.getOwner().getEyePosition().z(), (double)pos3.x(), (double)pos3.y(), (double)pos3.z()));
 
                 for (int ii = 0; ii < list.toArray().length; ii++) {
-                    Optional<Vec3> vec1 = list.get(ii).getBoundingBox().clip(this.getEyePosition(), (Vec3) pos1);
-                    if (vec1.isPresent() && ((LivingEntity)this.getOwner()).hasLineOfSight(list.get(ii))) {
+                    Optional<Vec3> vec1 = list.get(ii).getBoundingBox().inflate(0.5).clip(this.getOwner().getEyePosition(), (Vec3) pos1);
+                    if (vec1.isPresent() && ((LivingEntity)this.getOwner()).hasLineOfSight(list.get(ii))&& list.get(ii) != this.getOwner()) {
                         list.get(ii).invulnerableTime = 0;
                         list.get(ii).hurt(new EntityDamageSource("spell",(Player) this.getOwner()), 6);
                         list.get(ii).invulnerableTime = 0;
                     }
                 }
                 for (int ii = 0; ii < list2.toArray().length; ii++) {
-                    Optional<Vec3> vec1 = list2.get(ii).getBoundingBox().clip(this.getEyePosition(), (Vec3) pos2);
-                    if (vec1.isPresent() && ((LivingEntity)this.getOwner()).hasLineOfSight(list2.get(ii))) {
+                    Optional<Vec3> vec1 = list2.get(ii).getBoundingBox().inflate(0.5).clip(this.getOwner().getEyePosition(), (Vec3) pos2);
+                    if (vec1.isPresent() && ((LivingEntity)this.getOwner()).hasLineOfSight(list2.get(ii))&& list2.get(ii) != this.getOwner()) {
                         list2.get(ii).invulnerableTime = 0;
                         list2.get(ii).hurt(new EntityDamageSource("spell",(Player) this.getOwner()), 6);
                         list2.get(ii).invulnerableTime = 0;
                     }
                 }
                 for (int ii = 0; ii < list3.toArray().length; ii++) {
-                    Optional<Vec3> vec1 = list3.get(ii).getBoundingBox().clip(this.getEyePosition(), (Vec3) pos3);
-                    if (vec1.isPresent() && ((LivingEntity)this.getOwner()).hasLineOfSight(list3.get(ii))) {
+                    Optional<Vec3> vec1 = list3.get(ii).getBoundingBox().inflate(0.5).clip(this.getOwner().getEyePosition(), (Vec3) pos3);
+                    if (vec1.isPresent() && ((LivingEntity)this.getOwner()).hasLineOfSight(list3.get(ii))&& list3.get(ii) != this.getOwner()) {
                         list3.get(ii).invulnerableTime = 0;
                         list3.get(ii).hurt(new EntityDamageSource("spell",(Player) this.getOwner()), 6);
                         list3.get(ii).invulnerableTime = 0;

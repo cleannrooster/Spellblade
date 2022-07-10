@@ -61,6 +61,9 @@ public class ModItems {
             () -> new LightningEffigy( new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
     public static final RegistryObject<Item> WARDING_TOTEM = ITEMS.register("warding_totem",
             () -> new WardingTotem(ModBlocks.WARDING_TOTEM_BLOCK.get(), new Item.Properties().tab(ModSetup.ITEM_GROUP)));
+    public static final RegistryObject<Item> SENTINEL_TOTEM = ITEMS.register("sentinel_totem",
+            () -> new SentinelTotemItem(ModBlocks.SENTINEL_TOTEM_BLOCK.get(), new Item.Properties().tab(ModSetup.ITEM_GROUP)));
+
     public static final RegistryObject<Item> LIGHTNING_WHIRL = ITEMS.register("lightning_whirl",
             () -> new LightningWhirl( new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
     public static final RegistryObject<Item> VENGEFUL_STANCE = ITEMS.register("vengeful_stance",
@@ -86,6 +89,14 @@ public class ModItems {
 
     public static final RegistryObject<Item> REVERBERATING_RAY = ITEMS.register("reverberating_ray",
             () -> new ReverberatingRayItem(new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
+    public static final RegistryObject<Item> ANIMATE = ITEMS.register("animate",
+            () -> new Animate(new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
+    public static final RegistryObject<Item> ENDERLOPERSTANCE = ITEMS.register("enderloperstance",
+            () -> new EnderloperStance(new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
+    public static final RegistryObject<Item> NULLIFYINGSTANCE = ITEMS.register("nullifyingstance",
+            () -> new NullifyingStance(new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
+    public static final RegistryObject<Item> BLADEFLURRY = ITEMS.register("bladeflurry",
+            () -> new BladeFlurry(new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
 
 
 

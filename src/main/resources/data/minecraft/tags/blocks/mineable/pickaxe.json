@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "spellblademod:ward_iron_block"
+    "spellblademod:ward_iron_block",
+    "spellblademod:sentinel_totem_block"
   ]
 }

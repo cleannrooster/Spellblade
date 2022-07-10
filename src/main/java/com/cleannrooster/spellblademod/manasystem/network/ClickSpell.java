@@ -19,15 +19,17 @@ import java.util.function.Supplier;
 public class ClickSpell {
 
     public static final String MESSAGE_NO_MANA = "message.nomana";
-    private static int slot;
+    private int slot;
     public ClickSpell(int i) {
         slot = i;
     }
 
     public ClickSpell(FriendlyByteBuf buf) {
+        slot = buf.readInt();
     }
 
     public void toBytes(FriendlyByteBuf buf) {
+        buf.writeInt(slot);
     }
 
     public boolean handle(Supplier<NetworkEvent.Context> supplier) {

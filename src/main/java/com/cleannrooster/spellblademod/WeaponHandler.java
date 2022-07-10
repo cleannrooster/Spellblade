@@ -142,7 +142,6 @@ public class WeaponHandler {
             Player vengeant = (Player) event.getEntityLiving();
             if (vengeant.hasEffect(StatusEffectsModded.VENGEFUL_STANCE.get())) {
                 if (event.getSource().getEntity() instanceof LivingEntity) {
-                    event.getSource().getEntity().hurt(DamageSource.playerAttack(vengeant), (float) vengeant.getAttribute(Attributes.ATTACK_DAMAGE).getValue());
                 }
             }
         }

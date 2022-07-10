@@ -43,13 +43,31 @@ public class Spellblade extends SwordItem{
         this.defaultModifiers = builder.build();
     }
     @Override
-    public void onUsingTick(ItemStack stack, LivingEntity player, int count)
-    {
+    public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
         Player playa = (Player) player;
         PlayerMana playerMana = playa.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-        if ( player.getEffect((StatusEffectsModded.WARDLOCKED.get())) == null) {
+        if (player.getEffect((StatusEffectsModded.WARDLOCKED.get())) == null) {
 
-            player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(),30,1+EnchantmentHelper.getItemEnchantmentLevel(ModEnchants.WARDTEMPERED.get(),stack)));
+            player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(), 30, 1 + EnchantmentHelper.getItemEnchantmentLevel(ModEnchants.WARDTEMPERED.get(), stack)));
+        }
+
+        boolean flag = false;
+        int ii = 0;
+        for (int i = 0; i <= playa.getInventory().getContainerSize(); i++) {
+            if (playa.getInventory().getItem(i).getItem() instanceof Guard) {
+                if (playa.getInventory().getItem(i).hasTag()) {
+                    if (playa.getInventory().getItem(i).getTag().getInt("Triggerable") == 1) {
+                        ((Guard) playa.getInventory().getItem(i).getItem()).guardtick(playa, player.level);
+                        ii++;
+                    }
+                }
+            }
+            if (ii > 0) {
+                player.addEffect(new MobEffectInstance(StatusEffectsModded.SPELLWEAVING.get(), 30, ii - 1));
+            }
+        }
+        if (player.hasEffect(StatusEffectsModded.SPELLWEAVING.get()) && playerMana.getMana() < 0 && count % 10 ==5){
+            player.hurt(DamageSource.MAGIC,player.getEffect(StatusEffectsModded.SPELLWEAVING.get()).getAmplifier());
         }
     }
     /*public void releaseUsing(ItemStack p_43394_, Level p_43395_, LivingEntity p_43396_, int p_43397_) {
@@ -63,11 +81,28 @@ public class Spellblade extends SwordItem{
         ItemStack itemstack = p_41398_;
         if (p_41399_.isShiftKeyDown()) {
             p_41399_.startUsingItem(p_41401_);
+            int ii = 0;
+            for (int i = 0; i <= p_41399_.getInventory().getContainerSize(); i++) {
+                if (p_41399_.getInventory().getItem(i).getItem() instanceof Guard) {
+                    if (p_41399_.getInventory().getItem(i).hasTag()) {
+                        if (p_41399_.getInventory().getItem(i).getTag().getInt("Triggerable") == 1) {
+                            ((Guard) p_41399_.getInventory().getItem(i).getItem()).guardstart(p_41399_, p_41399_.level);
+                            ii++;
+                        }
+                    }
+                }
+                if (ii > 0) {
+                    p_41399_.addEffect(new MobEffectInstance(StatusEffectsModded.SPELLWEAVING.get(), 30, ii - 1));
+                }
+            }
             return InteractionResult.SUCCESS;
         } else {
+            p_41399_.getCooldowns().addCooldown(this,20);
+
             int ii = 0;
             PlayerMana playerMana = p_41399_.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
             if (p_41399_.getMainHandItem().getItem() instanceof Spellblade && !(p_41399_.getOffhandItem().getItem() instanceof LightningWhirl)) {
+                boolean flag = false;
                 for (int i = 0; i <= p_41399_.getInventory().getContainerSize(); i++) {
                     if (p_41399_.getInventory().getItem(i).getItem() instanceof Spell) {
                         if (p_41399_.getInventory().getItem(i).hasTag()) {
@@ -75,6 +110,9 @@ public class Spellblade extends SwordItem{
                                 if (!p_41399_.getCooldowns().isOnCooldown(p_41399_.getInventory().getItem(i).getItem())) {
                                     if (((Spell)p_41399_.getInventory().getItem(i).getItem()).isTargeted()) {
                                         if (((Spell) p_41399_.getInventory().getItem(i).getItem()).triggeron(p_41399_.level, p_41399_, p_41400_, (float) 1 / 8)) {
+                                        }
+                                        if (p_41399_.getInventory().getItem(i).getItem() instanceof LightningWhirl){
+                                             flag = true;
                                         }
                                     }
                                     else{
@@ -87,13 +125,16 @@ public class Spellblade extends SwordItem{
                                 ii++;
                             }
                         }
-
                     }
-
                 }
                 if (ii > 0) {
                     p_41399_.addEffect(new MobEffectInstance(StatusEffectsModded.SPELLWEAVING.get(), 80, ii - 1));
-                    return InteractionResult.SUCCESS;
+                    if (flag) {
+                        return InteractionResult.CONSUME;
+                    }
+                    else{
+                        return InteractionResult.SUCCESS;
+                    }
                 }
                 else{
                     return InteractionResult.FAIL;
@@ -101,8 +142,6 @@ public class Spellblade extends SwordItem{
             }
             return InteractionResult.FAIL;
         }
-
-
     }
 
     public void inventoryTick(ItemStack p_41404_, Level p_41405_, Entity p_41406_, int p_41407_, boolean p_41408_) {
@@ -168,18 +207,36 @@ public class Spellblade extends SwordItem{
         ItemStack itemstack = p_41433_.getItemInHand(p_41434_);
         if (p_41433_.isShiftKeyDown()) {
             p_41433_.startUsingItem(p_41434_);
+            int ii = 0;
+            for (int i = 0; i <= p_41433_.getInventory().getContainerSize(); i++) {
+                if (p_41433_.getInventory().getItem(i).getItem() instanceof Guard) {
+                    if (p_41433_.getInventory().getItem(i).hasTag()) {
+                        if (p_41433_.getInventory().getItem(i).getTag().getInt("Triggerable") == 1) {
+                            ((Guard) p_41433_.getInventory().getItem(i).getItem()).guardstart(p_41433_, p_41433_.level);
+                            ii++;
+                        }
+                    }
+                }
+                if (ii > 0) {
+                    p_41433_.addEffect(new MobEffectInstance(StatusEffectsModded.SPELLWEAVING.get(), 30, ii - 1));
+                }
+            }
             return InteractionResultHolder.consume(itemstack);
         } else {
             int ii = 0;
             PlayerMana playerMana = p_41433_.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
+            p_41433_.getCooldowns().addCooldown(this,20);
             if (p_41433_.getMainHandItem().getItem() instanceof Spellblade && !(p_41433_.getOffhandItem().getItem() instanceof LightningWhirl)) {
+                boolean flag = false;
                 for (int i = 0; i <= p_41433_.getInventory().getContainerSize() ; i++) {
                     if (p_41433_.getInventory().getItem(i).getItem() instanceof Spell) {
                         if (p_41433_.getInventory().getItem(i).hasTag()) {
                             if (p_41433_.getInventory().getItem(i).getTag().getInt("Triggerable") == 1) {
                                 if (!p_41433_.getCooldowns().isOnCooldown(p_41433_.getInventory().getItem(i).getItem())) {
                                     if (((Spell) p_41433_.getInventory().getItem(i).getItem()).trigger(p_41433_.level, p_41433_, (float) 1 / 8)) {
-                                        return InteractionResultHolder.success(itemstack);
+                                    }
+                                    if (p_41433_.getInventory().getItem(i).getItem() instanceof LightningWhirl){
+                                        flag = true;
                                     }
                                 }
                                 ii++;
@@ -191,8 +248,12 @@ public class Spellblade extends SwordItem{
                 }
                 if (ii > 0) {
                     p_41433_.addEffect(new MobEffectInstance(StatusEffectsModded.SPELLWEAVING.get(), 80, ii - 1));
-                    return InteractionResultHolder.success(itemstack);
-                }
+                    if (flag) {
+                        return InteractionResultHolder.consume(itemstack);
+                    }
+                    else{
+                        return InteractionResultHolder.success(itemstack);
+                    }                }
                 else{
                     return InteractionResultHolder.fail(itemstack);
                 }

@@ -29,6 +29,12 @@ public class ModEntities {
             () -> EntityType.Builder.<FluxEntity>of(FluxEntity::new, MobCategory.MISC).sized(0.1F, 0.1F).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "fluxentity").toString()));
     public static final RegistryObject<EntityType<ReverberatingRay>> REVERBERATING_RAY_ORB = ENTITIES.register("reverberatingrayorb",
             () -> EntityType.Builder.<ReverberatingRay>of(ReverberatingRay::new, MobCategory.MISC).sized(0.1F, 0.1F).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "reverberatingrayorb").toString()));
+    public static final RegistryObject<EntityType<SentinelEntity>> SENTINEL = ENTITIES.register("sentinel",
+            () -> EntityType.Builder.<SentinelEntity>of(SentinelEntity::new, MobCategory.MISC).sized(1, 1).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "sentinel").toString()));
+    public static final RegistryObject<EntityType<InvisiVex>> INVISIVEX = ENTITIES.register("invisivex",
+            () -> EntityType.Builder.<InvisiVex>of(InvisiVex::new, MobCategory.MISC).sized(1, 1).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "sentinel").toString()));
+    public static final RegistryObject<EntityType<sword1>> SWORD = ENTITIES.register("sword",
+            () -> EntityType.Builder.<sword1>of(sword1::new, MobCategory.MISC).sized(1, 1).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "sword").toString()));
 
 
 }

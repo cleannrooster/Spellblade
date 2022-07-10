@@ -1,34 +1,30 @@
 package com.cleannrooster.spellblademod.items;
 
-import com.cleannrooster.spellblademod.StatusEffectsModded;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
+import com.cleannrooster.spellblademod.manasystem.network.ClickSpell;
 import com.cleannrooster.spellblademod.setup.Messages;
 import io.netty.buffer.Unpooled;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.AABB;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
-public class VengefulStanceItem extends Guard{
-
-    public VengefulStanceItem(Properties p_41383_) {
+public class NullifyingStance extends Guard{
+    public NullifyingStance(Properties p_41383_) {
         super(p_41383_);
     }
     @Override
@@ -64,17 +60,23 @@ public class VengefulStanceItem extends Guard{
         return false;
     }
     @Override
-    public void guard(Player player, Level level, LivingEntity entity) {
-        level.playSound((Player) null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, player.getSoundSource(), 1.0F, 1.0F);
-        player.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, 1.0F, 1.0F);
-        entity.hurt(DamageSource.playerAttack(player), (float) player.getAttribute(Attributes.ATTACK_DAMAGE).getValue());
-        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer()).writeBlockPos(entity.blockPosition());
-        buf.writeInt(0);
-        if (level.getServer() != null) {
-            Stream<ServerPlayer> serverplayers = level.getServer().getPlayerList().getPlayers().stream();
-            serverplayers.forEach(player2 ->
-                    Messages.sendToPlayer(new ParticlePacket(buf), (ServerPlayer) player2));
+    public void guardtick(Player player, Level level) {
+        List entities = level.getEntitiesOfClass(Projectile.class, new AABB(player.getX() - 6, player.getY() - 6, player.getZ() - 6, player.getX() + 6, player.getY() + 6, player.getZ() + 6));
+        Object[] entitiesarray = entities.toArray();
+        int entityamount = entitiesarray.length;
+        for (int ii = 0; ii < entityamount; ii = ii + 1) {
+            Projectile projectile = (Projectile) entities.get(ii);
+            FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer()).writeBlockPos(projectile.blockPosition());
+            buf.writeInt(0);
+            if (level.getServer() != null) {
+                Stream<ServerPlayer> serverplayers = level.getServer().getPlayerList().getPlayers().stream();
+                serverplayers.forEach(player2 ->
+                        Messages.sendToPlayer(new ParticlePacket(buf), (ServerPlayer) player2));
 
+                level.playSound((Player) null, projectile.getX(), projectile.getY(), projectile.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, player.getSoundSource(), 1.0F, 1.0F);
+                player.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, 1.0F, 1.0F);
+                projectile.discard();
+            }
         }
     }
 }

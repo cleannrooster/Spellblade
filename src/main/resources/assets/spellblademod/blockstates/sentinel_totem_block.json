@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "spellblademod:block/stotem1"
+      },
+      {
+        "model": "spellblademod:block/stotem2"
+      },
+      {
+        "model": "spellblademod:block/stotem3"
+      },
+      {
+        "model": "spellblademod:block/stotem4"
+      }
+    ]
+  }
+}

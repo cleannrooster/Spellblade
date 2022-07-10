@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smithing",
+  "base": {
+    "item": "minecraft:polished_andesite"
+  },
+  "addition": {
+    "item": "spellblademod:wardiron"
+  },
+  "result": {
+    "item": "spellblademod:sentinel_totem"
+  }
+}

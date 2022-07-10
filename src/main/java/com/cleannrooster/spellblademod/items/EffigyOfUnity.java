@@ -51,7 +51,6 @@ public class EffigyOfUnity extends Item {
         }
         else {
             player.getCooldowns().addCooldown(this,20);
-            player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(),5, 3));
             p_41433_.startUsingItem(p_41434_);
             return InteractionResultHolder.consume(itemstack);
         }
