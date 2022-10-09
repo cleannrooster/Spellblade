@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smithing",
+  "base": {
+    "item": "minecraft:totem_of_undying"
+  },
+  "addition": {
+    "item": "spellblademod:reverberating_ray"
+  },
+  "result": {
+    "item": "spellblademod:ice_effigy"
+  }
+}

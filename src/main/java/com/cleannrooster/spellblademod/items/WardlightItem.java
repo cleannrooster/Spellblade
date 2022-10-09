@@ -3,8 +3,7 @@ package com.cleannrooster.spellblademod.items;
 import com.cleannrooster.spellblademod.ModBlocks;
 import com.cleannrooster.spellblademod.StatusEffectsModded;
 import com.cleannrooster.spellblademod.blocks.Wardlight;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
+import com.cleannrooster.spellblademod.manasystem.manatick;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -37,9 +36,8 @@ public class WardlightItem extends BlockItem {
     @Override
     public InteractionResult useOn(UseOnContext p_40581_) {
         Player player = (Player) p_40581_.getPlayer();
-        PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-        playerMana.addMana(-40);
-        if (playerMana.getMana() < -21) {
+        ((Player)player).getAttribute(manatick.WARD).setBaseValue(((Player) player).getAttributeBaseValue(manatick.WARD)-20);
+        if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -21) {
             player.hurt(DamageSource.MAGIC,2);
         }
             InteractionResult interactionresult = this.place(new BlockPlaceContext(p_40581_));

@@ -3,8 +3,7 @@ package com.cleannrooster.spellblademod.items;
 import com.cleannrooster.spellblademod.StatusEffectsModded;
 import com.cleannrooster.spellblademod.entity.FluxEntity;
 import com.cleannrooster.spellblademod.entity.ModEntities;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
+import com.cleannrooster.spellblademod.manasystem.manatick;
 import com.mojang.math.Vector3f;
 import it.unimi.dsi.fastutil.objects.ObjectLists;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -66,7 +65,6 @@ public class FluxItem extends Spell {
     public net.minecraft.world.InteractionResult interactLivingEntity(ItemStack stack, net.minecraft.world.entity.player.Player playerIn, LivingEntity entity, net.minecraft.world.InteractionHand hand) {
         List<LivingEntity> list = new ArrayList<>();
         Player player = playerIn;
-        PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
         if (entity instanceof ServerPlayer) {
             if (!(((ServerPlayer) entity).gameMode.getGameModeForPlayer() == GameType.SURVIVAL)) {
                 return InteractionResult.FAIL;
@@ -75,16 +73,18 @@ public class FluxItem extends Spell {
         if (player.getCooldowns().isOnCooldown(this)){
             return InteractionResult.FAIL;
         }
-        playerMana.addMana(-20);
+        ((Player)player).getAttribute(manatick.WARD).setBaseValue(((Player) player).getAttributeBaseValue(manatick.WARD)-15);
 
-        if (playerMana.getMana() < -21) {
+        if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -21) {
             player.hurt(DamageSource.MAGIC,2);
         }
             FluxEntity flux = new FluxEntity(ModEntities.FLUX_ENTITY.get(), entity.getLevel());
             flux.target = entity;
             flux.setOwner(player);
             flux.list = list;
-            flux.setPos(player.getBoundingBox().getCenter());
+        flux.first = true;
+
+        flux.setPos(player.getBoundingBox().getCenter());
             player.level.addFreshEntity(flux);
             player.getCooldowns().addCooldown(this, 10);
         return InteractionResult.sidedSuccess(player.getLevel().isClientSide());
@@ -93,7 +93,6 @@ public class FluxItem extends Spell {
     @Override
     public InteractionResultHolder<ItemStack> use(Level p_41432_, Player p_41433_, InteractionHand p_41434_) {
         Player player = p_41433_;
-        PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
         ItemStack itemstack = p_41433_.getItemInHand(p_41434_);
         if (player.isShiftKeyDown()) {
             CompoundTag nbt;
@@ -129,7 +128,7 @@ public class FluxItem extends Spell {
         }
     }
 
-    public static void FluxFlux(Player entity, LivingEntity target, Level level, List<LivingEntity> list) {
+    public static void FluxFlux(Player entity, LivingEntity target, Level level, List<LivingEntity> list, boolean first) {
         if (target == null) {
             return;
         }
@@ -142,22 +141,19 @@ public class FluxItem extends Spell {
             return;
         }
         boolean flag1 = false;
-        if (entity.getInventory().contains(ModItems.FRIENDSHIP.get().getDefaultInstance())){
-            flag1 = true;
-        }
         boolean flag2 = false;
         if (target.getClassification(false).isFriendly()|| target instanceof Player || (target instanceof NeutralMob)){
             flag2 = true;
         }
-        if (!(flag1 && flag2)/*&& !Objects.requireNonNullElse(this.blacklist, new ArrayList()).contains(target)*/) {
+        if (true)/*&& !Objects.requireNonNullElse(this.blacklist, new ArrayList()).contains(target)*/ {
             {
                 SoundEvent soundEvent = SoundEvents.AMETHYST_BLOCK_HIT;
                 level.playSound(null, target,soundEvent,SoundSource.PLAYERS,1.0F, 0.5F + level.random.nextFloat() * 1.2F);
                 list.add(target);
 
 
-                if (target.hasEffect(StatusEffectsModded.FLUXED.get())) {
-                    List entities = level.getEntitiesOfClass(LivingEntity.class, target.getBoundingBox().inflate(3));
+                if (target.hasEffect(StatusEffectsModded.FLUXED.get()) || first) {
+                    List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class,target.getBoundingBox().inflate(3D),livingEntity -> {return FriendshipBracelet.PlayerFriendshipPredicate((Player) entity,livingEntity);});
                     Object[] entitiesarray = entities.toArray();
                     int iii = 0;
                     for (int ii = 0; ii < entitiesarray.length; ii = ii + 1) {
@@ -168,6 +164,7 @@ public class FluxItem extends Spell {
                             flux.target = target2;
                             flux.setOwner(entity);
                             flux.list = list;
+
                             flux.setPos(target.getBoundingBox().getCenter());
                             if(!target2.hasEffect(StatusEffectsModded.FLUXED.get())){
                                 flux.bool = true;
@@ -184,19 +181,18 @@ public class FluxItem extends Spell {
     }
 
     public boolean trigger(Level level, Player player, float modifier) {
-        PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
         List<LivingEntity> list = new ArrayList<>();
 
         boolean flag1 = player.getInventory().contains(ModItems.FRIENDSHIP.get().getDefaultInstance());
 
-        List entities = player.level.getEntitiesOfClass(LivingEntity.class, new AABB(player.getX() - 6, player.getY() + 0.5 - 6, player.getZ() - 6, player.getX() + 6, player.getY() + 6, player.getZ() + 6));
+        List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class,player.getBoundingBox().inflate(6D),livingEntity -> {return FriendshipBracelet.PlayerFriendshipPredicate((Player) player,livingEntity);});
         List<LivingEntity> validentities = new ArrayList<>();
         Object[] entitiesarray = entities.toArray();
         int entityamount = entitiesarray.length;
         for (int ii = 0; ii < entityamount; ii = ii + 1) {
             LivingEntity target = (LivingEntity) entities.get(ii);
             boolean flag2 = target.getClassification(false).isFriendly() || target instanceof Player || (target instanceof NeutralMob);
-            if (target != player && !(flag1 && flag2)&& target.hasLineOfSight(player)) {
+            if (target != player  && target.hasLineOfSight(player)) {
                 validentities.add(target);
             }
 
@@ -204,7 +200,7 @@ public class FluxItem extends Spell {
 
         LivingEntity chained = player.getLevel().getNearestEntity(validentities, TargetingConditions.forNonCombat().ignoreLineOfSight(), player, player.getX(), player.getY(), player.getZ());
         if (chained != null) {
-            if(playerMana.getMana() < -1 && player.getHealth() <= 2)
+            if(((Player)player).getAttributes().getBaseValue(manatick.WARD) < -1 && player.getHealth() <= 2)
             {
                 return true;
             }
@@ -213,6 +209,8 @@ public class FluxItem extends Spell {
             flux.target = chained;
             flux.setOwner(player);
             flux.list = list;
+            flux.first = true;
+
             flux.setPos(player.getBoundingBox().getCenter().x + rand.nextDouble(-2,2),player.getBoundingBox().getCenter().y+ rand.nextDouble(0,2),player.getBoundingBox().getCenter().z+ rand.nextDouble(-2,2));
             player.level.addFreshEntity(flux);
             /*ist entities2 = player.level.getEntitiesOfClass(LivingEntity.class, new AABB(chained.getX() - 4, chained.getY() + 0.5 - 4, chained.getZ() - 4, chained.getX() + 4, chained.getY() + 4, chained.getZ() + 4));
@@ -227,7 +225,7 @@ public class FluxItem extends Spell {
 
             }*/
             player.getCooldowns().addCooldown(this, 10);
-            if (playerMana.getMana() < -1 && player.getHealth() > 2) {
+            if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -1 && player.getHealth() > 2) {
 
                 player.invulnerableTime = 0;
                 player.hurt(DamageSource.MAGIC, 2);
@@ -250,7 +248,6 @@ public class FluxItem extends Spell {
     @Override
     public boolean triggeron(Level level, Player player, LivingEntity target, float modifier) {
         List<LivingEntity> list = new ArrayList<>();
-        PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
         if (target instanceof ServerPlayer) {
             if (!(((ServerPlayer) target).gameMode.getGameModeForPlayer() == GameType.SURVIVAL)) {
                 return false;
@@ -259,21 +256,23 @@ public class FluxItem extends Spell {
         if (player.getCooldowns().isOnCooldown(this)) {
             return false;
         }
-        if(playerMana.getMana() < -1 && player.getHealth() <= 2)
+        if(((Player)player).getAttributes().getBaseValue(manatick.WARD) < -1 && player.getHealth() <= 2)
         {
             return true;
         }
-        playerMana.addMana(-20);
+        ((Player)player).getAttribute(manatick.WARD).setBaseValue(((Player) player).getAttributeBaseValue(manatick.WARD)-20);
 
 
         FluxEntity flux = new FluxEntity(ModEntities.FLUX_ENTITY.get(), target.getLevel());
         flux.target = target;
         flux.setOwner(player);
         flux.list = list;
+        flux.first = true;
+
         flux.setPos(player.getBoundingBox().getCenter());
         player.level.addFreshEntity(flux);
         player.getCooldowns().addCooldown(this, 10);
-        if (playerMana.getMana() < -1 && player.getHealth() > 2) {
+        if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -1 && player.getHealth() > 2) {
             player.hurt(DamageSource.MAGIC, 2);
             return true;
         }

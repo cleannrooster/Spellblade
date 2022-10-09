@@ -2,7 +2,11 @@ package com.cleannrooster.spellblademod.entity;
 
 import com.cleannrooster.spellblademod.StatusEffectsModded;
 import com.cleannrooster.spellblademod.effects.DamageSourceModded;
+import com.cleannrooster.spellblademod.items.FriendshipBracelet;
 import com.cleannrooster.spellblademod.items.ModItems;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
+import com.mojang.math.Vector3f;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleOptions;
@@ -19,6 +23,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.NeutralMob;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -30,11 +37,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
+import org.antlr.v4.runtime.misc.MultiMap;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 import static java.lang.Math.cos;
@@ -43,6 +54,9 @@ import static java.lang.Math.sin;
 public class EndersEyeEntity extends Projectile implements ItemSupplier {
 
     public List<Entity> blacklist;
+    public LivingEntity target;
+    public Vec3 pos1;
+
     public EndersEyeEntity(EntityType<? extends EndersEyeEntity> p_19870_, Level p_19871_) {
         super(p_19870_, p_19871_);
     }
@@ -50,64 +64,162 @@ public class EndersEyeEntity extends Projectile implements ItemSupplier {
     protected void defineSynchedData() {
 
     }
-
+    double lastx = 0;
+    double lasty = 0;
+    double lastz = 0;
     @Override
     public void tick() {
         super.tick();
         this.noPhysics = true;
-        if (this.tickCount > 120){
+        if (this.tickCount > 160 && !this.getLevel().isClientSide()){
             this.discard();
         }
         if(this.getOwner()!=null){
-            if(this.getOwner().isAlive()){
-                    this.setPos(this.getOwner().position().add(new Vec3(0, 2.5, 0)));
-                    boolean flag1 = false;
-                    if (((Player)this.getOwner()).getInventory().contains(ModItems.FRIENDSHIP.get().getDefaultInstance())){
-                        flag1 = true;
-                    }
-                    if (tickCount % 10 == 5) {
-                        List entities = this.level.getEntitiesOfClass(LivingEntity.class, new AABB(this.getX() - 6, this.getY() - 6, this.getZ() - 6, this.getX() + 6, this.getY() + 6, this.getZ() + 6));
-                        Object[] entitiesarray = entities.toArray();
-                        int entityamount = entitiesarray.length;
-                        for (int ii = 0; ii < entityamount; ii = ii + 1) {
-                            LivingEntity target = (LivingEntity) entities.get(ii);
-                            boolean flag2 = false;
-                            if (target.getClassification(false).isFriendly() || target instanceof Player || (target instanceof NeutralMob)){
-                                flag2 = true;
-                            }
-                            if (target != this.getOwner() && !Objects.requireNonNullElse(this.blacklist, new ArrayList()).contains(target) && !(flag1 && flag2) && target.hasLineOfSight(this)) {
-                                int i = 0;
-                                int num_pts = 100;
-                                int num_pts_line = 25;
-                                for (int iii = 0; iii < num_pts_line; iii++) {
-                                    double X = this.getEyePosition().x + (target.getEyePosition().x -this.getEyePosition().x) * ((double)iii / (num_pts_line));
-                                    double Y = this.getEyePosition().y + (target.getEyePosition().y - this.getEyePosition().y) * ((double)iii / (num_pts_line));
-                                    double Z = this.getEyePosition().z + (target.getEyePosition().z - this.getEyePosition().z) * ((double)iii / (num_pts_line));
-                                    this.level.addParticle(DustParticleOptions.REDSTONE, X, Y, Z, 0, 0, 0);
-                                }
-                                for (i = 0; i <= num_pts; i = i + 1) {
-                                    double[] indices = IntStream.rangeClosed(0, (int) ((1000 - 0) / 1))
-                                            .mapToDouble(x -> x * 1 + 0).toArray();
+            if (this.distanceTo(this.getOwner()) > 32 && !this.getLevel().isClientSide()){
+                this.discard();
+            }
+            if(this.getOwner().isAlive() && this.getOwner() instanceof Player player) {
 
-                                    double phi = Math.acos(1 - 2 * indices[i] / num_pts);
-                                    double theta = Math.PI * (1 + Math.pow(5, 0.5) * indices[i]);
-                                    double x = cos(theta) * sin(phi);
-                                    double y = Math.sin(theta) * sin(phi);
-                                    double z = cos(phi);
-                                    this.level.addParticle((ParticleOptions) DustParticleOptions.REDSTONE, target.getEyePosition().x + 1.5 * x, target.getEyePosition().y + 1.5 * y, target.getEyePosition().z + 1.5 * z, 0, 0, 0);
-                                }
-                                target.invulnerableTime = 0;
-                                target.hurt(new EntityDamageSource("spell",(Player) this.getOwner()), 6);
-                                target.invulnerableTime = 0;
+                if (this.lastx == 0 && this.lasty == 0 && this.lastz == 0) {
+                    this.lastx = this.getOwner().getEyePosition().x;
+                    this.lasty = this.getOwner().getEyePosition().y;
+                    this.lastz = this.getOwner().getEyePosition().z;
+                }
+
+
+                if (target == null || !target.isAlive() || target.isDeadOrDying()) {
+                    List<LivingEntity> entities = this.getLevel().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(player.getAttribute(ForgeMod.REACH_DISTANCE.get()).getValue() * 1.5), livingEntity -> {
+                        return FriendshipBracelet.PlayerFriendshipPredicate((Player) this.getOwner(), livingEntity);
+                    });
+                    entities.removeIf(livingEntity -> !livingEntity.hasLineOfSight(this));
+                    entities.removeIf(livingEntity -> livingEntity == this.getOwner() || livingEntity.isDeadOrDying());
+                    if (!entities.isEmpty()) {
+                        LivingEntity target1 = entities.get(0);
+                        this.target = entities.get(0);
+                        for (LivingEntity entity : entities) {
+                            if (entity.distanceTo(this) < target1.distanceTo(this)) {
+                                target1 = entity;
+                                this.target = entity;
                             }
                         }
                     }
                 }
-            }
-            else {
-                this.discard();
+
+
+                if (this.target == this.getOwner()) {
+                    this.target = null;
+                }
+                if(this.target == null){
+                    if(this.pos1 != null && !this.getLevel().isClientSide()) {
+                        this.setPos(this.pos1.add(random.nextDouble(-0.5, 0.5), random.nextDouble(-0.5, 0.5), random.nextDouble(-0.5, 0.5)));
+
+                    }
+                }
+
+
+
+                if (this.target != null) {
+                    if (this.target.isAlive() && !this.target.isDeadOrDying()) {
+                        if (!this.getLevel().isClientSide()) {
+                            this.pos1 = this.target.position().add(new Vec3(0, 1.5, 0)).add(new Vec3(0, this.target.getBoundingBox().getYsize() / 2, 0));
+                            this.setPos(this.target.position().add(new Vec3(0, 1.5, 0)).add(new Vec3(0, this.target.getBoundingBox().getYsize() / 2, 0)).add(random.nextDouble(-0.5, 0.5), random.nextDouble(-0.5, 0.5), random.nextDouble(-0.5, 0.5)));
+
+                        }
+
+
+                        if (tickCount % 10 == 5) {
+                            List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, this.target.getBoundingBox().inflate(3D), livingEntity -> {
+                                return FriendshipBracelet.PlayerFriendshipPredicate((Player) this.getOwner(), livingEntity);
+                            });
+                            if (((Player) this.getOwner()).getLastHurtMob() != null) {
+                                if (((Player) this.getOwner()).getLastHurtMob().isAlive() && this.getOwner().distanceTo(((Player) this.getOwner()).getLastHurtMob()) <= 8) {
+                                    if (!entities.contains(((Player) this.getOwner()).getLastHurtMob())) {
+                                        entities.add(((Player) this.getOwner()).getLastHurtMob());
+                                    }
+                                }
+                            }
+                            Object[] entitiesarray = entities.toArray();
+
+                            int entityamount = entitiesarray.length;
+                            for (int ii = 0; ii < entityamount; ii = ii + 1) {
+                                LivingEntity target = (LivingEntity) entities.get(ii);
+                                boolean flag2 = false;
+                                if (target.getClassification(false).isFriendly() || target instanceof Player || (target instanceof NeutralMob)) {
+                                    flag2 = true;
+                                }
+                                if (target != this.getOwner() && !Objects.requireNonNullElse(this.blacklist, new ArrayList()).contains(target)) {
+                                    int i = 0;
+                                    int num_pts = 100;
+                                    int num_pts_line = 25;
+                                    for (int iii = 0; iii < num_pts_line; iii++) {
+                                        double X = this.getEyePosition().x + (target.getEyePosition().x - this.getEyePosition().x) * ((double) iii / (num_pts_line));
+                                        double Y = this.getEyePosition().y + (target.getEyePosition().y - this.getEyePosition().y) * ((double) iii / (num_pts_line));
+                                        double Z = this.getEyePosition().z + (target.getEyePosition().z - this.getEyePosition().z) * ((double) iii / (num_pts_line));
+                                        this.level.addParticle(DustParticleOptions.REDSTONE, X, Y, Z, 0, 0, 0);
+                                    }
+                                    for (i = 0; i <= num_pts; i = i + 1) {
+                                        double[] indices = IntStream.rangeClosed(0, (int) ((1000 - 0) / 1))
+                                                .mapToDouble(x -> x * 1 + 0).toArray();
+
+                                        double phi = Math.acos(1 - 2 * indices[i] / num_pts);
+                                        double theta = Math.PI * (1 + Math.pow(5, 0.5) * indices[i]);
+                                        double x = cos(theta) * sin(phi);
+                                        double y = Math.sin(theta) * sin(phi);
+                                        double z = cos(phi);
+                                        this.level.addParticle((ParticleOptions) DustParticleOptions.REDSTONE, target.getEyePosition().x + 1.5 * x, target.getEyePosition().y + 1.5 * y, target.getEyePosition().z + 1.5 * z, 0, 0, 0);
+                                    }
+                                    target.invulnerableTime = 0;
+                                    AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "knockbackresist", 1, AttributeModifier.Operation.ADDITION);
+                                    ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+                                    builder.put(Attributes.KNOCKBACK_RESISTANCE, modifier);
+                                    target.getAttributes().addTransientAttributeModifiers(builder.build());
+                                    target.hurt(new EntityDamageSource("spell", (Player) this.getOwner()), 2);
+                                    target.getAttributes().removeAttributeModifiers(builder.build());
+                                    target.invulnerableTime = 0;
+
+                                }
+                            }
+                        }
+                    }
+                    else{
+                        if(this.pos1 != null&& !this.getLevel().isClientSide()) {
+                            this.setPos(this.pos1.add(random.nextDouble(-0.5, 0.5), random.nextDouble(-0.5, 0.5), random.nextDouble(-0.5, 0.5)));
+
+                        }
+                        if (this.distanceToSqr(new Vec3(this.lastx, this.lasty, this.lastz)) > 1) {
+                            for (int iii = 0; iii < 25; iii++) {
+                                double X = this.position().x + (this.lastx - this.position().x) * ((double) iii / (25));
+                                double Y = this.position().y + (this.lasty - this.position().y) * ((double) iii / (25));
+                                double Z = this.position().z + (this.lastz - this.position().z) * ((double) iii / (25));
+                                this.level.addParticle(ParticleTypes.DRAGON_BREATH, X, Y, Z, 0, 0, 0);
+                            }
+                        }
+                        this.lastx = this.position().x;
+                        this.lasty = this.position().y;
+                        this.lastz = this.position().z;
+                        return;
+                    }
+
+
+                }
+                if (this.distanceToSqr(new Vec3(this.lastx, this.lasty, this.lastz)) > 1) {
+                    for (int iii = 0; iii < 25; iii++) {
+                        double X = this.position().x + (this.lastx - this.position().x) * ((double) iii / (25));
+                        double Y = this.position().y + (this.lasty - this.position().y) * ((double) iii / (25));
+                        double Z = this.position().z + (this.lastz - this.position().z) * ((double) iii / (25));
+                        this.level.addParticle(ParticleTypes.DRAGON_BREATH, X, Y, Z, 0, 0, 0);
+                    }
+                }
+                this.lastx = this.position().x;
+                this.lasty = this.position().y;
+                this.lastz = this.position().z;
+
             }
         }
+        else {
+            this.discard();
+        }
+    }
 
     @Override
     public ItemStack getItem() {

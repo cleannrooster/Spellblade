@@ -2,8 +2,7 @@ package com.cleannrooster.spellblademod.items;
 
 import com.cleannrooster.spellblademod.entity.ModEntities;
 import com.cleannrooster.spellblademod.entity.ReverberatingRay;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
+import com.cleannrooster.spellblademod.manasystem.manatick;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -26,7 +25,6 @@ public class ReverberatingRayItem extends Spell {
     @Override
     public InteractionResultHolder<ItemStack> use(Level p_41432_, Player p_41433_, InteractionHand p_41434_) {
         ItemStack itemstack = ((Player) p_41433_).getItemInHand(p_41434_);
-        PlayerMana playerMana = p_41433_.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
 
         if (p_41433_.isShiftKeyDown()) {
             CompoundTag nbt;
@@ -69,8 +67,7 @@ public class ReverberatingRayItem extends Spell {
 
     @Override
     public boolean trigger(Level level, Player player, float modifier) {
-        PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-        if(playerMana.getMana() < -1 && player.getHealth() <= 2)
+        if(((Player)player).getAttributes().getBaseValue(manatick.WARD) < -1 && player.getHealth() <= 2)
         {
             return true;
         }
@@ -86,7 +83,7 @@ public class ReverberatingRayItem extends Spell {
             orb.shootFromRotation((Player) player, 0, 0, 0, 0, 0);
             level.addFreshEntity(orb);
         }
-        if (playerMana.getMana() < -1 && player.getHealth() > 2) {
+        if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -1 && player.getHealth() > 2) {
 
             player.invulnerableTime = 0;
             player.hurt(DamageSource.MAGIC, 2);

@@ -1,8 +1,6 @@
 package com.cleannrooster.spellblademod;
 
 import com.cleannrooster.spellblademod.items.Spellblade;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.scores.Objective;
@@ -37,11 +35,6 @@ public class WardGainHandler {
             return;
         }
         if (event.phase != TickEvent.Phase.START){
-            return;
-        }
-        Player player = (Player) event.player;
-        PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-        if (playerMana == null){
             return;
         }
 

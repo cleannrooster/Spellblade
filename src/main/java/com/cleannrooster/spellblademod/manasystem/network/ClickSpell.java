@@ -1,9 +1,10 @@
 package com.cleannrooster.spellblademod.manasystem.network;
 
 
+import com.cleannrooster.spellblademod.items.BladeFlurry;
+import com.cleannrooster.spellblademod.items.FriendshipBracelet;
 import com.cleannrooster.spellblademod.items.Spell;
-import com.cleannrooster.spellblademod.manasystem.data.ManaManager;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
+import com.cleannrooster.spellblademod.items.Spellblade;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
@@ -39,6 +40,87 @@ public class ClickSpell {
             ServerPlayer player = ctx.getSender();
             ItemStack itemStack = player.getInventory().getItem(slot);
             CompoundTag nbt;
+            if (itemStack.getItem() instanceof BladeFlurry)
+            {
+                if (itemStack.hasTag())
+                {
+                    if(itemStack.getTag().get("Triggerable") != null) {
+                        if(itemStack.getTag().getInt("Mode") < 3) {
+                            nbt = itemStack.getTag();
+                            nbt.putInt("Mode", itemStack.getTag().getInt("Mode") + 1);
+                            player.getInventory().setChanged();
+                        }
+                        else{
+                            nbt = itemStack.getTag();
+                            nbt.remove("Triggerable");
+                            nbt.remove("Mode");
+                            player.getInventory().setChanged();
+                        }
+                    }
+                    else{
+                        nbt = itemStack.getOrCreateTag();
+                        nbt.putInt("Triggerable", 1);
+                        nbt.putInt("Mode", 1);
+                        player.getInventory().setChanged();
+                    }
+
+                }
+                else {
+                    nbt = itemStack.getOrCreateTag();
+                    nbt.putInt("Triggerable", 1);
+                    nbt.putInt("Mode", 1);
+                    player.getInventory().setChanged();
+                }
+                return;
+            }
+            if (itemStack.getItem() instanceof FriendshipBracelet)
+            {
+                if (itemStack.hasTag())
+                {
+                    if(itemStack.getTag().get("Friendship") != null) {
+                        nbt = itemStack.getTag();
+                        nbt.remove("Friendship");
+                        player.getInventory().setChanged();
+                    }
+                    else{
+                        nbt = itemStack.getOrCreateTag();
+                        nbt.putInt("Friendship", 1);
+                        player.getInventory().setChanged();
+                    }
+
+                }
+                else
+                {
+                    nbt = itemStack.getOrCreateTag();
+                    nbt.putInt("Friendship", 1);
+                    player.getInventory().setChanged();
+                }
+                return;
+            }
+            if (itemStack.getItem() instanceof Spellblade)
+            {
+                if (itemStack.hasTag())
+                {
+                    if(itemStack.getTag().get("OnHit") != null) {
+                        nbt = itemStack.getTag();
+                        nbt.remove("OnHit");
+                        player.getInventory().setChanged();
+                    }
+                    else{
+                        nbt = itemStack.getOrCreateTag();
+                        nbt.putInt("OnHit", 1);
+                        player.getInventory().setChanged();
+                    }
+
+                }
+                else
+                {
+                    nbt = itemStack.getOrCreateTag();
+                    nbt.putInt("OnHit", 1);
+                    player.getInventory().setChanged();
+                }
+                return;
+            }
             if (itemStack.hasTag())
             {
                 if(itemStack.getTag().get("Triggerable") != null) {

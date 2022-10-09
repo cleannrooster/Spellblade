@@ -13,25 +13,16 @@ public class ClientManaData {
 
     private static float chunkMana;
 
-    public static void set(float playerMana, float playerBaseMana, CompoundTag modifiers, float chunkMana) {
+    public static void set(float playerMana, float playerBaseMana) {
         ClientManaData.playerMana = playerMana;
         ClientManaData.playerBaseMana = playerBaseMana;
-        ClientManaData.playerBasemodifiers = playerBasemodifiers;
-
-        ClientManaData.chunkMana = chunkMana;
     }
 
     public static float getPlayerMana() {
         return playerMana;
     }
+
     public static float getPlayerBaseMana() {
         return playerBaseMana;
-    }
-    public static CompoundTag getPlayerBasemodifiers() {
-        return playerBasemodifiers;
-    }
-
-    public static float getChunkMana() {
-        return chunkMana;
     }
 }

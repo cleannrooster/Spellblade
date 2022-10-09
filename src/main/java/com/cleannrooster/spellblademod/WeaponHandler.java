@@ -1,47 +1,28 @@
 package com.cleannrooster.spellblademod;
 
+import com.cleannrooster.spellblademod.entity.HammerEntity;
+import com.cleannrooster.spellblademod.entity.ModEntities;
 import com.cleannrooster.spellblademod.items.*;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
-import com.mojang.math.Vector3f;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.stats.Stat;
-import net.minecraft.util.ParticleUtils;
+import com.cleannrooster.spellblademod.manasystem.manatick;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.EntityDamageSource;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.NeutralMob;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
-import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.block.EnderChestBlock;
-import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.*;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.apache.logging.log4j.core.jmx.Server;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.stream.IntStream;
-
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
 
 @Mod.EventBusSubscriber(modid = "spellblademod", bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class WeaponHandler {
@@ -55,41 +36,12 @@ public class WeaponHandler {
             }
         }
     }
-    @SubscribeEvent
-    public static void lightningwhirlhandler2(LivingEvent.LivingUpdateEvent event){
-
-        if (event.getEntityLiving() instanceof Zombie)
-        {
-            AABB aabb1 = event.getEntityLiving().getBoundingBox();
-            if (event.getEntityLiving().getEffect( StatusEffectsModded.LIGHTNING_WHIRL_EFFECT.get()) != null){
-                AABB aabb2 = aabb1.minmax(aabb1);
-                List<Entity> list = event.getEntityLiving().level.getEntities(event.getEntityLiving(), aabb2);
-                if (!list.isEmpty()) {
-                    for(int i = 0; i < list.size(); ++i) {
-                        Entity entity = list.get(i);
-                        if (entity instanceof LivingEntity) {
-                            (entity).hurt(DamageSource.GENERIC,10);
-                            event.getEntityLiving().setDeltaMovement(event.getEntityLiving().getDeltaMovement().scale(-0.2D));
-                            break;
-                        }
-                    }
-                } else if (event.getEntityLiving().horizontalCollision) {
-                    event.getEntityLiving().setPose(Pose.FALL_FLYING);
-                }
-
-            }
-        }
-    }
 
     @SubscribeEvent
     public static void SpellbladeHandler(LivingHurtEvent event){
         if (event.getSource().getDirectEntity() instanceof Player) {
             Player player = (Player) event.getSource().getEntity();
-            PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-            if (((Player) event.getSource().getEntity()).getMainHandItem().getItem() instanceof Spellblade  && event.getSource().msgId != "spell") {
-                Spellblade spellblade = (Spellblade) ((Player) event.getSource().getEntity()).getMainHandItem().getItem();
-                event.setAmount((float) (event.getAmount()*Math.pow(1.25, spellblade.tier)));
-            }
+
             if (player.getOffhandItem().getItem() instanceof LightningWhirl && player.isAutoSpinAttack() && player.getMainHandItem().getItem() instanceof Spellblade){
                 if (event.getEntityLiving().hasEffect(StatusEffectsModded.SHOCKED.get())){
                     int amplifier = event.getEntityLiving().getEffect(StatusEffectsModded.SHOCKED.get()).getAmplifier();
@@ -126,7 +78,6 @@ public class WeaponHandler {
         if(event.getSource().getEntity() instanceof Player){
             if (((Player)event.getSource().getEntity()).getOffhandItem().getItem() instanceof FireEffigy){
                 Player player = (Player) event.getSource().getEntity();
-                PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
                     player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(), 80, 0));
                     if (!event.getEntityLiving().getLevel().isClientSide()) {
                         event.getEntityLiving().getLevel().explode(event.getSource().getEntity(), event.getEntityLiving().getX(), event.getEntityLiving().getY(), event.getEntityLiving().getZ(), 3, false, Explosion.BlockInteraction.NONE);
@@ -147,76 +98,30 @@ public class WeaponHandler {
         }
     }
     @SubscribeEvent
-    public static void EffigyOfChaining(LivingAttackEvent event){
-        if (event.getSource().getDirectEntity() instanceof Player && ((DamageSource)event.getSource()).msgId != "chain" && ((DamageSource)event.getSource()).msgId != "fluxed" && ((DamageSource)event.getSource()).msgId != "fluxed1") {
+    public static void EffigyOfChaining(LivingDamageEvent event){
+        if (event.getSource().getDirectEntity() instanceof Player && (int) event.getEntityLiving().getAttribute(manatick.SMOTE).getValue() <= 0) {
             Player player = (Player) event.getSource().getDirectEntity();
             LivingEntity living = event.getEntityLiving();
-            PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
             if (player.getOffhandItem().getItem() instanceof LightningEffigy && player.getMainHandItem().getItem() instanceof Spellblade) {
+                event.getEntityLiving().getAttribute(manatick.SMOTE).setBaseValue(10);
                 player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(), 80, 0));
-                List entities = player.getLevel().getEntitiesOfClass(LivingEntity.class, living.getBoundingBox().inflate(3));
+                List<LivingEntity> entities = player.level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(3D), livingEntity -> {
+                    return FriendshipBracelet.PlayerFriendshipPredicate(player, livingEntity);
+                });
                 List<LivingEntity> validentities = new ArrayList<>();
                 Object[] entitiesarray = entities.toArray();
-                int entityamount = entitiesarray.length;
-                boolean flag1 = false;
-                if (player.getInventory().contains(ModItems.FRIENDSHIP.get().getDefaultInstance())){
-                    flag1 = true;
-                }
-                for (int ii = 0; ii < entityamount; ii = ii + 1) {
-                LivingEntity target = (LivingEntity) entities.get(ii);
-                    boolean flag2 = false;
-                    if (target.getClassification(false).isFriendly()|| target instanceof Player || (target instanceof NeutralMob)){
-                        flag2 = true;
-                    }
-                    if (target != player && target != living && !(flag1 && flag2)) {
-                        validentities.add(target);
-                    }
-
-                }
-                LivingEntity chained = player.getLevel().getNearestEntity(validentities, TargetingConditions.forNonCombat().ignoreLineOfSight(), living, living.getX(), living.getY(), living.getZ());
-                if (chained != null) {
-                    /*int num_pts_line = 50;
-                    for (int iii = 0; iii < num_pts_line; iii++) {
-                        double X = living.getBoundingBox().getCenter().x + (chained.getBoundingBox().getCenter().x -living.getBoundingBox().getCenter().x) * ((double)iii / (num_pts_line));
-                        double Y = living.getBoundingBox().getCenter().y + (chained.getBoundingBox().getCenter().y - living.getBoundingBox().getCenter().y) * ((double)iii / (num_pts_line));
-                        double Z = living.getBoundingBox().getCenter().z + (chained.getBoundingBox().getCenter().z - living.getBoundingBox().getCenter().z) * ((double)iii / (num_pts_line));
-                        player.getLevel().addParticle(new DustParticleOptions(new Vector3f(Vec3.fromRGB24(65535)), 1F), X, Y, Z, 0, 0, 0);
-                    }*/
-                    List entities2 = player.getLevel().getEntitiesOfClass(LivingEntity.class, chained.getBoundingBox().inflate(3));
-                    List<LivingEntity> validentities2 = new ArrayList<>();
-                    Object[] entitiesarray2 = entities2.toArray();
-                    int entityamount2 = entitiesarray2.length;
-                    for (int ii = 0; ii < entityamount2; ii = ii + 1) {
-                        LivingEntity target = (LivingEntity) entities2.get(ii);
-                        boolean flag3 = false;
-                        if (target.getClassification(false).isFriendly()|| target instanceof Player || (target instanceof NeutralMob)){
-                            flag3 = true;
-                        }
-                        if (target != player && target != living && target != chained  && !(flag1 && flag3)) {
-                            validentities2.add(target);
-                        }
-
-                    }
-                    chained.hurt(new EntityDamageSource("chain", player), event.getAmount());
-
-                    LivingEntity chained2 = player.getLevel().getNearestEntity(validentities2, TargetingConditions.forNonCombat().ignoreLineOfSight(), chained, chained.getX(), chained.getY(), chained.getZ());
-                    if (chained2 != null) {
-                        /*int num_pts_line2 = 50;
-                        for (int iii = 0; iii < num_pts_line2; iii++) {
-                            double X = chained.getBoundingBox().getCenter().x + (chained2.getBoundingBox().getCenter().x -chained.getBoundingBox().getCenter().x) * ((double)iii / (num_pts_line));
-                            double Y = chained.getBoundingBox().getCenter().y + (chained2.getBoundingBox().getCenter().y - chained.getBoundingBox().getCenter().y) * ((double)iii / (num_pts_line));
-                            double Z = chained.getBoundingBox().getCenter().z + (chained2.getBoundingBox().getCenter().z - chained.getBoundingBox().getCenter().z) * ((double)iii / (num_pts_line));
-                            player.getLevel().addParticle(new DustParticleOptions(new Vector3f(Vec3.fromRGB24(65535)),1F), X, Y, Z, 0, 0, 0);
-
-                        }*/
-                        chained2.hurt(new EntityDamageSource("chain", player), event.getAmount());
-
-                    }
-                }
-
+                HammerEntity hammer3 = new HammerEntity(ModEntities.TRIDENT.get(), player.getLevel());
+                hammer3.setPos(living.getBoundingBox().getCenter().add(0, 4 + living.getBoundingBox().getYsize() / 2, 0));
+                hammer3.setOwner(player);
+                hammer3.pickup = AbstractArrow.Pickup.DISALLOWED;
+                hammer3.secondary = true;
+                hammer3.shoot(0, -1, 0, 1.6F, 0);
+                living.getLevel().addFreshEntity(hammer3);
             }
+
         }
     }
+}
     /*@SubscribeEvent
     public static void SpellbladeTrigger(PlayerInteractEvent event) {
 
@@ -283,5 +188,3 @@ public class WeaponHandler {
             }
         }
     }*/
-
-}

@@ -4,6 +4,7 @@ import com.cleannrooster.spellblademod.StatusEffectsModded;
 import com.cleannrooster.spellblademod.enchants.ModEnchants;
 import com.cleannrooster.spellblademod.entity.FluxEntity;
 import com.cleannrooster.spellblademod.entity.ModEntities;
+import com.cleannrooster.spellblademod.items.FriendshipBracelet;
 import com.cleannrooster.spellblademod.items.Spellblade;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.ParticleTypes;
@@ -16,6 +17,7 @@ import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Player;
@@ -46,7 +48,7 @@ public class FluxHandler {
 
     static Random random = new Random();
     @SubscribeEvent
-    public static void fluxHandler(LivingAttackEvent event){
+    public static void fluxHandler(LivingHurtEvent event){
         LivingEntity living = event.getEntityLiving();
         if (living instanceof ServerPlayer){
             if (!(((ServerPlayer)living).gameMode.getGameModeForPlayer() == GameType.SURVIVAL)){
@@ -60,7 +62,7 @@ public class FluxHandler {
                 int i;
                 float amount = (float) (event.getAmount());
                 List<LivingEntity> entitieshit = new ArrayList<>();
-                List entities = living.getLevel().getEntitiesOfClass(LivingEntity.class, new AABB(living.getBoundingBox().getCenter().x() - 3, living.getBoundingBox().getCenter().y - 3, living.getBoundingBox().getCenter().z - 3, living.getBoundingBox().getCenter().x + 3, living.getBoundingBox().getCenter().y + 3, living.getBoundingBox().getCenter().z + 3));
+                List<LivingEntity> entities = player.level.getEntitiesOfClass(LivingEntity.class,living.getBoundingBox().inflate(3D),livingEntity -> {return FriendshipBracelet.PlayerFriendshipPredicate(player,livingEntity);});
                 Object[] entitiesarray = entities.toArray();
                 float mult = 1;
                 int ii;
@@ -73,7 +75,10 @@ public class FluxHandler {
                     if (living.hasEffect(MobEffects.GLOWING)) {
                         living.removeEffect(MobEffects.GLOWING);
                     }
-                    living.hurt(DamageSourceModded.fluxed(player),amount*2.5F);
+                    living.invulnerableTime = 0;
+
+                    living.hurt(DamageSourceModded.fluxed(player),1.5F*event.getAmount());
+                    living.invulnerableTime = 0;
 
                     player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(), 80, 1+ EnchantmentHelper.getItemEnchantmentLevel(ModEnchants.WARDTEMPERED.get(),player.getMainHandItem())));
                     int num_pts = 100;
@@ -117,7 +122,7 @@ public class FluxHandler {
             }
         }
 
-        if (living.hasEffect(StatusEffectsModded.FLUXED.get()) && player.getMainHandItem().getItem() instanceof Spellblade && living != player) {
+        if (( living.hasEffect(StatusEffectsModded.FLUXED.get())) && player.getMainHandItem().getItem() instanceof Spellblade && living != player) {
             if (living.hasEffect(MobEffects.GLOWING)) {
                 living.removeEffect(MobEffects.GLOWING);
             }
@@ -134,9 +139,11 @@ public class FluxHandler {
                     level.addParticle(ParticleTypes.GLOW_SQUID_INK.getType(), true, living.getX() + random.nextDouble(-0.1, 0.1), living.getY() + random.nextDouble(-0.1, 0.1), living.getZ() + random.nextDouble(-0.1, 0.1), x * 0.5, y * 0.5, z * 0.5);
                 }*/
                 list.add(living);
-            living.removeEffect(StatusEffectsModded.FLUXED.get());
+                if(living.hasEffect(StatusEffectsModded.FLUXED.get())) {
+                    living.removeEffect(StatusEffectsModded.FLUXED.get());
+                }
 
-            List entities = living.getLevel().getEntitiesOfClass(LivingEntity.class, living.getBoundingBox().inflate(3));
+            List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class,living.getBoundingBox().inflate(3D),livingEntity -> {return FriendshipBracelet.PlayerFriendshipPredicate(player,livingEntity);});
             Object[] entitiesarray = entities.toArray();
             float mult = 1;
 

@@ -4,14 +4,27 @@ import com.cleannrooster.spellblademod.blocks.ModTileEntity;
 import com.cleannrooster.spellblademod.enchants.ModEnchants;
 import com.cleannrooster.spellblademod.entity.ModEntities;
 import com.cleannrooster.spellblademod.items.ModItems;
+import com.cleannrooster.spellblademod.manasystem.manatick;
 import com.cleannrooster.spellblademod.setup.Config;
 import com.cleannrooster.spellblademod.setup.ModSetup;
 import com.mojang.logging.LogUtils;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
+import net.minecraft.world.entity.ai.attributes.RangedAttribute;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -22,6 +35,9 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 
 import java.util.stream.Collectors;
@@ -57,7 +73,11 @@ public class SpellbladeMod
         MinecraftForge.EVENT_BUS.register(this);
         ModSetup.setup();
         Config.register();
-
+        DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(ForgeRegistries.ATTRIBUTES, "spellblademod");
+        ATTRIBUTES.register("generic.ward", () -> manatick.WARD);
+        ATTRIBUTES.register("generic.baseward", () -> manatick.BASEWARD);
+        ATTRIBUTES.register("smote", () -> manatick.SMOTE);
+        ATTRIBUTES.register(eventBus);
         // Register the setup method for modloading
         IEventBus modbus = FMLJavaModLoadingContext.get().getModEventBus();
         modbus.addListener(ModSetup::init);
@@ -93,6 +113,17 @@ public class SpellbladeMod
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
     }
+    @SubscribeEvent
+    public static void onEntityAttributeModificationEvent(EntityAttributeModificationEvent event) {
+
+        System.out.println("hello");
+        event.add(EntityType.PLAYER, manatick.WARD);
+        event.add(EntityType.PLAYER, manatick.BASEWARD);
+        for(EntityType entityType: event.getTypes()) {
+                event.add(entityType, manatick.SMOTE);
+        }
+
+    }
 
     // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
     // Event bus for receiving Registry Events)
@@ -105,6 +136,8 @@ public class SpellbladeMod
             // Register a new block here
             LOGGER.info("HELLO from Register Block");
         }
+
+
     }
 
 }

@@ -1,8 +1,7 @@
 package com.cleannrooster.spellblademod.items;
 
 import com.cleannrooster.spellblademod.entity.*;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
+import com.cleannrooster.spellblademod.manasystem.manatick;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -41,8 +40,7 @@ public class Animate extends Item{
     public InteractionResultHolder<ItemStack> use(Level p_40672_, Player p_40673_, InteractionHand p_40674_) {
         ItemStack itemstack = p_40673_.getItemInHand(p_40674_);
         Player player = p_40673_;
-        PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-        if(playerMana.getMana() < 80){
+        if(((Player)player).getAttributes().getBaseValue(manatick.WARD) < 80){
             return InteractionResultHolder.fail(itemstack);
         }
         double tridentEntity = player.getYRot();
@@ -121,8 +119,7 @@ public class Animate extends Item{
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        PlayerMana playerMana = context.getPlayer().getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-        if(playerMana.getMana() < 80){
+        if(((Player)context.getPlayer()).getAttributes().getBaseValue(manatick.WARD) < 80){
             return InteractionResult.FAIL;
         }
         if(context.getLevel().getBlockState(context.getClickedPos()).getBlock() == Blocks.IRON_BLOCK){

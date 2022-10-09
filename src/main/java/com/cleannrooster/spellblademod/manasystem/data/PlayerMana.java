@@ -65,16 +65,4 @@ public class PlayerMana {
     }
 
 
-    public void saveNBTData(CompoundTag compound) {
-        compound.putFloat("mana", mana);
-        compound.putFloat("basemana", basemana);
-        compound.put("basemodifiers", basemodifiers);
-
-    }
-
-    public void loadNBTData(CompoundTag compound) {
-        mana = compound.getFloat("mana");
-        basemana = compound.getFloat("basemana");
-        basemodifiers = compound.getCompound("basemodifiers");
-    }
 }

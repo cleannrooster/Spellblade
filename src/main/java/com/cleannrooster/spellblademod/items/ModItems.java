@@ -44,7 +44,7 @@ public class ModItems {
     public static final RegistryObject<Item> IRON_WARDING_BOOTS = ITEMS.register("iron_warding_boots",
             () -> new WardArmorItem(ModArmorMaterials.IRON_WARDING, EquipmentSlot.FEET, new Item.Properties().tab(CreativeModeTab.TAB_COMBAT)));*/
     public static final RegistryObject<Item> SPELLBLADE = ITEMS.register("spellblade",
-            () -> new Spellblade(Tiers.DIAMOND, 1, -1.8F, (new Item.Properties()).tab(ModSetup.ITEM_GROUP)));
+            () -> new Spellblade(Tiers.DIAMOND, 1, -2.0F, (new Item.Properties()).tab(ModSetup.ITEM_GROUP)));
     public static final RegistryObject<Item> DIAMOND_WARDING_HELMET = ITEMS.register("warding_helmet",
             () -> new WardArmorItem(ModArmorMaterials.DIAMOND_WARDING, EquipmentSlot.HEAD, new Item.Properties().tab(ModSetup.ITEM_GROUP)));
     public static final RegistryObject<Item> DIAMOND_WARDING_CHEST = ITEMS.register("warding_chest",

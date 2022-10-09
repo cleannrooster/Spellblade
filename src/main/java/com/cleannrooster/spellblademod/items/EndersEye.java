@@ -1,35 +1,26 @@
 package com.cleannrooster.spellblademod.items;
 
 import com.cleannrooster.spellblademod.StatusEffectsModded;
-import com.cleannrooster.spellblademod.effects.DamageSourceModded;
 import com.cleannrooster.spellblademod.entity.EndersEyeEntity;
-import com.cleannrooster.spellblademod.entity.HammerEntity;
 import com.cleannrooster.spellblademod.entity.ModEntities;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
-import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.core.particles.ParticleOptions;
+import com.cleannrooster.spellblademod.manasystem.manatick;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.NeutralMob;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.IntStream;
-
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
 
 public class EndersEye extends Spell {
     public EndersEye(Properties p_41383_) {
@@ -39,7 +30,6 @@ public class EndersEye extends Spell {
 
         ItemStack itemstack = p_43406_.getItemInHand(p_43407_);
         Player player = p_43406_;
-        PlayerMana playerMana = ((Player) p_43406_).getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
 
         if (((Player) p_43406_).isShiftKeyDown()) {
             CompoundTag nbt;
@@ -66,39 +56,70 @@ public class EndersEye extends Spell {
             return InteractionResultHolder.success(itemstack);
 
         }
-        playerMana.addMana(-80);
+        ((Player)player).getAttribute(manatick.WARD).setBaseValue(((Player) player).getAttributeBaseValue(manatick.WARD)-20);
 
-        if (playerMana.getMana() < -21) {
+        if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -21) {
             p_43406_.hurt(DamageSource.MAGIC,2);
         }
             ((Player) p_43406_).addEffect(new MobEffectInstance(StatusEffectsModded.ENDERSGAZE.get(), 120, 0));
         if (!((Player) p_43406_).isShiftKeyDown()) {
 
-            ((Player) p_43406_).getCooldowns().addCooldown(this, 160);
+            ((Player) p_43406_).getCooldowns().addCooldown(this, 40);
         }
 
             EndersEyeEntity eye = new EndersEyeEntity(ModEntities.ENDERS_EYE.get(),p_43406_.getLevel());
             eye.setPos(((Player) p_43406_).getEyePosition());
             eye.setOwner((Player) p_43406_);
-            eye.shootFromRotation(p_43406_,0,0,0,0,0);
-            p_43405_.addFreshEntity(eye);
+            if(p_43406_.getLastHurtMob() != null){
+                if(p_43406_.getLastHurtMob().isAlive() && player.distanceTo(player.getLastHurtMob()) <= player.getAttribute(ForgeMod.REACH_DISTANCE.get()).getValue() * 2){
+                    eye.target = p_43406_.getLastHurtMob();
+                }
+            }
+        List<EndersEyeEntity> eyes = p_43405_.getEntitiesOfClass(EndersEyeEntity.class,player.getBoundingBox().inflate(32),endersEyeEntity -> endersEyeEntity.getOwner() == player);
+            if(eyes.toArray().length >= 3){
+                EndersEyeEntity todelete = eyes.get(0);
+                for(EndersEyeEntity eyeEntity : eyes){
+                    if(eyeEntity.tickCount > todelete.tickCount){
+                        todelete = eyeEntity;
+                    }
+                }
+                todelete.discard();
+            }
+        eye.pos1 = ((Player) p_43406_).position().add(new Vec3(0, 1.5, 0)).add(new Vec3(0, player.getBoundingBox().getYsize() / 2, 0));
+        p_43405_.addFreshEntity(eye);
             return InteractionResultHolder.success(itemstack);
 
     }
     public boolean trigger(Level level, Player player, float modifier){
-        PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
 
-        if(playerMana.getMana() < -1 && player.getHealth() <= 2)
+        if(((Player)player).getAttributes().getBaseValue(manatick.WARD) < -1 && player.getHealth() <= 2)
         {
             return true;
         }
-        EndersEyeEntity eye = new EndersEyeEntity(ModEntities.ENDERS_EYE.get(),player.getLevel());
+        List<EndersEyeEntity> eyes = level.getEntitiesOfClass(EndersEyeEntity.class,player.getBoundingBox().inflate(32),endersEyeEntity -> endersEyeEntity.getOwner() == player);
+        if(eyes.toArray().length >= 3) {
+            EndersEyeEntity todelete = eyes.get(0);
+            for(EndersEyeEntity eyeEntity : eyes){
+                if(eyeEntity.tickCount > todelete.tickCount){
+                    todelete = eyeEntity;
+                }
+            }
+            todelete.discard();
+
+        }
+        EndersEyeEntity eye = new EndersEyeEntity(ModEntities.ENDERS_EYE.get(), player.getLevel());
         eye.setPos(player.getEyePosition());
         eye.setOwner(player);
-        eye.shootFromRotation(player,0,0,0,0,0);
+        if(player.getLastHurtMob() != null){
+            if(player.getLastHurtMob().isAlive() && player.distanceTo(player.getLastHurtMob()) <= player.getAttribute(ForgeMod.REACH_DISTANCE.get()).getValue() * 2){
+                eye.target = player.getLastHurtMob();
+            }
+        }
+        eye.pos1 = ((Player) player).position().add(new Vec3(0, 1.5, 0)).add(new Vec3(0, player.getBoundingBox().getYsize() / 2, 0));;
+
         level.addFreshEntity(eye);
-        player.getCooldowns().addCooldown(this, 160);
-        if (playerMana.getMana() < -1 && player.getHealth() > 2) {
+        player.getCooldowns().addCooldown(this,10);
+        if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -1 && player.getHealth() > 2) {
 
             player.invulnerableTime = 0;
             player.hurt(DamageSource.MAGIC, 2);
@@ -109,6 +130,19 @@ public class EndersEye extends Spell {
         }
         return false;
     }
+
+    @Override
+    public void inventoryTick(ItemStack p_41404_, Level level, Entity p_41406_, int p_41407_, boolean p_41408_) {
+        if(p_41406_ instanceof Player player) {
+            List<EndersEyeEntity> eyes = level.getEntitiesOfClass(EndersEyeEntity.class, player.getBoundingBox().inflate(64), endersEyeEntity -> endersEyeEntity.getOwner() == player);
+            if (eyes.toArray().length > 3) {
+                for (int ii = 3; ii < eyes.toArray().length; ii++) {
+                    eyes.get(ii).discard();
+                }
+            }
+        }
+    }
+
     @Override
     public boolean isFoil(ItemStack p_41453_) {
         if (p_41453_.hasTag()){

@@ -26,13 +26,15 @@ public class SpellRightClickHandler {
     @SubscribeEvent
     public static void onClick(ScreenEvent.MouseClickedEvent event){
         if ((event.getScreen() instanceof InventoryScreen screen && event.getButton() == 1)) {
-            ItemStack itemStack = Objects.requireNonNull(screen.getSlotUnderMouse()).getItem();
-            if (itemStack.getItem() instanceof Spell || itemStack.getItem() instanceof Guard) {
 
-                if (screen.getSlotUnderMouse() != null) {
-                    FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
-                    buf.writeInt(Objects.requireNonNull(screen.getSlotUnderMouse()).getSlotIndex());
-                    Messages.sendToServer(new ClickSpell(buf));
+            if (screen.getSlotUnderMouse() != null) {
+                ItemStack itemStack = Objects.requireNonNull(screen.getSlotUnderMouse()).getItem();
+                if (itemStack.getItem() instanceof FriendshipBracelet || itemStack.getItem() instanceof Spellblade||itemStack.getItem() instanceof Spell || itemStack.getItem() instanceof Guard) {
+
+                    if (screen.getSlotUnderMouse() != null) {
+                        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+                        buf.writeInt(Objects.requireNonNull(screen.getSlotUnderMouse()).getSlotIndex());
+                        Messages.sendToServer(new ClickSpell(buf));
                 /*CompoundTag nbt;
                 if (itemStack.hasTag()) {
                     nbt = itemStack.getTag();
@@ -42,7 +44,8 @@ public class SpellRightClickHandler {
                     nbt = itemStack.getOrCreateTag();
                     nbt.putInt("Triggerable", 1);
                 }*/
-                    event.setCanceled(true);
+                        event.setCanceled(true);
+                    }
                 }
             }
         }
@@ -52,7 +55,7 @@ public class SpellRightClickHandler {
                     ItemStack itemStack = Objects.requireNonNull(screen.getSlotUnderMouse()).getItem();
                     FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
                     buf.writeInt(Objects.requireNonNull(screen.getSlotUnderMouse()).getSlotIndex());
-                    if (itemStack.getItem() instanceof Spell || itemStack.getItem() instanceof Guard) {
+                    if (itemStack.getItem() instanceof FriendshipBracelet || itemStack.getItem() instanceof Spellblade|| itemStack.getItem() instanceof Spell || itemStack.getItem() instanceof Guard) {
                         Messages.sendToServer(new ClickSpell(buf));
                 /*CompoundTag nbt;
                 if (itemStack.hasTag()) {

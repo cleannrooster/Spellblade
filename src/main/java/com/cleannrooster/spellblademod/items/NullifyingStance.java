@@ -1,5 +1,6 @@
 package com.cleannrooster.spellblademod.items;
 
+import com.cleannrooster.spellblademod.entity.sword1;
 import com.cleannrooster.spellblademod.manasystem.network.ClickSpell;
 import com.cleannrooster.spellblademod.setup.Messages;
 import io.netty.buffer.Unpooled;
@@ -66,13 +67,19 @@ public class NullifyingStance extends Guard{
         int entityamount = entitiesarray.length;
         for (int ii = 0; ii < entityamount; ii = ii + 1) {
             Projectile projectile = (Projectile) entities.get(ii);
-            FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer()).writeBlockPos(projectile.blockPosition());
-            buf.writeInt(0);
-            if (level.getServer() != null) {
+            if (level.getServer() != null && !(projectile instanceof sword1)) {
+                int intarray[];
+                intarray = new int[3];
+                intarray[0] = (int) Math.round(projectile.getBoundingBox().getCenter().x);
+                intarray[1] = (int) Math.round(projectile.getBoundingBox().getCenter().y);
+                intarray[2] = (int) Math.round(projectile.getBoundingBox().getCenter().z);
+                FriendlyByteBuf buf =new FriendlyByteBuf(Unpooled.buffer()).writeVarIntArray(intarray);
                 Stream<ServerPlayer> serverplayers = level.getServer().getPlayerList().getPlayers().stream();
-                serverplayers.forEach(player2 ->
-                        Messages.sendToPlayer(new ParticlePacket(buf), (ServerPlayer) player2));
-
+                ParticlePacket packet = new ParticlePacket(buf);
+                for (ServerPlayer player2 : ((ServerLevel) level).getPlayers(serverPlayer -> serverPlayer.hasLineOfSight(projectile))){
+                    System.out.println(packet);
+                    Messages.sendToPlayer(packet, (ServerPlayer) player2);
+                }
                 level.playSound((Player) null, projectile.getX(), projectile.getY(), projectile.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, player.getSoundSource(), 1.0F, 1.0F);
                 player.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, 1.0F, 1.0F);
                 projectile.discard();

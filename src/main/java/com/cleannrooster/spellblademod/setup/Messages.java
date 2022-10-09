@@ -3,6 +3,7 @@ package com.cleannrooster.spellblademod.setup;
 
 import com.cleannrooster.spellblademod.items.ParticlePacket;
 import com.cleannrooster.spellblademod.manasystem.network.ClickSpell;
+import com.cleannrooster.spellblademod.manasystem.network.Hurt;
 import com.cleannrooster.spellblademod.manasystem.network.PacketSyncManaToClient;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -44,6 +45,11 @@ public class Messages {
                 .decoder(ParticlePacket::new)
                 .encoder(ParticlePacket::toBytes)
                 .consumer(ParticlePacket::handle)
+                .add();
+        net.messageBuilder(Hurt.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(Hurt::new)
+                .encoder(Hurt::toBytes)
+                .consumer(Hurt::handle)
                 .add();
     }
 

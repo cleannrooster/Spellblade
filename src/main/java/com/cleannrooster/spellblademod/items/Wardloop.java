@@ -1,8 +1,6 @@
 package com.cleannrooster.spellblademod.items;
 
 import com.cleannrooster.spellblademod.StatusEffectsModded;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -26,7 +24,6 @@ public class Wardloop extends Item{
 
     public InteractionResultHolder<ItemStack> use(Level p_41432_, Player p_41433_, InteractionHand p_41434_) {
         Player player = p_41433_;
-        PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
         ItemStack itemstack = p_41433_.getItemInHand(p_41434_);
         if (!p_41432_.isClientSide()) {
             CompoundTag nbt;

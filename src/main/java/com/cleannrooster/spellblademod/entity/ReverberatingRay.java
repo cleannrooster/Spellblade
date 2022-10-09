@@ -1,8 +1,8 @@
 package com.cleannrooster.spellblademod.entity;
 
 import com.cleannrooster.spellblademod.items.ReverberatingRayItem;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
+import com.cleannrooster.spellblademod.manasystem.manatick;
+import com.google.common.collect.ImmutableMultimap;
 import com.mojang.math.Vector3f;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Position;
@@ -17,6 +17,9 @@ import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.ItemSupplier;
@@ -29,6 +32,7 @@ import net.minecraft.world.phys.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 import static java.lang.Math.cos;
@@ -111,11 +115,10 @@ public class ReverberatingRay extends AbstractArrow implements ItemSupplier {
             if (tickCount % 10 == 1) {
 
                 if (!this.triggered) {
-                    PlayerMana playerMana = this.getOwner().getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
 
-                    playerMana.addMana(-20);
+                    ((Player)this.getOwner()).getAttribute(manatick.WARD).setBaseValue(((Player) this.getOwner()).getAttributeBaseValue(manatick.WARD)-10);
 
-                    if (playerMana.getMana() < -21) {
+                    if (((Player)this.getOwner()).getAttributes().getBaseValue(manatick.WARD) < -21) {
                         this.getOwner().hurt(DamageSource.MAGIC, 2);
                     }
                 }
@@ -160,26 +163,47 @@ public class ReverberatingRay extends AbstractArrow implements ItemSupplier {
 
                 for (int ii = 0; ii < list.toArray().length; ii++) {
                     Optional<Vec3> vec1 = list.get(ii).getBoundingBox().inflate(0.5).clip(this.getOwner().getEyePosition(), (Vec3) pos1);
-                    if (vec1.isPresent() && ((LivingEntity)this.getOwner()).hasLineOfSight(list.get(ii))&& list.get(ii) != this.getOwner()) {
-                        list.get(ii).invulnerableTime = 0;
-                        list.get(ii).hurt(new EntityDamageSource("spell",(Player) this.getOwner()), 6);
-                        list.get(ii).invulnerableTime = 0;
+                    if (list.get(ii) instanceof LivingEntity target && vec1.isPresent() && ((LivingEntity)this.getOwner()).hasLineOfSight(list.get(ii))&& list.get(ii) != this.getOwner()) {
+                        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(),"knockbackresist",1, AttributeModifier.Operation.ADDITION);
+
+                        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+                        builder.put(Attributes.KNOCKBACK_RESISTANCE, modifier);
+                        target.getAttributes().addTransientAttributeModifiers(builder.build());
+                        target.invulnerableTime = 0;
+                        target.hurt(new EntityDamageSource("spell", this.getOwner()), 4);
+
+                        target.getAttributes().removeAttributeModifiers(builder.build());
+                        target.invulnerableTime = 0;
                     }
                 }
                 for (int ii = 0; ii < list2.toArray().length; ii++) {
                     Optional<Vec3> vec1 = list2.get(ii).getBoundingBox().inflate(0.5).clip(this.getOwner().getEyePosition(), (Vec3) pos2);
-                    if (vec1.isPresent() && ((LivingEntity)this.getOwner()).hasLineOfSight(list2.get(ii))&& list2.get(ii) != this.getOwner()) {
-                        list2.get(ii).invulnerableTime = 0;
-                        list2.get(ii).hurt(new EntityDamageSource("spell",(Player) this.getOwner()), 6);
-                        list2.get(ii).invulnerableTime = 0;
+                    if (list2.get(ii) instanceof LivingEntity target && vec1.isPresent() && ((LivingEntity)this.getOwner()).hasLineOfSight(list2.get(ii))&& list2.get(ii) != this.getOwner()) {
+                        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(),"knockbackresist",1, AttributeModifier.Operation.ADDITION);
+
+                        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+                        builder.put(Attributes.KNOCKBACK_RESISTANCE, modifier);
+                        target.getAttributes().addTransientAttributeModifiers(builder.build());
+                        target.invulnerableTime = 0;
+                        target.hurt(new EntityDamageSource("spell", this.getOwner()), 4);
+
+                        target.getAttributes().removeAttributeModifiers(builder.build());
+                        target.invulnerableTime = 0;
                     }
                 }
                 for (int ii = 0; ii < list3.toArray().length; ii++) {
                     Optional<Vec3> vec1 = list3.get(ii).getBoundingBox().inflate(0.5).clip(this.getOwner().getEyePosition(), (Vec3) pos3);
-                    if (vec1.isPresent() && ((LivingEntity)this.getOwner()).hasLineOfSight(list3.get(ii))&& list3.get(ii) != this.getOwner()) {
-                        list3.get(ii).invulnerableTime = 0;
-                        list3.get(ii).hurt(new EntityDamageSource("spell",(Player) this.getOwner()), 6);
-                        list3.get(ii).invulnerableTime = 0;
+                    if (list3.get(ii) instanceof LivingEntity target && vec1.isPresent() && ((LivingEntity)this.getOwner()).hasLineOfSight(list3.get(ii))&& list3.get(ii) != this.getOwner()) {
+                        AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(),"knockbackresist",1, AttributeModifier.Operation.ADDITION);
+
+                        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+                        builder.put(Attributes.KNOCKBACK_RESISTANCE, modifier);
+                        target.getAttributes().addTransientAttributeModifiers(builder.build());
+                        target.invulnerableTime = 0;
+                        target.hurt(new EntityDamageSource("spell", this.getOwner()), 4);
+
+                        target.getAttributes().removeAttributeModifiers(builder.build());
+                        target.invulnerableTime = 0;
                     }
                 }
             }

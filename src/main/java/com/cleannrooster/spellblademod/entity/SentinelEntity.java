@@ -87,6 +87,7 @@ public class SentinelEntity extends PathfinderMob {
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, LivingEntity.class, true, p_21024_ ->{
             return !p_21024_.hasEffect(StatusEffectsModded.TOTEMIC_ZEAL.get());}));
     }
+
     public void tick() {
         this.addEffect(new MobEffectInstance(StatusEffectsModded.TOTEMIC_ZEAL.get(), 190, 0));
         super.tick();
@@ -97,25 +98,27 @@ public class SentinelEntity extends PathfinderMob {
                 LivingEntity livingentity = (LivingEntity) entities.get(ii);
                 boolean flag2 = false;
                 if (this.distanceToSqr(livingentity) < 81 && SentinelEntity.this.tickCount % 10 == 0 && !livingentity.hasEffect(StatusEffectsModded.TOTEMIC_ZEAL.get())) {
-                    int i = 0;
-                    int num_pts = 100;
-                    int num_pts_line = 25;
-                    for (int iii = 0; iii < num_pts_line; iii++) {
-                        double X = this.getEyePosition().x + (livingentity.getEyePosition().x - this.getEyePosition().x) * ((double) iii / (num_pts_line));
-                        double Y = this.getEyePosition().y + (livingentity.getEyePosition().y - this.getEyePosition().y) * ((double) iii / (num_pts_line));
-                        double Z = this.getEyePosition().z + (livingentity.getEyePosition().z - this.getEyePosition().z) * ((double) iii / (num_pts_line));
-                        this.getLevel().addParticle(DustParticleOptions.REDSTONE, X, Y, Z, 0, 0, 0);
-                    }
-                    for (i = 0; i <= num_pts; i = i + 1) {
-                        double[] indices = IntStream.rangeClosed(0, (int) ((100)))
-                                .mapToDouble(x -> x * 1 + 0).toArray();
+                    if(this.getLevel().isClientSide()) {
+                        int i = 0;
+                        int num_pts = 100;
+                        int num_pts_line = 25;
+                        for (int iii = 0; iii < num_pts_line; iii++) {
+                            double X = this.getEyePosition().x + (livingentity.getEyePosition().x - this.getEyePosition().x) * ((double) iii / (num_pts_line));
+                            double Y = this.getEyePosition().y + (livingentity.getEyePosition().y - this.getEyePosition().y) * ((double) iii / (num_pts_line));
+                            double Z = this.getEyePosition().z + (livingentity.getEyePosition().z - this.getEyePosition().z) * ((double) iii / (num_pts_line));
+                            this.getLevel().addParticle(DustParticleOptions.REDSTONE, X, Y, Z, 0, 0, 0);
+                        }
+                        for (i = 0; i <= num_pts; i = i + 1) {
+                            double[] indices = IntStream.rangeClosed(0, (int) ((100)))
+                                    .mapToDouble(x -> x * 1 + 0).toArray();
 
-                        double phi = Math.acos(1 - 2 * indices[i] / num_pts);
-                        double theta = Math.PI * (1 + Math.pow(5, 0.5) * indices[i]);
-                        double x = cos(theta) * sin(phi);
-                        double y = Math.sin(theta) * sin(phi);
-                        double z = cos(phi);
-                        this.getLevel().addParticle((ParticleOptions) DustParticleOptions.REDSTONE, livingentity.getEyePosition().x + 1.5 * x, livingentity.getEyePosition().y + 1.5 * y, livingentity.getEyePosition().z + 1.5 * z, 0, 0, 0);
+                            double phi = Math.acos(1 - 2 * indices[i] / num_pts);
+                            double theta = Math.PI * (1 + Math.pow(5, 0.5) * indices[i]);
+                            double x = cos(theta) * sin(phi);
+                            double y = Math.sin(theta) * sin(phi);
+                            double z = cos(phi);
+                            this.getLevel().addParticle((ParticleOptions) DustParticleOptions.REDSTONE, livingentity.getEyePosition().x + 1.5 * x, livingentity.getEyePosition().y + 1.5 * y, livingentity.getEyePosition().z + 1.5 * z, 0, 0, 0);
+                        }
                     }
                     livingentity.invulnerableTime = 0;
                     livingentity.hurt(new EntityDamageSource("spell", SentinelEntity.this), 6);

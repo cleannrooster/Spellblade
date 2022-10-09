@@ -19,21 +19,16 @@ import java.util.function.Supplier;
 
 public class ParticlePacket {
     public static final String MESSAGE_NO_MANA = "message.nomana";
-    private static int slot;
-    private BlockPos blockPos;
-    private int type;
+    public static int[] bytearray;
     public ParticlePacket(int i) {
-        slot = i;
     }
 
     public ParticlePacket(FriendlyByteBuf buf) {
-        blockPos = buf.readBlockPos();
-        type = buf.readInt();
+        bytearray = buf.readVarIntArray();
     }
 
     public void toBytes(FriendlyByteBuf buf) {
-        buf.writeBlockPos(blockPos);
-        buf.writeInt(type);
+        buf.writeVarIntArray(bytearray);
 
     }
 
@@ -41,17 +36,12 @@ public class ParticlePacket {
         NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
             // Here we are server side
-            if (type == 1){
-                Random rand = new Random();
-                Vec3 vec = new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-                Vec3 vec3 = vec.add(new Vec3(rand.nextDouble(-2, 2), rand.nextDouble(-2, 2), rand.nextDouble(-2, 2)));
-                Vec3 vec31 = vec.subtract(vec3).normalize();
-                Minecraft.getInstance().particleEngine.createParticle(ParticleTypes.SWEEP_ATTACK, vec3.x(), vec3.y(), vec3.z(),vec31.x()*0.5, vec31.y()*0.5, vec31.z()*0.5);
-            }
-            else {
-                Minecraft.getInstance().particleEngine.createParticle(ParticleTypes.SWEEP_ATTACK, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 0, 0, 0);
-            }
-            });
+            Random rand = new Random();
+            Vec3 vec = new Vec3((double) bytearray[0], (double)bytearray[1], (double)bytearray[2]);
+            Vec3 vec3 = vec.add(new Vec3(rand.nextDouble(-2, 2), rand.nextDouble(-2, 2), rand.nextDouble(-2, 2)));
+            Vec3 vec31 = vec.subtract(vec3).normalize();
+            Minecraft.getInstance().particleEngine.createParticle(ParticleTypes.SWEEP_ATTACK, vec3.x(), vec3.y(), vec3.z(),vec31.x()*0.5, vec31.y()*0.5, vec31.z()*0.5);
+        });
         return true;
     }
 }

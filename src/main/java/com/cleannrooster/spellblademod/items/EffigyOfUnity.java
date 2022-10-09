@@ -3,8 +3,7 @@ package com.cleannrooster.spellblademod.items;
 import com.cleannrooster.spellblademod.StatusEffectsModded;
 import com.cleannrooster.spellblademod.blocks.WardingTotemBlock;
 import com.cleannrooster.spellblademod.blocks.WardingTotemBlockEntity;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
+import com.cleannrooster.spellblademod.manasystem.manatick;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -43,10 +42,9 @@ public class EffigyOfUnity extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level p_41432_, Player p_41433_, InteractionHand p_41434_) {
         Player player = p_41433_;
-        PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
         ItemStack itemstack = p_41433_.getItemInHand(p_41434_);
 
-        if(playerMana.getMana()< 159 ){
+        if(((Player)player).getAttributes().getBaseValue(manatick.WARD)< 159 ){
             return InteractionResultHolder.fail(itemstack);
         }
         else {

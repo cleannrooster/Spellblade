@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smithing",
+  "base": {
+    "item": "minecraft:totem_of_undying"
+  },
+  "addition": {
+    "item": "spellblademod:splitting_trident"
+  },
+  "result": {
+    "item": "spellblademod:lightning_effigy"
+  }
+}

@@ -30,6 +30,8 @@ public class FluxEntity extends AbstractArrow implements ItemSupplier {
     public float explosionPower = 1F;
     public LivingEntity target;
     public boolean overload = false;
+    public boolean first = false;
+
     public float amount = 0;
     public boolean bool;
     public boolean bool2;
@@ -78,7 +80,6 @@ public class FluxEntity extends AbstractArrow implements ItemSupplier {
     public boolean isAttackable() {
         return false;
     }
-
     @Override
     public void tick() {
         pickup = Pickup.DISALLOWED;
@@ -108,12 +109,16 @@ public class FluxEntity extends AbstractArrow implements ItemSupplier {
 
             double d0 = 0.05D * (double)2;
             this.setDeltaMovement(this.getDeltaMovement().scale(0.95D).add(vec3.normalize().scale(d0)));
-            if(vec3.length() < 0.5){
+            if(this.getBoundingBox().intersects(this.target.getBoundingBox())){
                 if(this.getOwner() instanceof Player) {
                     if (this.overload) {
                         if(this.target.hasEffect(StatusEffectsModded.FLUXED.get())){
-                            this.target.hurt(DamageSourceModded.fluxed((Player) this.getOwner()), this.amount * 2.5F);
+                            this.target.invulnerableTime = 0;
+                            this.target.hurt(DamageSourceModded.fluxed((Player) this.getOwner()), this.amount * 1.5F);
+                            this.target.invulnerableTime = 0;
+                            this.target.hurt(DamageSourceModded.fluxed((Player) this.getOwner()), this.amount);
                             FluxHandler.fluxHandler2(this.target, (Player) this.getOwner(), this.amount, this.level, this.list);
+
                         }
 
 
@@ -122,7 +127,7 @@ public class FluxEntity extends AbstractArrow implements ItemSupplier {
                             this.discard();
                         }
                         else {
-                            FluxItem.FluxFlux((Player) this.getOwner(), this.target, this.level, this.list);
+                            FluxItem.FluxFlux((Player) this.getOwner(), this.target, this.level, this.list,first);
                         }
                     }
                 }

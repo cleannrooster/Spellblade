@@ -4,8 +4,7 @@ import com.cleannrooster.spellblademod.StatusEffectsModded;
 import com.cleannrooster.spellblademod.effects.DamageSourceModded;
 import com.cleannrooster.spellblademod.entity.ModEntities;
 import com.cleannrooster.spellblademod.entity.VolatileEntity;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
+import com.cleannrooster.spellblademod.manasystem.manatick;
 import com.mojang.math.Vector3d;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleOptions;
@@ -68,14 +67,13 @@ public class Volatile extends Spell{
 
         }
         if (!player.getMainHandItem().isEdible()) {
-            PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
 
                 VolatileEntity volatile1 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
                 VolatileEntity volatile2 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
                 VolatileEntity volatile3 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
 
 
-                List entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(player.getX() - 6, player.getY() - 6, player.getZ() - 6, player.getX() + 6, player.getY() + 6, player.getZ() + 6));
+            List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class,player.getBoundingBox().inflate(6D),livingEntity -> {return FriendshipBracelet.PlayerFriendshipPredicate((Player) player,livingEntity);});
                 Object[] entitiesarray = entities.toArray();
                 boolean flag1 = false;
                 if (player.getInventory().contains(ModItems.FRIENDSHIP.get().getDefaultInstance())){
@@ -89,15 +87,15 @@ public class Volatile extends Spell{
                     if (target.getClassification(false).isFriendly() || target instanceof Player || (target instanceof NeutralMob)) {
                         flag2 = true;
                     }
-                    if (target != player && !(flag1 && flag2) && target.hasLineOfSight(player)) {
+                    if (target != player && target.hasLineOfSight(player)) {
                         validtargets.add(target);
 
                     }
                 }
                 if (!validtargets.isEmpty()){
-                    playerMana.addMana(-40);
+                    ((Player)player).getAttribute(manatick.WARD).setBaseValue(((Player) player).getAttributeBaseValue(manatick.WARD)-20);
 
-                    if (playerMana.getMana() < -21) {
+                    if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -21) {
                         player.hurt(DamageSource.MAGIC,2);
                     }
                     if (!player.isShiftKeyDown()) {
@@ -184,8 +182,7 @@ public class Volatile extends Spell{
     public boolean trigger(Level level, Player player, float modifier) {
 
 
-        List entities = level.getEntitiesOfClass(LivingEntity.class, new AABB(player.getX() - 6, player.getY() - 6, player.getZ() - 6, player.getX() + 6, player.getY() + 6, player.getZ() + 6));
-        Object[] entitiesarray = entities.toArray();
+        List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class,player.getBoundingBox().inflate(6D),livingEntity -> {return FriendshipBracelet.PlayerFriendshipPredicate((Player) player,livingEntity);});          Object[] entitiesarray = entities.toArray();
         boolean flag1 = false;
         if (player.getInventory().contains(ModItems.FRIENDSHIP.get().getDefaultInstance())){
             flag1 = true;
@@ -198,14 +195,13 @@ public class Volatile extends Spell{
             if (target.getClassification(false).isFriendly() || target instanceof Player || (target instanceof NeutralMob)) {
                 flag2 = true;
             }
-            if (target != player && !(flag1 && flag2) && target.hasLineOfSight(player)) {
+            if (target != player && target.hasLineOfSight(player)) {
                 validtargets.add(target);
             }
         }
         if (!validtargets.isEmpty()){
-            PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
 
-            if(playerMana.getMana() < -1 && player.getHealth() <= 2)
+            if(((Player)player).getAttributes().getBaseValue(manatick.WARD)< -1 && player.getHealth() <= 2)
             {
                 return true;
             }
@@ -278,7 +274,7 @@ public class Volatile extends Spell{
                 level.addFreshEntity(volatile3);
 
             }
-            if (playerMana.getMana() < -1 && player.getHealth() > 2) {
+            if (((Player)player).getAttributes().getBaseValue(manatick.WARD)< -1 && player.getHealth() > 2) {
 
                 player.invulnerableTime = 0;
                 player.hurt(DamageSource.MAGIC, 2);

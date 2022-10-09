@@ -1,18 +1,38 @@
 package com.cleannrooster.spellblademod;
 
 import com.cleannrooster.spellblademod.items.ModItems;
+import com.cleannrooster.spellblademod.items.ParticlePacket;
+import com.cleannrooster.spellblademod.items.Spellblade;
 import com.cleannrooster.spellblademod.items.WardArmorItem;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
+import com.cleannrooster.spellblademod.manasystem.manatick;
+import com.cleannrooster.spellblademod.manasystem.network.Hurt;
+import com.cleannrooster.spellblademod.setup.Messages;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.mojang.datafixers.util.Pair;
+import io.netty.buffer.Unpooled;
 import net.minecraft.client.resources.sounds.Sound;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ShieldItem;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static java.lang.Math.pow;
@@ -26,7 +46,6 @@ public class ArmorHandler {
             Player player = (Player) event.getEntityLiving();
             int flagd = 0;
             int flagg = 0;
-            PlayerMana playerMana = event.getEntityLiving().getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
             if (player.getInventory().getArmor(0).getItem() == ModItems.DIAMOND_WARDING_BOOTS.get())
             {
                 flagd = flagd + 1;
@@ -67,11 +86,21 @@ public class ArmorHandler {
             {
                 flagg = flagg + 1;
             }*/
-            double multiplier = (double) Math.pow(0.5,(double)(playerMana.getMana()+0)/50);
+            double multiplier = (double) Math.pow(0.5,(double)(player.getAttribute(manatick.WARD).getValue()+0)/50);
             if (event.getSource().isMagic()){
                 multiplier = 1;
             }
-            event.setAmount((float)(event.getAmount()*multiplier));
+            if(player.getAttribute(manatick.WARD).getValue() > -1) {
+                player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDABSORPTION.get(), 0, (int) Math.round((player.getAttribute(manatick.WARD).getValue()+1)/40F)));
+
+            }
+
+            if(player.getAttribute(manatick.WARD).getValue() > 19){
+                double amount = player.getAttribute(manatick.WARD).getValue()/2;
+
+                player.getAttribute(manatick.WARD).setBaseValue(amount);
+
+            }
 
             int threshold = 160;
             if (flagd >= 1){

@@ -1,24 +1,34 @@
 package com.cleannrooster.spellblademod.entity;
 
+import com.cleannrooster.spellblademod.items.FriendshipBracelet;
+import com.google.common.collect.ImmutableMultimap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.EntityDamageSource;
+import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.*;
+import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.*;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 import static java.lang.Math.cos;
@@ -37,40 +47,40 @@ public boolean secondary = false;
         Entity entity = p_37573_.getEntity();
         float f = 8.0F;
         if (entity instanceof LivingEntity) {
-            LivingEntity livingentity = (LivingEntity)entity;
+            LivingEntity livingentity = (LivingEntity) entity;
             f += EnchantmentHelper.getDamageBonus(this.tridentItem, livingentity.getMobType());
         }
         float multi;
-        if (!this.triggered){
+        if (!this.triggered) {
             multi = 1;
-        }
-        else {
+        } else {
             multi = 0.5F;
         }
         Entity entity1 = this.getOwner();
-        if (entity1 == p_37573_.getEntity()){
+        if (entity1 == p_37573_.getEntity()) {
             this.discard();
             return;
         }
-        DamageSource damagesource = DamageSource.trident(this, (Entity)(entity1 == null ? this : entity1));
+        DamageSource damagesource = DamageSource.trident(this, this.getOwner());
         this.dealtDamage = true;
         SoundEvent soundevent = SoundEvents.TRIDENT_HIT;
         entity.invulnerableTime = 0;
-        if (entity.hurt(damagesource, f*multi)) {
-            if (entity.getType() == EntityType.ENDERMAN) {
-                return;
-            }
 
-            if (entity instanceof LivingEntity) {
-                LivingEntity livingentity1 = (LivingEntity)entity;
+        if (entity instanceof LivingEntity) {
+            if (FriendshipBracelet.PlayerFriendshipPredicate((Player) this.getOwner(), (LivingEntity) entity)) {
+                entity.hurt(damagesource, 4);
+                if (entity.getType() == EntityType.ENDERMAN) {
+                    return;
+                }
+
+                LivingEntity livingentity1 = (LivingEntity) entity;
                 if (entity1 instanceof LivingEntity) {
                     EnchantmentHelper.doPostHurtEffects(livingentity1, entity1);
-                    EnchantmentHelper.doPostDamageEffects((LivingEntity)entity1, livingentity1);
+                    EnchantmentHelper.doPostDamageEffects((LivingEntity) entity1, livingentity1);
                 }
                 this.doPostHurtEffects(livingentity1);
             }
         }
-        entity.invulnerableTime = 0;
 
         this.setDeltaMovement(this.getDeltaMovement().multiply(-0.01D, -0.1D, -0.01D));
         float f1 = 1.0F;
@@ -97,12 +107,12 @@ public boolean secondary = false;
         }
             float multi;
             if (!this.triggered){
-                multi = 1;
+                multi = 1F;
             }
             else{
-                multi = 0.5F;
+                multi = 0.75F;
             }
-            int num_pts = 75;
+            int num_pts = 100;
             LivingEntity entity = (LivingEntity) this.getOwner();
             /*if (this.getLevel().isClientSide)
             {
@@ -124,15 +134,23 @@ public boolean secondary = false;
             //}
         if (this.getOwner() != null) {
 
-            List<LivingEntity> entities = this.level.getEntitiesOfClass(LivingEntity.class, new AABB(this.getX() - 4, this.getY() + 0.5 - 4, this.getZ() - 4, this.getX() + 4, this.getY() + 4, this.getZ() + 4));
+            List<LivingEntity> entities = this.getLevel().getEntitiesOfClass(LivingEntity.class,this.getBoundingBox().inflate(6D),livingEntity -> {return FriendshipBracelet.PlayerFriendshipPredicate((Player) this.getOwner(),livingEntity);});
+
             Object[] entitiesarray = entities.toArray();
             int entityamount = entitiesarray.length;
+
             for (int ii = 0; ii < entityamount; ii = ii + 1) {
                 LivingEntity target = (LivingEntity) entities.get(ii);
                 if (target != this.getOwner() && target.hasLineOfSight(this)) {
+                    AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(),"knockbackresist",1, AttributeModifier.Operation.ADDITION);
+
+                    ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+                    builder.put(Attributes.KNOCKBACK_RESISTANCE, modifier);
+                    target.getAttributes().addTransientAttributeModifiers(builder.build());
                     target.invulnerableTime = 0;
-                    target.hurt(DamageSource.trident(this, this.getOwner()), 8*multi);
-                    target.invulnerableTime = 0;
+                    target.hurt(new IndirectEntityDamageSource("spell",this,this.getOwner()), 3);
+
+                    target.getAttributes().removeAttributeModifiers(builder.build());
                 }
 
             }

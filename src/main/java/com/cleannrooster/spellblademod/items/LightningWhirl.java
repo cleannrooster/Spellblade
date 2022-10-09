@@ -1,7 +1,6 @@
 package com.cleannrooster.spellblademod.items;
 
-import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
+import com.cleannrooster.spellblademod.manasystem.manatick;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -86,10 +85,9 @@ public class LightningWhirl extends Spell{
 
         }
         if (!p_43406_.getMainHandItem().isEdible()) {
-            PlayerMana playerMana = p_43406_.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-            playerMana.addMana(-40);
+            ((Player)p_43406_).getAttribute(manatick.WARD).setBaseValue(((Player) p_43406_).getAttributeBaseValue(manatick.WARD)-20);
 
-            if (playerMana.getMana() < -21) {
+            if (((Player)p_43406_).getAttributes().getBaseValue(manatick.WARD) < -21) {
                 p_43406_.hurt(DamageSource.MAGIC,2);
             }
                 p_43406_.getCooldowns().addCooldown(this,20);
@@ -121,8 +119,7 @@ public class LightningWhirl extends Spell{
 
     public boolean trigger(Level level, Player player, float modifier) {
 
-        PlayerMana playerMana = player.getCapability(PlayerManaProvider.PLAYER_MANA).orElse(null);
-        if(playerMana.getMana() < -1 && player.getHealth() <= 2)
+        if(((Player)player).getAttributes().getBaseValue(manatick.WARD) < -1 && player.getHealth() <= 2)
         {
             return true;
         }
@@ -147,7 +144,7 @@ public class LightningWhirl extends Spell{
         soundevent = SoundEvents.TRIDENT_RIPTIDE_3;
 
         level.playSound((Player) null, player, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
-        if (playerMana.getMana() < -1 && player.getHealth() > 2) {
+        if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -1 && player.getHealth() > 2) {
 
             player.invulnerableTime = 0;
             player.hurt(DamageSource.MAGIC, 2);

@@ -1,13 +1,13 @@
 package com.cleannrooster.spellblademod.items;
 
 import com.cleannrooster.spellblademod.StatusEffectsModded;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerMana;
-import com.cleannrooster.spellblademod.manasystem.data.PlayerManaProvider;
 import com.cleannrooster.spellblademod.setup.Messages;
 import io.netty.buffer.Unpooled;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.PlayerList;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -19,10 +19,12 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.behavior.EntityTracker;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.stream.Stream;
 
@@ -68,12 +70,20 @@ public class VengefulStanceItem extends Guard{
         level.playSound((Player) null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, player.getSoundSource(), 1.0F, 1.0F);
         player.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, 1.0F, 1.0F);
         entity.hurt(DamageSource.playerAttack(player), (float) player.getAttribute(Attributes.ATTACK_DAMAGE).getValue());
-        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer()).writeBlockPos(entity.blockPosition());
-        buf.writeInt(0);
+
         if (level.getServer() != null) {
+            int intarray[];
+            intarray = new int[3];
+            intarray[0] = (int) Math.round(entity.getBoundingBox().getCenter().x);
+            intarray[1] = (int) Math.round(entity.getBoundingBox().getCenter().y);
+            intarray[2] = (int) Math.round(entity.getBoundingBox().getCenter().z);
+            FriendlyByteBuf buf =new FriendlyByteBuf(Unpooled.buffer()).writeVarIntArray(intarray);
             Stream<ServerPlayer> serverplayers = level.getServer().getPlayerList().getPlayers().stream();
-            serverplayers.forEach(player2 ->
-                    Messages.sendToPlayer(new ParticlePacket(buf), (ServerPlayer) player2));
+            ParticlePacket packet = new ParticlePacket(buf);
+            for (ServerPlayer player2 : ((ServerLevel) level).getPlayers(serverPlayer -> serverPlayer.hasLineOfSight(entity))){
+                System.out.println(packet);
+                Messages.sendToPlayer(packet, (ServerPlayer) player2);
+            }
 
         }
     }
