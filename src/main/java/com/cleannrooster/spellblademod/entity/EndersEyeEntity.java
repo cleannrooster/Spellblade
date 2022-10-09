@@ -16,6 +16,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -166,8 +167,8 @@ public class EndersEyeEntity extends Projectile implements ItemSupplier {
                                     flag2 = true;
                                 }
                                 if (target != this.getOwner() && !Objects.requireNonNullElse(this.blacklist, new ArrayList()).contains(target) && !this.getLevel().isClientSide()) {
-                                    if(this.getOwner() instanceof ServerPlayer serverPlayer){
-                                        Messages.sendToPlayer(new ParticlePacket2(this.getX(),this.getY(),this.getZ(),this.target.getX(),this.target.getEyeY(),this.target.getZ()),serverPlayer);
+                                    for(ServerPlayer serverPlayer: ((ServerLevel)this.getLevel()).players()) {
+                                        Messages.sendToPlayer(new ParticlePacket2(this.getX(), this.getY(), this.getZ(), this.target.getX(), this.target.getEyeY(), this.target.getZ()), serverPlayer);
                                     }
                                     target.invulnerableTime = 0;
                                     AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "knockbackresist", 1, AttributeModifier.Operation.ADDITION);
