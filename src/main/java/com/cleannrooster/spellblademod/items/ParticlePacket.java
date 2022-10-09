@@ -41,6 +41,8 @@ public class ParticlePacket {
             Vec3 vec3 = vec.add(new Vec3(rand.nextDouble(-2, 2), rand.nextDouble(-2, 2), rand.nextDouble(-2, 2)));
             Vec3 vec31 = vec.subtract(vec3).normalize();
             Minecraft.getInstance().particleEngine.createParticle(ParticleTypes.SWEEP_ATTACK, vec3.x(), vec3.y(), vec3.z(),vec31.x()*0.5, vec31.y()*0.5, vec31.z()*0.5);
+
+
         });
         return true;
     }

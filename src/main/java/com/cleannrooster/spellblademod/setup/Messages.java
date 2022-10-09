@@ -2,6 +2,7 @@ package com.cleannrooster.spellblademod.setup;
 
 
 import com.cleannrooster.spellblademod.items.ParticlePacket;
+import com.cleannrooster.spellblademod.items.ParticlePacket2;
 import com.cleannrooster.spellblademod.manasystem.network.ClickSpell;
 import com.cleannrooster.spellblademod.manasystem.network.Hurt;
 import com.cleannrooster.spellblademod.manasystem.network.PacketSyncManaToClient;
@@ -45,6 +46,11 @@ public class Messages {
                 .decoder(ParticlePacket::new)
                 .encoder(ParticlePacket::toBytes)
                 .consumer(ParticlePacket::handle)
+                .add();
+        net.messageBuilder(ParticlePacket2.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(ParticlePacket2::new)
+                .encoder(ParticlePacket2::toBytes)
+                .consumer(ParticlePacket2::handle)
                 .add();
         net.messageBuilder(Hurt.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(Hurt::new)

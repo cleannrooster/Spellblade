@@ -2,6 +2,7 @@ package com.cleannrooster.spellblademod.items;
 
 import com.cleannrooster.spellblademod.StatusEffectsModded;
 import com.cleannrooster.spellblademod.entity.FluxEntity;
+import com.cleannrooster.spellblademod.entity.InvisiVex;
 import com.cleannrooster.spellblademod.entity.ModEntities;
 import com.cleannrooster.spellblademod.manasystem.manatick;
 import com.mojang.math.Vector3f;
@@ -154,6 +155,13 @@ public class FluxItem extends Spell {
 
                 if (target.hasEffect(StatusEffectsModded.FLUXED.get()) || first) {
                     List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class,target.getBoundingBox().inflate(3D),livingEntity -> {return FriendshipBracelet.PlayerFriendshipPredicate((Player) entity,livingEntity);});
+                    entities.removeIf(livingEntity -> {
+                        if (livingEntity instanceof InvisiVex vex) {
+                            return vex.owner2 == entity;
+                        } else {
+                            return false;
+                        }
+                    });
                     Object[] entitiesarray = entities.toArray();
                     int iii = 0;
                     for (int ii = 0; ii < entitiesarray.length; ii = ii + 1) {
@@ -197,6 +205,13 @@ public class FluxItem extends Spell {
             }
 
         }
+        validentities.removeIf(livingEntity -> {
+            if (livingEntity instanceof InvisiVex vex) {
+                return vex.owner2 == player;
+            } else {
+                return false;
+            }
+        });
 
         LivingEntity chained = player.getLevel().getNearestEntity(validentities, TargetingConditions.forNonCombat().ignoreLineOfSight(), player, player.getX(), player.getY(), player.getZ());
         if (chained != null) {

@@ -77,7 +77,6 @@ public class NullifyingStance extends Guard{
                 Stream<ServerPlayer> serverplayers = level.getServer().getPlayerList().getPlayers().stream();
                 ParticlePacket packet = new ParticlePacket(buf);
                 for (ServerPlayer player2 : ((ServerLevel) level).getPlayers(serverPlayer -> serverPlayer.hasLineOfSight(projectile))){
-                    System.out.println(packet);
                     Messages.sendToPlayer(packet, (ServerPlayer) player2);
                 }
                 level.playSound((Player) null, projectile.getX(), projectile.getY(), projectile.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, player.getSoundSource(), 1.0F, 1.0F);

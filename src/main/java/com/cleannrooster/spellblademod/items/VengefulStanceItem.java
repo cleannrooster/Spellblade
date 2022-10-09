@@ -81,7 +81,6 @@ public class VengefulStanceItem extends Guard{
             Stream<ServerPlayer> serverplayers = level.getServer().getPlayerList().getPlayers().stream();
             ParticlePacket packet = new ParticlePacket(buf);
             for (ServerPlayer player2 : ((ServerLevel) level).getPlayers(serverPlayer -> serverPlayer.hasLineOfSight(entity))){
-                System.out.println(packet);
                 Messages.sendToPlayer(packet, (ServerPlayer) player2);
             }
 

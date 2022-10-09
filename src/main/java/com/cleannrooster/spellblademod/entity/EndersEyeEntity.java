@@ -4,6 +4,8 @@ import com.cleannrooster.spellblademod.StatusEffectsModded;
 import com.cleannrooster.spellblademod.effects.DamageSourceModded;
 import com.cleannrooster.spellblademod.items.FriendshipBracelet;
 import com.cleannrooster.spellblademod.items.ModItems;
+import com.cleannrooster.spellblademod.items.ParticlePacket2;
+import com.cleannrooster.spellblademod.setup.Messages;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.math.Vector3f;
@@ -14,6 +16,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.util.ParticleUtils;
@@ -93,6 +96,14 @@ public class EndersEyeEntity extends Projectile implements ItemSupplier {
                     });
                     entities.removeIf(livingEntity -> !livingEntity.hasLineOfSight(this));
                     entities.removeIf(livingEntity -> livingEntity == this.getOwner() || livingEntity.isDeadOrDying());
+                    entities.removeIf(livingEntity -> {
+                        if (livingEntity instanceof InvisiVex vex) {
+                            return vex.owner2 == this.getOwner();
+                        } else {
+                            return false;
+                        }
+                    });
+
                     if (!entities.isEmpty()) {
                         LivingEntity target1 = entities.get(0);
                         this.target = entities.get(0);
@@ -131,6 +142,13 @@ public class EndersEyeEntity extends Projectile implements ItemSupplier {
                             List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, this.target.getBoundingBox().inflate(3D), livingEntity -> {
                                 return FriendshipBracelet.PlayerFriendshipPredicate((Player) this.getOwner(), livingEntity);
                             });
+                            entities.removeIf(livingEntity -> {
+                                if (livingEntity instanceof InvisiVex vex) {
+                                    return vex.owner2 == this.getOwner();
+                                } else {
+                                    return false;
+                                }
+                            });
                             if (((Player) this.getOwner()).getLastHurtMob() != null) {
                                 if (((Player) this.getOwner()).getLastHurtMob().isAlive() && this.getOwner().distanceTo(((Player) this.getOwner()).getLastHurtMob()) <= 8) {
                                     if (!entities.contains(((Player) this.getOwner()).getLastHurtMob())) {
@@ -147,26 +165,9 @@ public class EndersEyeEntity extends Projectile implements ItemSupplier {
                                 if (target.getClassification(false).isFriendly() || target instanceof Player || (target instanceof NeutralMob)) {
                                     flag2 = true;
                                 }
-                                if (target != this.getOwner() && !Objects.requireNonNullElse(this.blacklist, new ArrayList()).contains(target)) {
-                                    int i = 0;
-                                    int num_pts = 100;
-                                    int num_pts_line = 25;
-                                    for (int iii = 0; iii < num_pts_line; iii++) {
-                                        double X = this.getEyePosition().x + (target.getEyePosition().x - this.getEyePosition().x) * ((double) iii / (num_pts_line));
-                                        double Y = this.getEyePosition().y + (target.getEyePosition().y - this.getEyePosition().y) * ((double) iii / (num_pts_line));
-                                        double Z = this.getEyePosition().z + (target.getEyePosition().z - this.getEyePosition().z) * ((double) iii / (num_pts_line));
-                                        this.level.addParticle(DustParticleOptions.REDSTONE, X, Y, Z, 0, 0, 0);
-                                    }
-                                    for (i = 0; i <= num_pts; i = i + 1) {
-                                        double[] indices = IntStream.rangeClosed(0, (int) ((1000 - 0) / 1))
-                                                .mapToDouble(x -> x * 1 + 0).toArray();
-
-                                        double phi = Math.acos(1 - 2 * indices[i] / num_pts);
-                                        double theta = Math.PI * (1 + Math.pow(5, 0.5) * indices[i]);
-                                        double x = cos(theta) * sin(phi);
-                                        double y = Math.sin(theta) * sin(phi);
-                                        double z = cos(phi);
-                                        this.level.addParticle((ParticleOptions) DustParticleOptions.REDSTONE, target.getEyePosition().x + 1.5 * x, target.getEyePosition().y + 1.5 * y, target.getEyePosition().z + 1.5 * z, 0, 0, 0);
+                                if (target != this.getOwner() && !Objects.requireNonNullElse(this.blacklist, new ArrayList()).contains(target) && !this.getLevel().isClientSide()) {
+                                    if(this.getOwner() instanceof ServerPlayer serverPlayer){
+                                        Messages.sendToPlayer(new ParticlePacket2(this.getX(),this.getY(),this.getZ(),this.target.getX(),this.target.getEyeY(),this.target.getZ()),serverPlayer);
                                     }
                                     target.invulnerableTime = 0;
                                     AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "knockbackresist", 1, AttributeModifier.Operation.ADDITION);
