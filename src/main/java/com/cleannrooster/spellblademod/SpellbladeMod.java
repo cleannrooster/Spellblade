@@ -1,30 +1,28 @@
 package com.cleannrooster.spellblademod;
 
 import com.cleannrooster.spellblademod.blocks.ModTileEntity;
-import com.cleannrooster.spellblademod.enchants.ModEnchants;
+import com.cleannrooster.spellblademod.enchants.GreaterWardingEnchant;
+import com.cleannrooster.spellblademod.enchants.SpellProxy;
+import com.cleannrooster.spellblademod.enchants.WardTempered;
+import com.cleannrooster.spellblademod.enchants.WardingEnchant;
 import com.cleannrooster.spellblademod.entity.ModEntities;
 import com.cleannrooster.spellblademod.items.ModItems;
+import com.cleannrooster.spellblademod.items.Spell;
 import com.cleannrooster.spellblademod.manasystem.manatick;
 import com.cleannrooster.spellblademod.setup.Config;
 import com.cleannrooster.spellblademod.setup.ModSetup;
 import com.mojang.logging.LogUtils;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeMap;
-import net.minecraft.world.entity.ai.attributes.RangedAttribute;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
-import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -37,31 +35,44 @@ import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 
 import java.util.stream.Collectors;
 
 import static com.cleannrooster.spellblademod.StatusEffectsModded.registerStatusEffects;
+import static com.cleannrooster.spellblademod.items.ModItems.*;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("spellblademod")
-@Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
 public class SpellbladeMod
 {
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
+    public static Enchantment wardTempered = new WardTempered(Enchantment.Rarity.UNCOMMON, EnchantmentCategory.WEAPON, EquipmentSlot.MAINHAND).setRegistryName("wardtempered");
+    public static Enchantment warding = new WardingEnchant(Enchantment.Rarity.UNCOMMON,EnchantmentCategory.ARMOR,ARMOR_SLOTS).setRegistryName("lesserwarding");
+    public static Enchantment greaterwarding = new GreaterWardingEnchant(Enchantment.Rarity.UNCOMMON, EnchantmentCategory.ARMOR,ARMOR_SLOTS).setRegistryName("greaterwarding");
+    public static Enchantment spellproxy = new SpellProxy(Enchantment.Rarity.UNCOMMON, EnchantmentCategory.WEAPON, EquipmentSlot.MAINHAND).setRegistryName("spellproxy");
 
     public SpellbladeMod()
     {
+
         MinecraftForge.EVENT_BUS.register(this);
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         registerStatusEffects();
         ModBlocks.register(eventBus);
         ModTileEntity.register(eventBus);
+        //ENCHANTMENTS.register(eventBus);
+
+        ForgeRegistries.ENCHANTMENTS.register(wardTempered);
+        ForgeRegistries.ENCHANTMENTS.register(warding);
+        ForgeRegistries.ENCHANTMENTS.register(greaterwarding);
+        ForgeRegistries.ENCHANTMENTS.register(spellproxy);
+
+
         ModItems.register(eventBus);
-        ModEnchants.register(eventBus);
+
         ModEntities.ENTITIES.register(eventBus);
+
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         // Register the enqueueIMC method for modloading
@@ -82,11 +93,40 @@ public class SpellbladeMod
         IEventBus modbus = FMLJavaModLoadingContext.get().getModEventBus();
         modbus.addListener(ModSetup::init);
 
+
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> modbus.addListener(com.cleannrooster.spellblademod.manasystem.client.ClientSetup::init));
+
+
     }
 
     private void setup(final FMLCommonSetupEvent event)
     {
+        event.enqueueWork(() -> {
+
+            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(Items.GLASS_BOTTLE,
+                    Items.GLOW_BERRIES, (Spell) FLUXITEM.get()));
+            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
+                    Items.FIRE_CHARGE, (Spell) VOLATILE.get()));
+            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
+                    Items.MAGMA_CREAM, (Spell) BOUNCINGITEM.get()));
+            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
+                    Items.FERMENTED_SPIDER_EYE, (Spell) SPARKITEM.get()));
+            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
+                    Items.PRISMARINE, (Spell) SPLITTING_TRIDENT.get()));
+            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
+                    Items.ENDER_PEARL, (Spell) REVERBERATING_RAY.get()));
+            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
+                    Items.AMETHYST_SHARD, (Spell) BLADEFLURRY.get()));
+            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
+                    Items.PRISMARINE_CRYSTALS, (Spell) LIGHTNING_WHIRL.get()));
+            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
+                    Items.ENDER_EYE, (Spell) ENDERSEYE.get()));
+            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
+                    Items.POINTED_DRIPSTONE, (Spell) IMPALE.get()));
+            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
+                    Items.PACKED_ICE, (Spell) WINTERBURIAL.get()));
+
+        });
         // some preinit code
         LOGGER.info("HELLO FROM PREINIT");
         LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
@@ -107,23 +147,14 @@ public class SpellbladeMod
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
+
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event)
     {
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
     }
-    @SubscribeEvent
-    public static void onEntityAttributeModificationEvent(EntityAttributeModificationEvent event) {
 
-        System.out.println("hello");
-        event.add(EntityType.PLAYER, manatick.WARD);
-        event.add(EntityType.PLAYER, manatick.BASEWARD);
-        for(EntityType entityType: event.getTypes()) {
-                event.add(entityType, manatick.SMOTE);
-        }
-
-    }
 
     // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
     // Event bus for receiving Registry Events)

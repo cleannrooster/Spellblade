@@ -2,6 +2,10 @@ package com.cleannrooster.spellblademod.items;
 
 import com.cleannrooster.spellblademod.manasystem.manatick;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -11,11 +15,16 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.inventory.ClickAction;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class LightningWhirl extends Spell{
 
@@ -29,7 +38,18 @@ public class LightningWhirl extends Spell{
     public int getUseDuration(ItemStack p_43419_) {
         return 72000;
     }
+    public Item getIngredient1() {return Items.PRISMARINE_CRYSTALS;};
+    public Item getIngredient2() {return ModItems.FLUXITEM.get();};
+    public boolean isTriggerable() {return false;}
 
+
+    public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
+        TextComponent text = new TextComponent("Not Triggerable");
+                p_41423_.add(text);
+
+
+        super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
+    }
     public void releaseUsing(ItemStack p_41412_, Level p_41413_, LivingEntity p_41414_, int p_41415_) {
 
 /*
@@ -59,6 +79,10 @@ public class LightningWhirl extends Spell{
         p_41413_.playSound((Player)null, player, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
 */
 
+    }
+    @Override
+    public boolean overrideOtherStackedOnMe(ItemStack thisStack, ItemStack onStack, Slot slot, ClickAction clickAction, Player player, SlotAccess slotAccess) {
+        return false;
     }
     public InteractionResultHolder<ItemStack> use(Level p_43405_, Player p_43406_, InteractionHand p_43407_) {
         ItemStack itemstack = p_43406_.getItemInHand(p_43407_);
@@ -90,7 +114,7 @@ public class LightningWhirl extends Spell{
             if (((Player)p_43406_).getAttributes().getBaseValue(manatick.WARD) < -21) {
                 p_43406_.hurt(DamageSource.MAGIC,2);
             }
-                p_43406_.getCooldowns().addCooldown(this,20);
+                p_43406_.getCooldowns().addCooldown(this,40);
 
                 float f7 = p_43406_.getYRot();
                 float f = p_43406_.getXRot();
@@ -116,14 +140,22 @@ public class LightningWhirl extends Spell{
         }
         return InteractionResultHolder.fail(itemstack);
     }
+    public int getColor() {
+        return 10978560;
+    }
 
-    public boolean trigger(Level level, Player player, float modifier) {
+    @Override
+    public int triggerCooldown() {
+        return 40;
+    }
 
+    /*public boolean trigger(Level level, Player player, float modifier) {
+*//*
         if(((Player)player).getAttributes().getBaseValue(manatick.WARD) < -1 && player.getHealth() <= 2)
         {
             return true;
         }
-        player.getCooldowns().addCooldown(this, 20);
+        player.getCooldowns().addCooldown(this, 40);
         float f7 = player.getYRot();
         float f = player.getXRot();
         float f1 = -Mth.sin(f7 * ((float) Math.PI / 180F)) * Mth.cos(f * ((float) Math.PI / 180F));
@@ -144,14 +176,13 @@ public class LightningWhirl extends Spell{
         soundevent = SoundEvents.TRIDENT_RIPTIDE_3;
 
         level.playSound((Player) null, player, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
-        if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -1 && player.getHealth() > 2) {
+        ((Player)player).getAttribute(manatick.WARD).setBaseValue(((Player) player).getAttributeBaseValue(manatick.WARD)-20);
 
-            player.invulnerableTime = 0;
-            player.hurt(DamageSource.MAGIC, 2);
-            player.invulnerableTime = 0;
+        if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -21) {
+            player.hurt(DamageSource.MAGIC,2);
         }
-        return false;
-    }
+        return false;*//*
+    }*/
     @Override
     public boolean isFoil(ItemStack p_41453_) {
         if (p_41453_.hasTag()){

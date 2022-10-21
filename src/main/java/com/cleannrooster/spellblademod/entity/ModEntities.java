@@ -35,6 +35,18 @@ public class ModEntities {
             () -> EntityType.Builder.<InvisiVex>of(InvisiVex::new, MobCategory.MISC).sized(1, 1).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "sentinel").toString()));
     public static final RegistryObject<EntityType<sword1>> SWORD = ENTITIES.register("sword",
             () -> EntityType.Builder.<sword1>of(sword1::new, MobCategory.MISC).sized(1, 1).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "sword").toString()));
+    public static final RegistryObject<EntityType<BouncingEntity>> BETTY = ENTITIES.register("betty",
+            () -> EntityType.Builder.<BouncingEntity>of(BouncingEntity::new, MobCategory.MISC).sized(1, 1).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "betty").toString()));
+    public static final RegistryObject<EntityType<ThrownItems>> FIREBALL = ENTITIES.register("fireball",
+            () -> EntityType.Builder.<ThrownItems>of(ThrownItems::new, MobCategory.MISC).sized(1, 1).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "fireball").toString()));
+    public static final RegistryObject<EntityType<VolleyballEntity>> VOLLEYBALL = ENTITIES.register("volleyball",
+            () -> EntityType.Builder.<VolleyballEntity>of(VolleyballEntity::new, MobCategory.MISC).sized(1, 1).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "volleyball").toString()));
+    public static final RegistryObject<EntityType<SpiderSpark>> SPARK = ENTITIES.register("spark",
+            () -> EntityType.Builder.<SpiderSpark>of(SpiderSpark::new, MobCategory.MISC).sized(1, 1).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "spark").toString()));
+    public static final RegistryObject<EntityType<ImpaleEntity>> IMPALE = ENTITIES.register("impaleentity",
+            () -> EntityType.Builder.<ImpaleEntity>of(ImpaleEntity::new, MobCategory.MISC).sized(1, 1).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "impale").toString()));
+    public static final RegistryObject<EntityType<WinterBurialEntity>> WINTERBURIAL = ENTITIES.register("winterburialentity",
+            () -> EntityType.Builder.<WinterBurialEntity>of(WinterBurialEntity::new, MobCategory.MISC).sized(1, 1).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "impale").toString()));
 
 
 }

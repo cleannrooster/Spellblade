@@ -168,7 +168,7 @@ public class EndersEyeEntity extends Projectile implements ItemSupplier {
                                 }
                                 if (target != this.getOwner() && !Objects.requireNonNullElse(this.blacklist, new ArrayList()).contains(target) && !this.getLevel().isClientSide()) {
                                     for(ServerPlayer serverPlayer: ((ServerLevel)this.getLevel()).players()) {
-                                        Messages.sendToPlayer(new ParticlePacket2(this.getX(), this.getY(), this.getZ(), this.target.getX(), this.target.getEyeY(), this.target.getZ()), serverPlayer);
+                                        Messages.sendToPlayer(new ParticlePacket2(this.getX(), this.getY(), this.getZ(), target.getX(), target.getEyeY(), target.getZ()), serverPlayer);
                                     }
                                     target.invulnerableTime = 0;
                                     AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(), "knockbackresist", 1, AttributeModifier.Operation.ADDITION);

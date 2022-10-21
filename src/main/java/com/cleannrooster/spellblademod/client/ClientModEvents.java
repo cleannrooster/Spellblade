@@ -1,8 +1,8 @@
 package com.cleannrooster.spellblademod.client;
 
 import com.cleannrooster.spellblademod.entity.*;
-import net.minecraft.client.renderer.entity.ThrownItemRenderer;
-import net.minecraft.client.renderer.entity.VexRenderer;
+import net.minecraft.client.model.ZombieModel;
+import net.minecraft.client.renderer.entity.*;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.EnderEyeItem;
 import net.minecraft.world.item.Items;
@@ -38,8 +38,19 @@ public class ClientModEvents {
             return new ThrownItemRenderer<>(p_174086_, 2.0F, true);
         });
         event.registerEntityRenderer(ModEntities.SENTINEL.get(), SentinelRenderer::new);
+        event.registerEntityRenderer(ModEntities.VOLLEYBALL.get(), VolleyballRenderer::new);
+        event.registerEntityRenderer(ModEntities.SPARK.get(), SpiderSparkRenderer::new);
+
         event.registerEntityRenderer(ModEntities.INVISIVEX.get(), VexRenderer::new);
         event.registerEntityRenderer(ModEntities.SWORD.get(), sword1renderer::new);
+        event.registerEntityRenderer(ModEntities.BETTY.get(), (p_174086_) -> {
+            return new ThrownItemRenderer<>(p_174086_, 2.0F, true);});
+        event.registerEntityRenderer(ModEntities.FIREBALL.get(), (p_174086_) -> {
+            return new ThrownItemRenderer<>(p_174086_, 2.0F, true);});
+        event.registerEntityRenderer(ModEntities.IMPALE.get(), FallingBlockRenderer::new);
+        event.registerEntityRenderer(ModEntities.WINTERBURIAL.get(), FallingBlockRenderer::new);
+
+
 
     }
 }

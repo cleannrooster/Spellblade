@@ -1,6 +1,6 @@
 package com.cleannrooster.spellblademod.items;
 
-import com.cleannrooster.spellblademod.enchants.ModEnchants;
+
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.Item;
@@ -24,23 +24,12 @@ public class TradeHandler {
          ItemStack fireinstance = new ItemStack(ModItems.FIRE_EFFIGY.get());
          ItemStack lightninginstance = new ItemStack(ModItems.LIGHTNING_EFFIGY.get());
          ItemStack iceinstance = new ItemStack(ModItems.ICE_EFFIGY.get());
-        ItemStack lesserwarding = new ItemStack(Items.ENCHANTED_BOOK);
-        lesserwarding.enchant(ModEnchants.LESSERWARDING.get(),1);
-        ItemStack greaterwarding = new ItemStack(Items.ENCHANTED_BOOK);
-        greaterwarding.enchant(ModEnchants.GREATERWARDING.get(),1);
-        ItemStack wardtempered1 = new ItemStack(Items.ENCHANTED_BOOK);
-        wardtempered1.enchant(ModEnchants.WARDTEMPERED.get(),1);
-
 
         event.getGenericTrades().add(new ItemTrades(fireinstance,  4, 1, 2, 20));
 
         event.getGenericTrades().add(new ItemTrades(iceinstance,  4, 1, 2, 20));
 
         event.getGenericTrades().add(new ItemTrades(lightninginstance,  4, 1, 2, 20));
-        event.getGenericTrades().add(new ItemTrades(lesserwarding,  4, 1, 4, 20));
-
-        event.getRareTrades().add(new ItemTrades(greaterwarding,  12, 1, 4, 20));
-        event.getGenericTrades().add(new ItemTrades(wardtempered1,  8, 1, 2, 20));
 
 
 
@@ -52,23 +41,13 @@ public class TradeHandler {
          ItemStack lightninginstance = new ItemStack(ModItems.LIGHTNING_EFFIGY.get());
          ItemStack iceinstance = new ItemStack(ModItems.ICE_EFFIGY.get());
         ItemStack lesserwarding = new ItemStack(Items.ENCHANTED_BOOK);
-        lesserwarding.enchant(ModEnchants.LESSERWARDING.get(),1);
-        ItemStack greaterwarding = new ItemStack(Items.ENCHANTED_BOOK);
-        greaterwarding.enchant(ModEnchants.GREATERWARDING.get(),1);
-        ItemStack wardtempered1 = new ItemStack(Items.ENCHANTED_BOOK);
-        wardtempered1.enchant(ModEnchants.WARDTEMPERED.get(),1);
+
         if (VillagerProfession.CLERIC.equals(profession)) {
             event.getTrades().get(3).add(new ItemTrades(lightninginstance,  4, 1, 2, 20));
             event.getTrades().get(3).add(new ItemTrades(fireinstance,  4, 1, 2, 20));
             event.getTrades().get(3).add(new ItemTrades(iceinstance,  4, 1, 2, 20));
-            event.getTrades().get(4).add(new ItemTrades(lesserwarding,  4, 1, 4, 20));
-            event.getTrades().get(5).add(new ItemTrades(greaterwarding,  12, 1, 4, 20));
 
 
         }
-        if (VillagerProfession.WEAPONSMITH.equals(profession)) {
-            event.getTrades().get(3).add(new ItemTrades(wardtempered1,  8, 1, 2, 20));
-        }
-
         }
 }

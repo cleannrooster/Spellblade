@@ -1,11 +1,11 @@
 package com.cleannrooster.spellblademod.setup;
 
 
+import com.cleannrooster.spellblademod.items.AmorphousPacket;
 import com.cleannrooster.spellblademod.items.ParticlePacket;
 import com.cleannrooster.spellblademod.items.ParticlePacket2;
-import com.cleannrooster.spellblademod.manasystem.network.ClickSpell;
-import com.cleannrooster.spellblademod.manasystem.network.Hurt;
-import com.cleannrooster.spellblademod.manasystem.network.PacketSyncManaToClient;
+import com.cleannrooster.spellblademod.manasystem.client.ParticleReverb;
+import com.cleannrooster.spellblademod.manasystem.network.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
@@ -37,6 +37,21 @@ public class Messages {
                 .encoder(ClickSpell::toBytes)
                 .consumer(ClickSpell::handle)
                 .add();
+        net.messageBuilder(RetrieveItem.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(RetrieveItem::new)
+                .encoder(RetrieveItem::toBytes)
+                .consumer(RetrieveItem::handle)
+                .add();
+        net.messageBuilder(ParticleReverb.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(ParticleReverb::new)
+                .encoder(ParticleReverb::toBytes)
+                .consumer(ParticleReverb::handle)
+                .add();
+        net.messageBuilder(SyncAutouse.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(SyncAutouse::new)
+                .encoder(SyncAutouse::toBytes)
+                .consumer(SyncAutouse::handle)
+                .add();
         net.messageBuilder(PacketSyncManaToClient.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(PacketSyncManaToClient::new)
                 .encoder(PacketSyncManaToClient::toBytes)
@@ -46,6 +61,11 @@ public class Messages {
                 .decoder(ParticlePacket::new)
                 .encoder(ParticlePacket::toBytes)
                 .consumer(ParticlePacket::handle)
+                .add();
+        net.messageBuilder(AmorphousPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(AmorphousPacket::new)
+                .encoder(AmorphousPacket::toBytes)
+                .consumer(AmorphousPacket::handle)
                 .add();
         net.messageBuilder(ParticlePacket2.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(ParticlePacket2::new)

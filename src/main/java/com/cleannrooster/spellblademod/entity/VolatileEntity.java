@@ -11,45 +11,63 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-public class VolatileEntity extends AbstractArrow implements ItemSupplier{
-    public float explosionPower = 2F;
+public class VolatileEntity extends LargeFireball implements ItemSupplier{
+    public int explosionPower = 2;
     public LivingEntity target;
     boolean flag = false;
     int waiting = 0;
-    public  VolatileEntity(EntityType<? extends AbstractArrow> p_37006_, Level p_37007_) {
+    public  VolatileEntity(EntityType<? extends VolatileEntity> p_37006_, Level p_37007_) {
         super(p_37006_, p_37007_);
     }
     @Override
     protected void onHit(HitResult p_37218_) {
+        if(this.target != null){
+            return;
+        }
+        HitResult.Type hitresult$type = p_37218_.getType();
+        if (hitresult$type == HitResult.Type.ENTITY) {
+            if(!(((EntityHitResult)(p_37218_)).getEntity() instanceof VolatileEntity)) {
+                this.onHitEntity((EntityHitResult) p_37218_);
 
+            }
+            else{
+                return;
+            }
+        } else if (hitresult$type == HitResult.Type.BLOCK) {
+            this.onHitBlock((BlockHitResult)p_37218_);
+        }
+
+        if (hitresult$type != HitResult.Type.MISS) {
+            this.gameEvent(GameEvent.PROJECTILE_LAND, this.getOwner());
+        }
+        if (!this.level.isClientSide) {
+            boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this.getOwner());
+            this.level.explode((Entity)null, this.getX(), this.getY(), this.getZ(), (float)this.explosionPower, false, Explosion.BlockInteraction.NONE);
+            this.discard();
+        }
     }
 
-    @Override
-    protected void onHitBlock(BlockHitResult p_37258_) {
-
-    }
-
-    @Override
-    protected ItemStack getPickupItem() {
-        return null;
-    }
-
-    @Override
     protected void onHitEntity(EntityHitResult p_37259_) {
-
+        if(p_37259_.getEntity() instanceof VolatileEntity){
+            return;
+        }
+        else{
+            super.onHitEntity(p_37259_);
+        }
     }
+
 
     @Override
     public void tick() {
         this.setSecondsOnFire(5);
-        this.pickup = Pickup.DISALLOWED;
-        this.noPhysics = true;
-        if(tickCount > 200){
+        this.setNoGravity(true);
+        if(tickCount > 400){
             if (!this.level.isClientSide) {
                 boolean flag = false;
                 this.level.explode((Entity)this.getOwner(), this.getX(), this.getY(), this.getZ(), (float)this.explosionPower, flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
@@ -57,6 +75,7 @@ public class VolatileEntity extends AbstractArrow implements ItemSupplier{
             }
         }
         if(this.flag){
+
             if (waiting >= 10){
                 boolean flag = false;
                 if(this.target != null) {
@@ -68,12 +87,14 @@ public class VolatileEntity extends AbstractArrow implements ItemSupplier{
                 }
                 this.discard();
             }
+            this.setDeltaMovement(Vec3.ZERO);
             waiting++;
             return;
         }
+
         if(this.target != null){
-            super.tick();
             this.noPhysics = true;
+            super.tick();
             Vec3 vec3 = target.getBoundingBox().getCenter().subtract(this.position());
             this.setPosRaw(this.getX(), this.getY() + vec3.y * 0.015D * (double)2, this.getZ());
             if (this.level.isClientSide) {
@@ -86,23 +107,35 @@ public class VolatileEntity extends AbstractArrow implements ItemSupplier{
                 this.flag = true;
             }
         }
+        else{
+            super.tick();
+        }
+
     }
 
     @Override
     public boolean hurt(DamageSource p_36839_, float p_36840_) {
-        return false;
+        if(this.target == null) {
+            super.hurt(p_36839_, p_36840_);
+            return true;
+        }
+        else{
+            return false;
+        }
     }
     @Override
     public boolean mayInteract(Level p_150167_, BlockPos p_150168_) {
-        return false;
+
+        return this.target == null;
     }
     @Override
     public boolean isAttackable() {
-        return false;
+        return this.target == null;
     }
     @Override
     public boolean skipAttackInteraction(Entity p_20357_) {
-        return true;
+
+        return this.target != null;
     }
 
     @Override

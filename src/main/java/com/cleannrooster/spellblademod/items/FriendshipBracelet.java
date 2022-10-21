@@ -7,7 +7,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.NeutralMob;
+import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ClickAction;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -30,7 +33,31 @@ public class FriendshipBracelet extends Item {
         }
         return false;
     }
+    @Override
+    public boolean overrideOtherStackedOnMe(ItemStack thisStack, ItemStack onStack, Slot slot, ClickAction clickAction, Player player, SlotAccess slotAccess) {
+        if(clickAction == ClickAction.SECONDARY){
+            CompoundTag nbt = thisStack.getOrCreateTag();
+            if (thisStack.hasTag()) {
+                if (thisStack.getTag().get("Friendship") != null) {
+                    nbt = thisStack.getTag();
+                    nbt.remove("Friendship");
+                    return true;
+                } else {
+                    nbt = thisStack.getOrCreateTag();
+                    nbt.putInt("Friendship", 1);
+                    return true;
+                }
 
+            } else {
+                nbt = thisStack.getOrCreateTag();
+                nbt.putInt("Friendship", 1);
+                return true;
+
+            }
+
+        }
+        return false;
+    }
     @Override
     public InteractionResultHolder<ItemStack> use(Level p_41432_, Player p_41433_, InteractionHand p_41434_) {
         ItemStack itemstack = p_41433_.getItemInHand(p_41434_);
@@ -64,8 +91,10 @@ public class FriendshipBracelet extends Item {
         boolean flag2 = false;
         for (int i = 0; i <= player.getInventory().getContainerSize(); i++) {
             if (player.getInventory().getItem(i).getItem() instanceof FriendshipBracelet) {
-                if (player.getInventory().getItem(i).getTag().get("Friendship") != null) {
-                    flag1 = true;
+                if(player.getInventory().getItem(i).getTag() != null) {
+                    if (player.getInventory().getItem(i).getTag().get("Friendship") != null) {
+                        flag1 = true;
+                    }
                 }
             }
         }

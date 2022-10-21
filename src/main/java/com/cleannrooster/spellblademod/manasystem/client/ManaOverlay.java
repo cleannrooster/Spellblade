@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class ManaOverlay {
 
-    static int color = TextColor.fromRgb(0x9966cc).getValue();
+    public static int color = TextColor.fromRgb(0x9966cc).getValue();
 
     static float hue = 0;
     static int i = 0;
@@ -19,7 +19,7 @@ public class ManaOverlay {
     static int g = 0;
     static int b = 0;
 
-    static int color2 = TextColor.fromRgb(0x000000).getValue();
+    public static int color2 = 0x000000;
     public static final IIngameOverlay HUD_MANA = (gui, poseStack, partialTicks, width, height) -> {
         String toDisplay = String.valueOf(Math.round(ClientManaData.getPlayerMana()) + " / " + Math.round(ClientManaData.getPlayerBaseMana()) );
         int x = 10;
@@ -27,22 +27,27 @@ public class ManaOverlay {
         if (ClientManaData.getPlayerMana() < -21)
         {
             color = TextColor.fromRgb(0xFF0000).getValue();
+            color2 = 0xFF0000;
         }
         if (ClientManaData.getPlayerMana() >= -21 && ClientManaData.getPlayerMana() < 39)
         {
             color = TextColor.fromRgb(0x9966cc).getValue();
+            color2 = 0x9966cc;
         }
         if (ClientManaData.getPlayerMana() >= 39 && ClientManaData.getPlayerMana() <= 79 )
         {
             color = TextColor.fromRgb(0xFF69B4).getValue();
+            color2 = 0xFF69B4;
         }
         if (ClientManaData.getPlayerMana() >= 79 && ClientManaData.getPlayerMana() <= 119 )
         {
             color = TextColor.fromRgb(0x00FFFF).getValue();
+            color2 = 0x00FFFF;
         }
         if (ClientManaData.getPlayerMana() >= 119 && ClientManaData.getPlayerMana() <= 159 )
         {
             color = TextColor.fromRgb(0xFFFFFF).getValue();
+            color2 = 0xFFFFFF;
         }
         if (ClientManaData.getPlayerMana() >= 159) {
 
@@ -78,6 +83,7 @@ public class ManaOverlay {
             }
             int hex = (a << 24) + (r << 16) + (g << 8) + (b);
             color = hex;
+            color2 = hex;
         }
         if (x >= 0 && y >= 0 && Math.abs(ClientManaData.getPlayerMana()) >= 0.5) {
             gui.getFont().draw(poseStack, toDisplay, x, y, color);

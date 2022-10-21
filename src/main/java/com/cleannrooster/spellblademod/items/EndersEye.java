@@ -14,7 +14,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
@@ -26,12 +28,15 @@ public class EndersEye extends Spell {
     public EndersEye(Properties p_41383_) {
         super(p_41383_);
     }
+    public Item getIngredient1() {return Items.ENDER_EYE;};
+    public Item getIngredient2() {return ModItems.FLUXITEM.get();};
+
     public InteractionResultHolder<ItemStack> use(Level p_43405_, Player p_43406_, InteractionHand p_43407_) {
 
         ItemStack itemstack = p_43406_.getItemInHand(p_43407_);
         Player player = p_43406_;
 
-        if (((Player) p_43406_).isShiftKeyDown()) {
+        if (((Player) p_43406_).isShiftKeyDown() && itemstack.getItem() instanceof Spell) {
             CompoundTag nbt;
             if (itemstack.hasTag())
             {
@@ -64,7 +69,6 @@ public class EndersEye extends Spell {
             ((Player) p_43406_).addEffect(new MobEffectInstance(StatusEffectsModded.ENDERSGAZE.get(), 120, 0));
         if (!((Player) p_43406_).isShiftKeyDown()) {
 
-            ((Player) p_43406_).getCooldowns().addCooldown(this, 40);
         }
 
             EndersEyeEntity eye = new EndersEyeEntity(ModEntities.ENDERS_EYE.get(),p_43406_.getLevel());
@@ -92,10 +96,6 @@ public class EndersEye extends Spell {
     }
     public boolean trigger(Level level, Player player, float modifier){
 
-        if(((Player)player).getAttributes().getBaseValue(manatick.WARD) < -1 && player.getHealth() <= 2)
-        {
-            return true;
-        }
         List<EndersEyeEntity> eyes = level.getEntitiesOfClass(EndersEyeEntity.class,player.getBoundingBox().inflate(32),endersEyeEntity -> endersEyeEntity.getOwner() == player);
         if(eyes.toArray().length >= 3) {
             EndersEyeEntity todelete = eyes.get(0);
@@ -118,19 +118,16 @@ public class EndersEye extends Spell {
         eye.pos1 = ((Player) player).position().add(new Vec3(0, 1.5, 0)).add(new Vec3(0, player.getBoundingBox().getYsize() / 2, 0));;
 
         level.addFreshEntity(eye);
-        player.getCooldowns().addCooldown(this,10);
-        if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -1 && player.getHealth() > 2) {
+        ((Player)player).getAttribute(manatick.WARD).setBaseValue(((Player) player).getAttributeBaseValue(manatick.WARD)-20);
 
-            player.invulnerableTime = 0;
-            player.hurt(DamageSource.MAGIC, 2);
-            player.invulnerableTime = 0;
-
-
-
+        if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -21) {
+            player.hurt(DamageSource.MAGIC,2);
         }
         return false;
     }
-
+    public int getColor() {
+        return 4950629;
+    }
     @Override
     public void inventoryTick(ItemStack p_41404_, Level level, Entity p_41406_, int p_41407_, boolean p_41408_) {
         if(p_41406_ instanceof Player player) {
@@ -142,7 +139,10 @@ public class EndersEye extends Spell {
             }
         }
     }
-
+    @Override
+    public int triggerCooldown() {
+        return 10;
+    }
     @Override
     public boolean isFoil(ItemStack p_41453_) {
         if (p_41453_.hasTag()){
@@ -152,5 +152,6 @@ public class EndersEye extends Spell {
         }
         return false;
     }
+
 
 }

@@ -9,6 +9,7 @@ import com.cleannrooster.spellblademod.manasystem.network.Hurt;
 import com.cleannrooster.spellblademod.setup.Messages;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.ibm.icu.text.CaseMap;
 import com.mojang.datafixers.util.Pair;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.resources.sounds.Sound;
@@ -27,6 +28,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShieldItem;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -38,7 +40,7 @@ import java.util.Random;
 import static java.lang.Math.pow;
 @Mod.EventBusSubscriber(modid = "spellblademod", bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ArmorHandler {
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOW)
     public static void damageevent(LivingHurtEvent event){
         Random rand = new Random();
 
@@ -90,14 +92,12 @@ public class ArmorHandler {
             if (event.getSource().isMagic()){
                 multiplier = 1;
             }
-            if(player.getAttribute(manatick.WARD).getValue() > -1) {
-                player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDABSORPTION.get(), 0, (int) Math.round((player.getAttribute(manatick.WARD).getValue()+1)/40F)));
 
-            }
 
-            if(player.getAttribute(manatick.WARD).getValue() > 19){
+            if(player.getAttribute(manatick.WARD).getValue() > 19 && !player.hasEffect(StatusEffectsModded.WARDABSORPTION.get())){
                 double amount = player.getAttribute(manatick.WARD).getValue()/2;
-
+                event.setAmount(event.getAmount()- Math.max(0,Math.round((player.getAttribute(manatick.WARD).getValue() + 1) / 40F)));
+                player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDABSORPTION.get(),1,0));
                 player.getAttribute(manatick.WARD).setBaseValue(amount);
 
             }

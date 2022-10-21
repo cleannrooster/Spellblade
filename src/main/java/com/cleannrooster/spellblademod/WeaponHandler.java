@@ -2,8 +2,10 @@ package com.cleannrooster.spellblademod;
 
 import com.cleannrooster.spellblademod.entity.HammerEntity;
 import com.cleannrooster.spellblademod.entity.ModEntities;
+import com.cleannrooster.spellblademod.entity.SpiderSpark;
 import com.cleannrooster.spellblademod.items.*;
 import com.cleannrooster.spellblademod.manasystem.manatick;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -15,14 +17,23 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.FireAspectEnchantment;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.event.entity.item.ItemEvent;
 import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.RegistryObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Mod.EventBusSubscriber(modid = "spellblademod", bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class WeaponHandler {
@@ -36,6 +47,7 @@ public class WeaponHandler {
             }
         }
     }
+
 
     @SubscribeEvent
     public static void SpellbladeHandler(LivingHurtEvent event){
@@ -61,6 +73,54 @@ public class WeaponHandler {
                 player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(),80,0));
                 event.getEntityLiving().addEffect(new MobEffectInstance(StatusEffectsModded.ECHOES.get(),10, (int) Math.floor(event.getAmount())));
             }
+        }
+    }
+    @SubscribeEvent
+    public static void spellproxy(AttackEntityEvent event) {
+
+        if (/*&& !player.getPersistentData().getBoolean("cast")*/  EnchantmentHelper.getEnchantmentLevel(SpellbladeMod.spellproxy, event.getPlayer()) > 0 && event.getTarget() instanceof LivingEntity living && !(event.getTarget() instanceof SpiderSpark)) {
+            //player.getPersistentData().putBoolean("cast", true);
+            Player player = event.getPlayer();
+            ItemStack itemstack = new ItemStack(ModItems.SPELLBLADE.get());
+                itemstack = ItemStack.of(player.getPersistentData().getCompound("spellproxy"));
+            CompoundTag compoundtag = new CompoundTag();
+            itemstack.save(compoundtag);
+            player.setLastHurtMob(living);
+
+            CompoundTag tag = itemstack.getOrCreateTag();
+
+            if(tag.contains("Oils")){
+                for(int ii  = 0; ii < tag.getCompound("Oils").getAllKeys().size(); ii++){
+                    String spell = tag.getCompound("Oils").getAllKeys().stream().toList().get(ii);
+                    if (tag.getCompound("Oils").getInt(spell) > 0) {
+
+                        Flask.triggerOrTriggeron(spell, player.getLevel(), player, living, 1, itemstack);
+                        tag.getCompound("Oils").putInt(spell, tag.getCompound("Oils").getInt(spell) - 1);
+                    }
+                    else if(!tag.getCompound("AutoUse").contains(spell)){
+                        tag.getCompound("Oils").remove(spell);
+                    }
+
+                }
+            }
+            for(ItemStack item : player.getInventory().items){
+                if(item.getItem() instanceof Flask flask && tag.contains("AutoUse") && tag.getCompound("AutoUse").contains(Flask.getSpellItem(item))){
+                    for (RegistryObject<Item> spell3 : ModItems.ITEMS.getEntries()) {
+                        if (spell3.get() instanceof Spell spell) {
+                            if (Objects.equals(spell.getDescriptionId(), Flask.getSpellItem(item))) {
+                                if(spell.isTriggerable()){
+                                    flask.applyFlask(player, null, item, itemstack);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            itemstack.save(compoundtag);
+            player.getPersistentData().put("spellproxy", compoundtag);
+            player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(), 80, -1+EnchantmentHelper.getEnchantmentLevel(SpellbladeMod.spellproxy, player) + EnchantmentHelper.getEnchantmentLevel(SpellbladeMod.wardTempered, player)));
+
         }
     }
     @SubscribeEvent

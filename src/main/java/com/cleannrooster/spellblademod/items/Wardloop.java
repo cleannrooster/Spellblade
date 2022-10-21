@@ -54,21 +54,17 @@ public class Wardloop extends Item{
             if (p_41404_.getTag().get("CustomModelData") != null) {
 
                 for (int i = 0; i <= 9; i++) {
-                    if (player.getInventory().getItem(i).getItem() != this && ((Player)p_41406_).getInventory().getItem(i).getItem() instanceof Spell) {
+                    if (player.getInventory().getItem(i).getItem() != this && ((Player)p_41406_).getInventory().getItem(i).getItem() instanceof Spell spell && spell.isTriggerable()) {
                         if (player.getInventory().getItem(i).getTag() != null) {
                             if (Objects.requireNonNull(player.getInventory().getItem(i).getTag()).getInt("Triggerable") == 1) {
 
-                                if (!player.getCooldowns().isOnCooldown(((Player)p_41406_).getInventory().getItem(i).getItem())) {
-                                    if (((Spell) ((Player)p_41406_).getInventory().getItem(i).getItem()).trigger(p_41405_, (Player) p_41406_, (float) 1 / 8)){
-                                        if (p_41404_.hasTag())
-                                        {
-
-                                            CompoundTag nbt;
-                                            nbt = p_41404_.getTag();
-                                            nbt.remove("CustomModelData");
+                                if (!player.getCooldowns().isOnCooldown(spell) ) {
+                                        if(spell.trigger(p_41405_, (Player) p_41406_, 1)) {
 
                                         }
-                                    }
+                                    player.getCooldowns().addCooldown(spell,spell.triggerCooldown());
+
+
                                 }
                                 ii++;
                             }
@@ -76,7 +72,6 @@ public class Wardloop extends Item{
 
                     }
                 }
-                player.addEffect(new MobEffectInstance(StatusEffectsModded.SPELLWEAVING.get(), 5, ii-1));
             }
         }
         super.inventoryTick(p_41404_,p_41405_,p_41406_,p_41407_,p_41408_);

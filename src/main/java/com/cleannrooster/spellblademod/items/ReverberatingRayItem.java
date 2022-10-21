@@ -9,18 +9,37 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
 
 public class ReverberatingRayItem extends Spell {
     public ReverberatingRayItem(Properties p_41383_) {
         super(p_41383_);
     }
+    public int getColor() {
+        return 34693;
+    }
 
+    @Override
+    public boolean isTriggerable() {
+        return true;
+    }
+
+    @Override
+    public boolean isTargeted() {
+        return true;
+    }
+
+    public Item getIngredient1() {return Items.ENDER_PEARL;};
+    public Item getIngredient2() {return ModItems.FLUXITEM.get();};
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level p_41432_, Player p_41433_, InteractionHand p_41434_) {
@@ -48,32 +67,68 @@ public class ReverberatingRayItem extends Spell {
             return InteractionResultHolder.success(itemstack);
 
         }
+        ((Player)p_41433_).getAttribute(manatick.WARD).setBaseValue(((Player) p_41433_).getAttributeBaseValue(manatick.WARD)-20);
 
-        if (p_41434_ == InteractionHand.OFF_HAND){
-            return InteractionResultHolder.fail(((Player) p_41433_).getItemInHand(p_41434_));
+            ReverberatingRay orb = new ReverberatingRay(ModEntities.REVERBERATING_RAY_ORB.get(), ((Player) p_41433_).getLevel(),(LivingEntity)null);
+            orb.setPos(((Player) p_41433_).getEyePosition());
+            orb.pickup = AbstractArrow.Pickup.DISALLOWED;
+            orb.setNoPhysics(true);
+            orb.setOwner((Player) p_41433_);
+            orb.primary = true;
+            orb.triggered = true;
+            orb.shootFromRotation((Player) p_41433_, 0, 0, 0, 0, 0);
+
+        if(!p_41432_.isClientSide()) {
+            p_41432_.addFreshEntity(orb);
         }
+        if (((Player)p_41433_).getAttributes().getBaseValue(manatick.WARD) < -21 ) {
 
-        ((Player) p_41433_).startUsingItem(p_41434_);
-        ReverberatingRay orb = new ReverberatingRay(ModEntities.REVERBERATING_RAY_ORB.get(), ((Player) p_41433_).getLevel());
-        orb.setPos(((Player) p_41433_).getEyePosition());
-        orb.pickup = AbstractArrow.Pickup.DISALLOWED;
-        orb.noPhysics = true;
-        orb.setOwner((Player) p_41433_);
-        orb.primary = true;
-        orb.shootFromRotation((Player) p_41433_,0,0,0,0,0);
-        p_41432_.addFreshEntity(orb);
+            p_41433_.hurt(DamageSource.MAGIC, 2);
+
+        }
         return InteractionResultHolder.success(itemstack);
     }
 
     @Override
+    public int triggerCooldown() {
+        return 20;
+    }
+
+    @Override
     public boolean trigger(Level level, Player player, float modifier) {
-        if(((Player)player).getAttributes().getBaseValue(manatick.WARD) < -1 && player.getHealth() <= 2)
-        {
-            return true;
+        List<LivingEntity> entities = level.getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT,player,player.getBoundingBox().inflate(20));
+        entities.removeIf(entity -> !FriendshipBracelet.PlayerFriendshipPredicate(player,entity));
+        entities.removeIf(entity -> !entity.hasLineOfSight(player));
+        for(int ii = 0; ii < 3; ii++){
+            LivingEntity target = level.getNearestEntity(entities,TargetingConditions.forNonCombat(),player,player.getX(),player.getY(),player.getZ());
+            if(target != null) {
+                ReverberatingRay orb = new ReverberatingRay(ModEntities.REVERBERATING_RAY_ORB.get(), ((Player) player).getLevel(), target);
+                orb.setPos(((Player) player).getEyePosition());
+                orb.pickup = AbstractArrow.Pickup.DISALLOWED;
+                orb.setNoPhysics(true);
+                orb.setOwner((Player) player);
+                orb.primary = true;
+                orb.triggered = true;
+                orb.shootFromRotation((Player) player, 0, 0, 0, 0, 0);
+                if (!level.isClientSide()) {
+                    level.addFreshEntity(orb);
+
+                }
+                entities.remove(target);
+
+                ((Player)player).getAttribute(manatick.WARD).setBaseValue(((Player) player).getAttributeBaseValue(manatick.WARD)-20);
+                if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -21) {
+                    player.hurt(DamageSource.MAGIC,2);
+                }
+            }
+
         }
-        player.getCooldowns().addCooldown(this,20);
-        if(!level.isClientSide()) {
-            ReverberatingRay orb = new ReverberatingRay(ModEntities.REVERBERATING_RAY_ORB.get(), ((Player) player).getLevel());
+
+        return false;
+    }
+    @Override
+    public boolean triggeron(Level level, Player player, LivingEntity target, float modifier){
+            ReverberatingRay orb = new ReverberatingRay(ModEntities.REVERBERATING_RAY_ORB.get(), ((Player) player).getLevel(), target);
             orb.setPos(((Player) player).getEyePosition());
             orb.pickup = AbstractArrow.Pickup.DISALLOWED;
             orb.setNoPhysics(true);
@@ -81,14 +136,13 @@ public class ReverberatingRayItem extends Spell {
             orb.primary = true;
             orb.triggered = true;
             orb.shootFromRotation((Player) player, 0, 0, 0, 0, 0);
+        if(!level.isClientSide()) {
             level.addFreshEntity(orb);
         }
-        if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -1 && player.getHealth() > 2) {
+        ((Player)player).getAttribute(manatick.WARD).setBaseValue(((Player) player).getAttributeBaseValue(manatick.WARD)-20);
 
-            player.invulnerableTime = 0;
-            player.hurt(DamageSource.MAGIC, 2);
-            player.invulnerableTime = 0;
-
+        if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -21) {
+            player.hurt(DamageSource.MAGIC,2);
         }
         return false;
     }

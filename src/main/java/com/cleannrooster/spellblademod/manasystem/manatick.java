@@ -22,6 +22,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraftforge.api.distmarker.Dist;
@@ -33,7 +34,9 @@ import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.w3c.dom.Attr;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = "spellblademod", bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -131,42 +134,42 @@ public class manatick {
             }
             if (event.player.getInventory().getArmor(0).isEnchanted()) {
                 if (event.player.getInventory().getArmor(0).getEnchantmentTags().toString().contains("lesserwarding")) {
-                    flagd = flagd + 0.5F;
+                    flagd = flagd + 1F;
                 }
             }
             if (event.player.getInventory().getArmor(1).isEnchanted()) {
                 if (event.player.getInventory().getArmor(1).getEnchantmentTags().toString().contains("lesserwarding")) {
-                    flagd = flagd + 0.5F;
+                    flagd = flagd + 1F;
                 }
             }
             if (event.player.getInventory().getArmor(2).isEnchanted()) {
                 if (event.player.getInventory().getArmor(2).getEnchantmentTags().toString().contains("lesserwarding")) {
-                    flagd = flagd + 0.5F;
+                    flagd = flagd + 1F;
                 }
             }
             if (event.player.getInventory().getArmor(3).isEnchanted()) {
                 if (event.player.getInventory().getArmor(3).getEnchantmentTags().toString().contains("lesserwarding")) {
-                    flagd = flagd + 0.5F;
+                    flagd = flagd + 1F;
                 }
             }
             if (event.player.getInventory().getArmor(0).isEnchanted()) {
                 if (event.player.getInventory().getArmor(0).getEnchantmentTags().toString().contains("greaterwarding")) {
-                    flagd = flagd + 1.5F;
+                    flagd = flagd + 2F;
                 }
             }
             if (event.player.getInventory().getArmor(1).isEnchanted()) {
                 if (event.player.getInventory().getArmor(1).getEnchantmentTags().toString().contains("greaterwarding")) {
-                    flagd = flagd + 1.5F;
+                    flagd = flagd + 2F;
                 }
             }
             if (event.player.getInventory().getArmor(2).isEnchanted()) {
                 if (event.player.getInventory().getArmor(2).getEnchantmentTags().toString().contains("greaterwarding")) {
-                    flagd = flagd + 1.5F;
+                    flagd = flagd + 2F;
                 }
             }
             if (event.player.getInventory().getArmor(3).isEnchanted()) {
                 if (event.player.getInventory().getArmor(3).getEnchantmentTags().toString().contains("greaterwarding")) {
-                    flagd = flagd + 1.5F;
+                    flagd = flagd + 2F;
                 }
             }
 
@@ -175,9 +178,13 @@ public class manatick {
                 //playerMana.addMana( ((float)flagd*(float)0.25));
             }
             basearmor = (float) (0.25 * flagd);
-
+            float multiplier = 1;
             float base = (float) (basestep + basewaving + basearmor + basewarding + basetotem -warddrain);
-            float baseWard = base / (0.025F);
+
+            if(base > 0 && (event.player.getInventory().hasAnyOf(Set.of(ModItems.AMORPHOUS.get())))){
+                multiplier = 0.5F;
+            }
+            float baseWard = multiplier*base / (0.025F);
 
 
             if (!event.player.hasEffect(StatusEffectsModded.WARDLOCKED.get())) {

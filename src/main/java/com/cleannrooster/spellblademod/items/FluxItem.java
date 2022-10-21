@@ -32,6 +32,7 @@ import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
@@ -57,10 +58,15 @@ public class FluxItem extends Spell {
         super(p_41383_);
     }
     public boolean targeted = true;
+    public Item getIngredient1() {return Items.GLOW_BERRIES;};
+    public Item getIngredient2() {return Items.GLASS_BOTTLE;};
 
     @Override
     public boolean isTargeted() {
         return true;
+    }
+    public int getColor() {
+        return 5081087;
     }
 
     public net.minecraft.world.InteractionResult interactLivingEntity(ItemStack stack, net.minecraft.world.entity.player.Player playerIn, LivingEntity entity, net.minecraft.world.InteractionHand hand) {
@@ -87,7 +93,6 @@ public class FluxItem extends Spell {
 
         flux.setPos(player.getBoundingBox().getCenter());
             player.level.addFreshEntity(flux);
-            player.getCooldowns().addCooldown(this, 10);
         return InteractionResult.sidedSuccess(player.getLevel().isClientSide());
     }
 
@@ -123,10 +128,63 @@ public class FluxItem extends Spell {
                 return InteractionResultHolder.success(itemstack);
 
             }
+
         }
-        else{
-            return InteractionResultHolder.fail(itemstack);
+        List<LivingEntity> list = new ArrayList<>();
+
+        boolean flag1 = player.getInventory().contains(ModItems.FRIENDSHIP.get().getDefaultInstance());
+
+        List<LivingEntity> entities = p_41432_.getEntitiesOfClass(LivingEntity.class,player.getBoundingBox().inflate(6D),livingEntity -> {return FriendshipBracelet.PlayerFriendshipPredicate((Player) player,livingEntity);});
+        List<LivingEntity> validentities = new ArrayList<>();
+        Object[] entitiesarray = entities.toArray();
+        int entityamount = entitiesarray.length;
+        for (int ii = 0; ii < entityamount; ii = ii + 1) {
+            LivingEntity target = (LivingEntity) entities.get(ii);
+            boolean flag2 = target.getClassification(false).isFriendly() || target instanceof Player || (target instanceof NeutralMob);
+            if (target != player  && target.hasLineOfSight(player)) {
+                validentities.add(target);
+            }
         }
+
+        validentities.removeIf(livingEntity -> {
+            if (livingEntity instanceof InvisiVex vex) {
+                return vex.owner2 == player;
+            } else {
+                return false;
+            }
+        });
+
+        LivingEntity chained = player.getLevel().getNearestEntity(validentities, TargetingConditions.forNonCombat().ignoreLineOfSight(), player, player.getX(), player.getY(), player.getZ());
+        if (chained != null) {
+            ((Player)player).getAttribute(manatick.WARD).setBaseValue(((Player) player).getAttributeBaseValue(manatick.WARD)-15);
+
+            if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -21) {
+                player.hurt(DamageSource.MAGIC,2);
+            }
+
+            Random rand = new Random();
+            FluxEntity flux = new FluxEntity(ModEntities.FLUX_ENTITY.get(), chained.getLevel());
+            flux.target = chained;
+            flux.setOwner(player);
+            flux.list = list;
+            flux.first = true;
+
+            flux.setPos(player.getBoundingBox().getCenter().x + rand.nextDouble(-2,2),player.getBoundingBox().getCenter().y+ rand.nextDouble(0,2),player.getBoundingBox().getCenter().z+ rand.nextDouble(-2,2));
+            player.level.addFreshEntity(flux);
+            /*ist entities2 = player.level.getEntitiesOfClass(LivingEntity.class, new AABB(chained.getX() - 4, chained.getY() + 0.5 - 4, chained.getZ() - 4, chained.getX() + 4, chained.getY() + 4, chained.getZ() + 4));
+            List<LivingEntity> validentities2 = new ArrayList<>();
+            Object[] entitiesarray2 = entities2.toArray();
+            int entityamount2 = entitiesarray2.length;
+            for (int ii = 0; ii < entityamount2; ii = ii + 1) {
+                LivingEntity target = (LivingEntity) entities2.get(ii);
+                if (target != player && target != living && target != chained) {
+                    validentities2.add(target);
+                }
+
+            }*/
+        }
+        return InteractionResultHolder.success(itemstack);
+
     }
 
     public static void FluxFlux(Player entity, LivingEntity target, Level level, List<LivingEntity> list, boolean first) {
@@ -215,9 +273,10 @@ public class FluxItem extends Spell {
 
         LivingEntity chained = player.getLevel().getNearestEntity(validentities, TargetingConditions.forNonCombat().ignoreLineOfSight(), player, player.getX(), player.getY(), player.getZ());
         if (chained != null) {
-            if(((Player)player).getAttributes().getBaseValue(manatick.WARD) < -1 && player.getHealth() <= 2)
-            {
-                return true;
+            ((Player)player).getAttribute(manatick.WARD).setBaseValue(((Player) player).getAttributeBaseValue(manatick.WARD)-15);
+
+            if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -21) {
+                player.hurt(DamageSource.MAGIC,2);
             }
             Random rand = new Random();
             FluxEntity flux = new FluxEntity(ModEntities.FLUX_ENTITY.get(), chained.getLevel());
@@ -239,13 +298,6 @@ public class FluxItem extends Spell {
                 }
 
             }*/
-            player.getCooldowns().addCooldown(this, 10);
-            if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -1 && player.getHealth() > 2) {
-
-                player.invulnerableTime = 0;
-                player.hurt(DamageSource.MAGIC, 2);
-                player.invulnerableTime = 0;
-            }
         }
         return false;
     }
@@ -286,12 +338,16 @@ public class FluxItem extends Spell {
 
         flux.setPos(player.getBoundingBox().getCenter());
         player.level.addFreshEntity(flux);
-        player.getCooldowns().addCooldown(this, 10);
-        if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -1 && player.getHealth() > 2) {
+        if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -20 ) {
             player.hurt(DamageSource.MAGIC, 2);
             return true;
         }
         return false;
+    }
+
+    @Override
+    public int triggerCooldown() {
+        return 10;
     }
 }
 

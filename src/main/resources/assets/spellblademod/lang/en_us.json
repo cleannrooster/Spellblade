@@ -1,13 +1,13 @@
 {
   "item.spellblademod.spellblade": "Spellblade",
-  "item.spellblademod.splitting_trident": "Splitting Trident Spellbook",
-  "item.spellblademod.vengeful_stance": "Vengeful Stance Spellbook",
-  "item.spellblademod.lightning_whirl": "Lightning Whirl Spellbook",
+  "item.spellblademod.splitting_trident": "Splitting Trident",
+  "item.spellblademod.vengeful_stance": "Vengeful Stance",
+  "item.spellblademod.lightning_whirl": "Lightning Whirl",
   "item.spellblademod.steelball": "Lancing Steel",
   "item.spellblademod.lightning_effigy": "Smiting Effigy",
   "item.spellblademod.fire_effigy": "Blasting Effigy",
   "item.spellblademod.ice_effigy": "Echoing Effigy",
-  "item.spellblademod.teleport": "Teleport Spellbook",
+  "item.spellblademod.teleport": "Teleport",
   "item.spellblademod.wardiron": "Warded Iron Ingot",
   "item.spellblademod.warding_helmet": "Warded Helmet",
   "item.spellblademod.warding_chest": "Warded Chestplate",
@@ -27,6 +27,14 @@
   "item.spellblademod.enderloperstance": "Enderloper Stance",
   "item.spellblademod.bladeflurry": "Blade Flurry",
   "item.spellblademod.reverberating_ray": "Reverberating Ray",
+  "item.spellblademod.bouncing": "Bouncing Betty",
+  "item.spellblademod.spark": "Phantasmal Spider",
+  "item.spellblademod.oil": "Spell Oil",
+  "item.spellblademod.winterburial": "Winter Burial",
+  "item.spellblademod.impale": "Impale",
+
+
+
   "entity.spellblademod.splitting_trident": "Splitting Trident",
   "entity.spellblademod.enderseyeentity": "Ender's Watchful Eye",
   "entity.spellblademod.reverberatingrayorb": "Reverberating Ray",
@@ -57,6 +65,8 @@
   "death.attack.spell.player": "%1$s was hexed by %2$s",
   "enchantment.spellblademod.greaterwarding": "Greater Warding",
   "enchantment.spellblademod.lesserwarding": "Lesser Warding",
-  "enchantment.spellblademod.wardtempered": "Ward-Tempered"
+  "enchantment.spellblademod.wardtempered": "Ward-Tempered",
+  "enchantment.spellblademod.spellproxy": "Spell Proxy"
+
 
 }

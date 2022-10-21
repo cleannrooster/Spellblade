@@ -1,12 +1,18 @@
 package com.cleannrooster.spellblademod.entity;
 
 import com.cleannrooster.spellblademod.items.ReverberatingRayItem;
+import com.cleannrooster.spellblademod.manasystem.client.ParticleReverb;
 import com.cleannrooster.spellblademod.manasystem.manatick;
+import com.cleannrooster.spellblademod.setup.Messages;
 import com.google.common.collect.ImmutableMultimap;
 import com.mojang.math.Vector3f;
+import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Position;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -20,6 +26,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.ItemSupplier;
@@ -28,6 +35,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.*;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +49,7 @@ import static java.lang.Math.sin;
 public class ReverberatingRay extends AbstractArrow implements ItemSupplier {
 
     public  boolean primary = false;
+    public LivingEntity target;
     private boolean secondary = false;
     public boolean triggered = false;
 
@@ -63,6 +72,12 @@ public class ReverberatingRay extends AbstractArrow implements ItemSupplier {
     public ReverberatingRay(EntityType<? extends AbstractArrow> p_36833_, Level p_36834_) {
         super(p_36833_, p_36834_);
         this.pickup = Pickup.DISALLOWED;
+        this.target = null;
+    }
+    public ReverberatingRay(EntityType<? extends AbstractArrow> p_36833_, Level p_36834_, @Nullable LivingEntity target2) {
+        super(p_36833_, p_36834_);
+        this.pickup = Pickup.DISALLOWED;
+        this.target = target2;
     }
 
     @Override
@@ -70,6 +85,23 @@ public class ReverberatingRay extends AbstractArrow implements ItemSupplier {
         return false;
     }
 
+    protected float rotateTowards(float p_24957_, float p_24958_, float p_24959_) {
+        float f = Mth.degreesDifference(p_24957_, p_24958_);
+        float f1 = Mth.clamp(f, -p_24959_, p_24959_);
+        return p_24957_ + f1;
+    }
+    protected float getYRotD(LivingEntity target) {
+        double d0 = target.getX() - this.getX();
+        double d1 = target.getZ() - this.getZ();
+        return /*!(Math.abs(d1) > (double)1.0E-5F) && !(Math.abs(d0) > (double)1.0E-5F) ? Optional.empty() : Optional.of(*/(float)(Mth.atan2(d1, d0) * (double)(180F / (float)Math.PI)) - 90.0F;
+    }
+    protected float getXRotD(LivingEntity target) {
+        double d0 = target.getX() - this.getX();
+        double d1 = target.getY()+target.getBoundingBox().getYsize()/2 - this.getEyeY();
+        double d2 = target.getZ() - this.getZ();
+        double d3 = Math.sqrt(d0 * d0 + d2 * d2);
+        return /*!(Math.abs(d1) > (double)1.0E-5F) && !(Math.abs(d3) > (double)1.0E-5F) ? Optional.empty() : Optional.of(*/(float)(-(Mth.atan2(d1, d3) * (double)(180F / (float)Math.PI)));
+    }
     @Override
     public void tick() {
         super.tick();
@@ -93,6 +125,11 @@ public class ReverberatingRay extends AbstractArrow implements ItemSupplier {
             float f8 = this.getOwner().getYRot()+60;
             float f9 = this.getOwner().getYRot()-60;
             float f = this.getOwner().getXRot();
+            if(this.target != null){
+                f7 = this.getYRotD(target);
+                f = this.getXRotD(target);
+            }
+            System.out.println(this.target);
             float f1 = -Mth.sin(f7 * ((float) Math.PI / 180F)) * Mth.cos(f * ((float) Math.PI / 180F));
             float f2 = -Mth.sin(f * ((float) Math.PI / 180F));
             float f3 = Mth.cos(f7 * ((float) Math.PI / 180F)) * Mth.cos(f * ((float) Math.PI / 180F));
@@ -124,46 +161,31 @@ public class ReverberatingRay extends AbstractArrow implements ItemSupplier {
                 }
                 SoundEvent soundEvent = SoundEvents.ILLUSIONER_CAST_SPELL;
                 level.playSound((Player)null, this.getOnPos(), soundEvent, SoundSource.PLAYERS, 1F, 1F);
-
-                    int num_pts_line = 30;
-                    for (int iii = 0; iii < num_pts_line; iii++) {
-                        double X = this.getEyePosition().x + (pos1.x() -this.getEyePosition().x) * ((double)iii / (num_pts_line));
-                        double Y = this.getEyePosition().y + (pos1.y() - this.getEyePosition().y) * ((double)iii / (num_pts_line));
-                        double Z = this.getEyePosition().z + (pos1.z() - this.getEyePosition().z) * ((double)iii / (num_pts_line));
-                        double X2 = this.getEyePosition().x + (pos2.x() -this.getEyePosition().x) * ((double)iii / (num_pts_line));
-                        double Y2 = this.getEyePosition().y + (pos2.y() - this.getEyePosition().y) * ((double)iii / (num_pts_line));
-                        double Z2 = this.getEyePosition().z + (pos2.z() - this.getEyePosition().z) * ((double)iii / (num_pts_line));
-                        double X3 = this.getEyePosition().x + (pos3.x() -this.getEyePosition().x) * ((double)iii / (num_pts_line));
-                        double Y3 = this.getEyePosition().y + (pos3.y() - this.getEyePosition().y) * ((double)iii / (num_pts_line));
-                        double Z3 = this.getEyePosition().z + (pos3.z() - this.getEyePosition().z) * ((double)iii / (num_pts_line));
-
-                        int num_pts = 10;
-                        Vec3 targetcenter = new Vec3(X,Y,Z);
-                        Vec3 targetcenter2 = new Vec3(X2,Y2,Z2);
-                        Vec3 targetcenter3 = new Vec3(X3,Y3,Z3);
-
-                        for (int i = 1; i < num_pts; i = i + 1) {
-                            double[] indices = IntStream.rangeClosed(0, (int) ((num_pts - 0) / 1))
-                                    .mapToDouble(x -> x * 1 + 0).toArray();
-
-                            double phi = Math.acos(1 - 2 * indices[i] / num_pts);
-                            double theta = Math.PI * (1 + Math.pow(5, 0.5) * indices[i]);
-                            double x = cos(theta) * sin(phi);
-                            double y = Math.sin(theta) * sin(phi);
-                            double z = cos(phi);
-                            level.addParticle(new DustParticleOptions(new Vector3f(Vec3.fromRGB24(65436)),1F), true, targetcenter.x + x/4D , targetcenter.y + y/4D , targetcenter.z + z/4D, x * 0.05, y * 0.05, z * 0.05);
-                            level.addParticle(new DustParticleOptions(new Vector3f(Vec3.fromRGB24(65436)),1F), true, targetcenter2.x + x/4D , targetcenter2.y  + y/4D , targetcenter2.z  + z/4D, x * 0.05, y * 0.05, z * 0.05);
-                            level.addParticle(new DustParticleOptions(new Vector3f(Vec3.fromRGB24(65436)),1F), true, targetcenter3.x +  x/4D , targetcenter3.y + y/4D , targetcenter3.z  + z/4D, x * 0.05, y * 0.05, z * 0.05);
-
-                        }
+                if(this.getLevel() instanceof ServerLevel serverLevel) {
+                    for (ServerPlayer player : serverLevel.players()){
+                        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+                        buf.writeDouble(this.getX());
+                        buf.writeDouble(this.getY());
+                        buf.writeDouble(this.getZ());
+                        buf.writeDouble(pos1.x());
+                        buf.writeDouble(pos1.y());
+                        buf.writeDouble(pos1.z());
+                        buf.writeDouble(pos2.x());
+                        buf.writeDouble(pos2.y());
+                        buf.writeDouble(pos2.z());
+                        buf.writeDouble(pos3.x());
+                        buf.writeDouble(pos3.y());
+                        buf.writeDouble(pos3.z());
+                        Messages.sendToPlayer(new ParticleReverb(buf),player);
                     }
+                }
                 List<Entity> list = this.level.getEntities(this, new AABB((double)this.getOwner().getEyePosition().x(), (double)this.getOwner().getEyePosition().y(), (double)this.getOwner().getEyePosition().z(), (double)pos1.x(), (double)pos1.y(), (double)pos1.z()));
                 List<Entity> list2 = this.level.getEntities(this, new AABB((double)this.getOwner().getEyePosition().x(), (double)this.getOwner().getEyePosition().y(), (double)this.getOwner().getEyePosition().z(), (double)pos2.x(), (double)pos2.y(), (double)pos2.z()));
                 List<Entity> list3 = this.level.getEntities(this, new AABB((double)this.getOwner().getEyePosition().x(), (double)this.getOwner().getEyePosition().y(), (double)this.getOwner().getEyePosition().z(), (double)pos3.x(), (double)pos3.y(), (double)pos3.z()));
 
                 for (int ii = 0; ii < list.toArray().length; ii++) {
                     Optional<Vec3> vec1 = list.get(ii).getBoundingBox().inflate(0.5).clip(this.getOwner().getEyePosition(), (Vec3) pos1);
-                    if (list.get(ii) instanceof LivingEntity target && vec1.isPresent() && ((LivingEntity)this.getOwner()).hasLineOfSight(list.get(ii))&& list.get(ii) != this.getOwner()) {
+                    if (list.get(ii) instanceof LivingEntity target && vec1.isPresent() && ((LivingEntity)this.getOwner()).hasLineOfSight(list.get(ii))&& list.get(ii) != this.getOwner() && !this.getLevel().isClientSide()) {
                         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(),"knockbackresist",1, AttributeModifier.Operation.ADDITION);
 
                         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
@@ -178,7 +200,7 @@ public class ReverberatingRay extends AbstractArrow implements ItemSupplier {
                 }
                 for (int ii = 0; ii < list2.toArray().length; ii++) {
                     Optional<Vec3> vec1 = list2.get(ii).getBoundingBox().inflate(0.5).clip(this.getOwner().getEyePosition(), (Vec3) pos2);
-                    if (list2.get(ii) instanceof LivingEntity target && vec1.isPresent() && ((LivingEntity)this.getOwner()).hasLineOfSight(list2.get(ii))&& list2.get(ii) != this.getOwner()) {
+                    if (list2.get(ii) instanceof LivingEntity target && vec1.isPresent() && ((LivingEntity)this.getOwner()).hasLineOfSight(list2.get(ii))&& list2.get(ii) != this.getOwner()&& !this.getLevel().isClientSide()) {
                         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(),"knockbackresist",1, AttributeModifier.Operation.ADDITION);
 
                         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
@@ -193,7 +215,7 @@ public class ReverberatingRay extends AbstractArrow implements ItemSupplier {
                 }
                 for (int ii = 0; ii < list3.toArray().length; ii++) {
                     Optional<Vec3> vec1 = list3.get(ii).getBoundingBox().inflate(0.5).clip(this.getOwner().getEyePosition(), (Vec3) pos3);
-                    if (list3.get(ii) instanceof LivingEntity target && vec1.isPresent() && ((LivingEntity)this.getOwner()).hasLineOfSight(list3.get(ii))&& list3.get(ii) != this.getOwner()) {
+                    if (list3.get(ii) instanceof LivingEntity target && vec1.isPresent() && ((LivingEntity)this.getOwner()).hasLineOfSight(list3.get(ii))&& list3.get(ii) != this.getOwner()&& !this.getLevel().isClientSide()) {
                         AttributeModifier modifier = new AttributeModifier(UUID.randomUUID(),"knockbackresist",1, AttributeModifier.Operation.ADDITION);
 
                         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();

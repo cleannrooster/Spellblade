@@ -21,15 +21,17 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 import static java.lang.Math.*;
 
-public class SentinelEntity extends PathfinderMob {
+public class SentinelEntity extends PathfinderMob implements NeutralMob {
 
     private boolean noTotem;
 
@@ -47,6 +49,33 @@ public class SentinelEntity extends PathfinderMob {
         super.move(p_33997_, p_33998_);
         this.checkInsideBlocks();
     }
+
+    @Override
+    public int getRemainingPersistentAngerTime() {
+        return 0;
+    }
+
+    @Override
+    public void setRemainingPersistentAngerTime(int p_21673_) {
+
+    }
+
+    @Nullable
+    @Override
+    public UUID getPersistentAngerTarget() {
+        return null;
+    }
+
+    @Override
+    public void setPersistentAngerTarget(@Nullable UUID p_21672_) {
+
+    }
+
+    @Override
+    public void startPersistentAngerTimer() {
+
+    }
+
     class VexMoveControl extends MoveControl {
         public VexMoveControl(SentinelEntity p_34062_) {
             super(p_34062_);

@@ -1,0 +1,15 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+  "layer0": "spellblademod:item/amorphous_amethyst"
+  },
+  "overrides": [
+    { "predicate":  { "custom_model_data": 0 }, "model": "spellblademod:item/amorphous_amethyst"},
+    { "predicate":  { "custom_model_data": 1 }, "model": "spellblademod:item/spellblade_tier_0"},
+    { "predicate":  { "custom_model_data": 2 }, "model": "spellblademod:item/amorphous_axe"},
+    { "predicate":  { "custom_model_data": 3 }, "model": "spellblademod:item/amorphous_pickaxe"},
+    { "predicate":  { "custom_model_data": 4 }, "model": "spellblademod:item/amorphous_shovel"},
+    { "predicate":  { "custom_model_data": 5 }, "model": "spellblademod:item/amorphous_hoe"}
+
+  ]
+}

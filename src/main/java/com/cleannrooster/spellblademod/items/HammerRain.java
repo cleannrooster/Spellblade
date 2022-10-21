@@ -9,7 +9,9 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -19,6 +21,12 @@ public class HammerRain extends Spell {
     public HammerRain(Properties p_41383_) {
         super(p_41383_);
     }
+    public int getColor() {
+        return 8307711;
+    }
+    public Item getIngredient1() {return Items.PRISMARINE;};
+    public Item getIngredient2() {return ModItems.FLUXITEM.get();};
+
     public InteractionResultHolder<ItemStack> use(Level p_43405_, Player p_43406_, InteractionHand p_43407_) {
         ItemStack itemstack = p_43406_.getItemInHand(p_43407_);
 
@@ -50,7 +58,6 @@ public class HammerRain extends Spell {
             p_43406_.hurt(DamageSource.MAGIC,2);
         }
         if (!p_43406_.isShiftKeyDown()) {
-            p_43406_.getCooldowns().addCooldown(this, 20);
         }
             HammerEntity hammer1 = new HammerEntity(ModEntities.TRIDENT.get(),p_43406_.getLevel());
             hammer1.setPos(p_43406_.getEyePosition());
@@ -66,7 +73,6 @@ public class HammerRain extends Spell {
         {
             return true;
         }
-        player.getCooldowns().addCooldown(this,10);
 
         Random rand = new Random();
 
@@ -112,13 +118,10 @@ public class HammerRain extends Spell {
         level.addFreshEntity(hammer2);
         level.addFreshEntity(hammer3);
         level.addFreshEntity(hammer4);
+        ((Player)player).getAttribute(manatick.WARD).setBaseValue(((Player) player).getAttributeBaseValue(manatick.WARD)-20);
 
-        if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -1 && player.getHealth() > 2) {
-
-            player.invulnerableTime = 0;
-            player.hurt(DamageSource.MAGIC, 2);
-            player.invulnerableTime = 0;
-
+        if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -21) {
+            player.hurt(DamageSource.MAGIC,2);
         }
         return false;
     }
@@ -130,5 +133,10 @@ public class HammerRain extends Spell {
             }
         }
         return false;
+    }
+
+    @Override
+    public int triggerCooldown() {
+        return 10;
     }
 }

@@ -113,6 +113,8 @@ public class FluxEntity extends AbstractArrow implements ItemSupplier {
                 if(this.getOwner() instanceof Player) {
                     if (this.overload) {
                         if(this.target.hasEffect(StatusEffectsModded.FLUXED.get())){
+                                this.target.removeEffect(StatusEffectsModded.FLUXED.get());
+
                             this.target.invulnerableTime = 0;
                             this.target.hurt(DamageSourceModded.fluxed((Player) this.getOwner()), this.amount * 1.5F);
                             this.target.invulnerableTime = 0;

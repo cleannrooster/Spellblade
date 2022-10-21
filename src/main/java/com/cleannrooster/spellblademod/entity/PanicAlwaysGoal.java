@@ -1,8 +1,11 @@
 package com.cleannrooster.spellblademod.entity;
 
+import com.cleannrooster.spellblademod.items.FriendshipBracelet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
@@ -11,6 +14,7 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
+import java.util.List;
 
 public class PanicAlwaysGoal extends Goal {
     public static final int WATER_CHECK_DISTANCE_VERTICAL = 1;
@@ -20,6 +24,7 @@ public class PanicAlwaysGoal extends Goal {
     protected double posY;
     protected double posZ;
     protected boolean isRunning;
+    private int ticksUntilNextAttack = 0;
 
     public PanicAlwaysGoal(PathfinderMob p_25691_, double p_25692_) {
         this.mob = p_25691_;
@@ -28,7 +33,26 @@ public class PanicAlwaysGoal extends Goal {
     }
 
     public boolean canUse() {
-        return this.findRandomPosition();
+        List<LivingEntity> entity = this.mob.getLevel().getEntitiesOfClass(LivingEntity.class,this.mob.getBoundingBox().inflate(4), livingEntity -> (livingEntity != this.mob) && !(livingEntity instanceof SpiderSpark));
+        if(((SpiderSpark)this.mob).owner != null) {
+            entity.removeIf(entity2 -> !FriendshipBracelet.PlayerFriendshipPredicate(((SpiderSpark) this.mob).owner, entity2));
+            entity.removeIf(livingEntity -> livingEntity == ((SpiderSpark)this.mob).owner);
+        }
+
+        for(LivingEntity living : entity) {
+            if (this.mob.getBoundingBox().intersects(living.getBoundingBox().inflate(1)) && this.ticksUntilNextAttack <= 0){
+                this.ticksUntilNextAttack = 10;
+
+                this.mob.swing(InteractionHand.MAIN_HAND);
+                this.mob.doHurtTarget(living);
+            }
+        }
+        this.ticksUntilNextAttack = Math.max(this.ticksUntilNextAttack - 1, 0);
+        if(this.mob.getLevel().random.nextInt(20) % 20 >= 10) {
+            return this.findRandomPosition();
+        }
+        return false;
+
     }
 
     protected boolean findRandomPosition() {

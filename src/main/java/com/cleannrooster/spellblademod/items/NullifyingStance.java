@@ -61,7 +61,7 @@ public class NullifyingStance extends Guard{
         return false;
     }
     @Override
-    public void guardtick(Player player, Level level) {
+    public void guardtick(Player player, Level level, int slot, int count) {
         List entities = level.getEntitiesOfClass(Projectile.class, new AABB(player.getX() - 6, player.getY() - 6, player.getZ() - 6, player.getX() + 6, player.getY() + 6, player.getZ() + 6));
         Object[] entitiesarray = entities.toArray();
         int entityamount = entitiesarray.length;

@@ -1,10 +1,10 @@
 package com.cleannrooster.spellblademod.effects;
 
 import com.cleannrooster.spellblademod.StatusEffectsModded;
-import com.cleannrooster.spellblademod.enchants.ModEnchants;
 import com.cleannrooster.spellblademod.entity.FluxEntity;
 import com.cleannrooster.spellblademod.entity.ModEntities;
 import com.cleannrooster.spellblademod.items.FriendshipBracelet;
+import com.cleannrooster.spellblademod.items.ModItems;
 import com.cleannrooster.spellblademod.items.Spellblade;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.ParticleTypes;
@@ -58,7 +58,6 @@ public class FluxHandler {
         if(event.getSource().getDirectEntity() instanceof Player) {
             Player player = (Player) event.getSource().getEntity();
 
-            if (!((DamageSource) event.getSource()).msgId.equals("explosion.player") &&((DamageSource) event.getSource()).msgId != "fluxed" && ((DamageSource) event.getSource()).msgId != "spell" && ((DamageSource) event.getSource()).msgId != "fluxed1" && player.getMainHandItem().getItem() instanceof Spellblade) {
                 int i;
                 float amount = (float) (event.getAmount());
                 List<LivingEntity> entitieshit = new ArrayList<>();
@@ -75,12 +74,14 @@ public class FluxHandler {
                     if (living.hasEffect(MobEffects.GLOWING)) {
                         living.removeEffect(MobEffects.GLOWING);
                     }
+                    living.removeEffect(StatusEffectsModded.FLUXED.get());
+
                     living.invulnerableTime = 0;
 
                     living.hurt(DamageSourceModded.fluxed(player),1.5F*event.getAmount());
                     living.invulnerableTime = 0;
 
-                    player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(), 80, 1+ EnchantmentHelper.getItemEnchantmentLevel(ModEnchants.WARDTEMPERED.get(),player.getMainHandItem())));
+                    player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(), 80, 1+ EnchantmentHelper.getItemEnchantmentLevel(ModItems.WARDTEMPERED.get(),player.getMainHandItem())));
                     int num_pts = 100;
                     /*for (i = 0; i <= num_pts; i = i + 1) {
                         double[] indices = IntStream.rangeClosed(0, (int) ((num_pts - 0) / 1))
@@ -109,9 +110,8 @@ public class FluxHandler {
                             living.level.addFreshEntity(flux);
                         }
                     }
-                }
 
-                living.removeEffect(StatusEffectsModded.FLUXED.get());
+
             }
         }
     }
@@ -122,7 +122,6 @@ public class FluxHandler {
             }
         }
 
-        if (( living.hasEffect(StatusEffectsModded.FLUXED.get())) && player.getMainHandItem().getItem() instanceof Spellblade && living != player) {
             if (living.hasEffect(MobEffects.GLOWING)) {
                 living.removeEffect(MobEffects.GLOWING);
             }
@@ -139,9 +138,7 @@ public class FluxHandler {
                     level.addParticle(ParticleTypes.GLOW_SQUID_INK.getType(), true, living.getX() + random.nextDouble(-0.1, 0.1), living.getY() + random.nextDouble(-0.1, 0.1), living.getZ() + random.nextDouble(-0.1, 0.1), x * 0.5, y * 0.5, z * 0.5);
                 }*/
                 list.add(living);
-                if(living.hasEffect(StatusEffectsModded.FLUXED.get())) {
-                    living.removeEffect(StatusEffectsModded.FLUXED.get());
-                }
+
 
             List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class,living.getBoundingBox().inflate(3D),livingEntity -> {return FriendshipBracelet.PlayerFriendshipPredicate(player,livingEntity);});
             Object[] entitiesarray = entities.toArray();
@@ -164,7 +161,7 @@ public class FluxHandler {
                         living.level.addFreshEntity(flux);
                     }
                 }
-            }
+
         }
 
     }
