@@ -57,8 +57,10 @@ public class ClientSetup {
 
 
     public static void init(FMLClientSetupEvent event){
-        OverlayRegistry.registerOverlayAbove(HOTBAR_ELEMENT, "ward", ManaOverlay.HUD_MANA);
+        //OverlayRegistry.registerOverlayAbove(HOTBAR_ELEMENT, "ward", ManaOverlay.HUD_MANA);
         OverlayRegistry.registerOverlayAbove(PLAYER_HEALTH_ELEMENT,"wardhearts", new OverlayWard(new GUI(Minecraft.getInstance())));
+        OverlayRegistry.registerOverlayBelow(PLAYER_HEALTH_ELEMENT, "wardbar", new WardBar(new WardBarGUI(Minecraft.getInstance())));
+
     }
 
 }
