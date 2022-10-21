@@ -70,7 +70,6 @@ public class MoveControlVolleyball implements Control {
     }
 
         public void tick() {
-        System.out.println(this.operation);
             if (this.operation == MoveControlVolleyball.Operation.STRAFE) {
                 float f = (float)this.mob.getAttributeValue(Attributes.MOVEMENT_SPEED);
                 float f1 = (float)this.speedModifier * f;

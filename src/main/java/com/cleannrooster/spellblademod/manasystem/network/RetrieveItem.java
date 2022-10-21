@@ -58,7 +58,6 @@ public class RetrieveItem {
                 nbt.put("AutoUse",autoUse);
             }
             nbt.put("AutoUse", autoUse);
-            System.out.println(nbt);
             itemStack.save(compoundtag);
             CompoundTag tag = new CompoundTag();
             tag.put("spellproxy", compoundtag);

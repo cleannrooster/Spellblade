@@ -46,8 +46,6 @@ public class SpellProxy extends Enchantment {
 
     @Override
     public void doPostAttack(LivingEntity p_44692_, Entity living, int p_44694_) {
-        System.out.println(living);
-        System.out.println(p_44692_);
 
 
     }

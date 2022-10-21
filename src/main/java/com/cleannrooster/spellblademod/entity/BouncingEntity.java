@@ -54,7 +54,6 @@ public class BouncingEntity extends Fireball {
                     double y = this.random.nextDouble(-0.4, 0.4);
                     double z = this.random.nextDouble(-0.4, 0.4);
                     this.setDeltaMovement((this.thrower.getPosition(0).add(p_36839_.getEntity().getPosition(0).multiply(-1, -1, -1))).normalize().multiply(1 + x, 0, 1 + z).add(0, 0.35, 0));
-                    System.out.println(this.getDeltaMovement());
                     this.thrower = (LivingEntity) p_36839_.getEntity();
 
                     this.changetime = 10;

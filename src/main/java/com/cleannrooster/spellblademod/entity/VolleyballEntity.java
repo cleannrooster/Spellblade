@@ -87,7 +87,6 @@ public class VolleyballEntity extends PathfinderMob{
     public void tick() {
         super.tick();
         if(this.jumping){
-            System.out.println(jumping);
             this.setSpeed(-10);
         }
         /*this.target = this.findTarget();
@@ -272,13 +271,11 @@ public class VolleyballEntity extends PathfinderMob{
                             if(player != this.mob) {
                                 this.mob.getMoveControl().setWantedPosition(x, y, z, 0.6);
 
-                                System.out.print("if");
                             }
 
                             if (bouncing.changetime == 0 && bouncing.thrower != null && !this.mob.getLevel().isClientSide) {
                                 {
                                     if ((this.mob.distanceTo(target) < 5 && player != this.mob)) {
-                                        System.out.println("hit");
                                         this.mob.swing(InteractionHand.MAIN_HAND);
                                         bouncing.hurt(DamageSource.mobAttack(this.mob), 1);
                                     }

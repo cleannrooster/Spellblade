@@ -129,7 +129,6 @@ public class ReverberatingRay extends AbstractArrow implements ItemSupplier {
                 f7 = this.getYRotD(target);
                 f = this.getXRotD(target);
             }
-            System.out.println(this.target);
             float f1 = -Mth.sin(f7 * ((float) Math.PI / 180F)) * Mth.cos(f * ((float) Math.PI / 180F));
             float f2 = -Mth.sin(f * ((float) Math.PI / 180F));
             float f3 = Mth.cos(f7 * ((float) Math.PI / 180F)) * Mth.cos(f * ((float) Math.PI / 180F));
