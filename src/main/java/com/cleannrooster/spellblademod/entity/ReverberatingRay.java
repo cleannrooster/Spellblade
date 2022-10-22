@@ -113,13 +113,7 @@ public class ReverberatingRay extends AbstractArrow implements ItemSupplier {
             Random rand = new Random();
 
             this.pickup = Pickup.DISALLOWED;
-            if(!this.triggered) {
-                if (!(((Player) this.getOwner()).isUsingItem() && ((Player) this.getOwner()).getMainHandItem().getItem() instanceof ReverberatingRayItem)) {
-                    if (!this.getLevel().isClientSide()) {
-                        this.discard();
-                    }
-                }
-            }
+
 
             float f7 = this.getOwner().getYRot();
             float f8 = this.getOwner().getYRot()+60;

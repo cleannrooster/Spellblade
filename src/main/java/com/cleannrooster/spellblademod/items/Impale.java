@@ -5,6 +5,7 @@ import com.cleannrooster.spellblademod.entity.ModEntities;
 import com.cleannrooster.spellblademod.entity.WinterBurialEntity;
 import com.cleannrooster.spellblademod.items.Spell;
 import com.cleannrooster.spellblademod.manasystem.manatick;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -47,6 +48,33 @@ public class Impale extends Spell {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack itemstack = player.getItemInHand(hand);
+
+        if (((Player) player).isShiftKeyDown()) {
+            CompoundTag nbt;
+            if (itemstack.hasTag())
+            {
+                if(itemstack.getTag().get("Triggerable") != null) {
+                    nbt = itemstack.getTag();
+                    nbt.remove("Triggerable");
+                    player.getInventory().setChanged();
+                }
+                else{
+                    nbt = itemstack.getOrCreateTag();
+                    nbt.putInt("Triggerable", 1);
+                    player.getInventory().setChanged();
+                }
+
+            }
+            else
+            {
+                nbt = itemstack.getOrCreateTag();
+                nbt.putInt("Triggerable", 1);
+                player.getInventory().setChanged();
+            }
+            return InteractionResultHolder.success(itemstack);
+
+        }
         BlockHitResult hitResult = Impale.getPlayerPOVHitResult(level,player, ClipContext.Fluid.NONE);
         if(hitResult.getType() == HitResult.Type.BLOCK) {
             ImpaleEntity impale = new ImpaleEntity(ModEntities.IMPALE.get(), level, player, hitResult.getBlockPos());

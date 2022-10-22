@@ -4,6 +4,7 @@ import com.cleannrooster.spellblademod.entity.ImpaleEntity;
 import com.cleannrooster.spellblademod.entity.ModEntities;
 import com.cleannrooster.spellblademod.entity.WinterBurialEntity;
 import com.cleannrooster.spellblademod.manasystem.manatick;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -44,6 +45,33 @@ public class WinterBurial extends Spell{
     }
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack itemstack = player.getItemInHand(hand);
+
+        if (((Player) player).isShiftKeyDown()) {
+            CompoundTag nbt;
+            if (itemstack.hasTag())
+            {
+                if(itemstack.getTag().get("Triggerable") != null) {
+                    nbt = itemstack.getTag();
+                    nbt.remove("Triggerable");
+                    player.getInventory().setChanged();
+                }
+                else{
+                    nbt = itemstack.getOrCreateTag();
+                    nbt.putInt("Triggerable", 1);
+                    player.getInventory().setChanged();
+                }
+
+            }
+            else
+            {
+                nbt = itemstack.getOrCreateTag();
+                nbt.putInt("Triggerable", 1);
+                player.getInventory().setChanged();
+            }
+            return InteractionResultHolder.success(itemstack);
+
+        }
         if(Impale.getPlayerPOVHitResult(level,player, ClipContext.Fluid.NONE).getType() == HitResult.Type.BLOCK) {
             new WinterBurialEntity(ModEntities.WINTERBURIAL.get(), level, player,Impale.getPlayerPOVHitResult(level,player, ClipContext.Fluid.NONE).getBlockPos() , 3);
             ((Player)player).getAttribute(manatick.WARD).setBaseValue(((Player) player).getAttributeBaseValue(manatick.WARD)-20);

@@ -3,6 +3,7 @@ package com.cleannrooster.spellblademod.items;
 import com.cleannrooster.spellblademod.entity.ModEntities;
 import com.cleannrooster.spellblademod.entity.SpiderSpark;
 import com.cleannrooster.spellblademod.manasystem.manatick;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
@@ -24,6 +25,34 @@ public class SpiderSparkItem extends Spell{
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level p_41432_, Player p_41433_, InteractionHand p_41434_) {
+        ItemStack itemstack = p_41433_.getItemInHand(p_41434_);
+        Player player = p_41433_;
+
+        if (((Player) player).isShiftKeyDown()) {
+            CompoundTag nbt;
+            if (itemstack.hasTag())
+            {
+                if(itemstack.getTag().get("Triggerable") != null) {
+                    nbt = itemstack.getTag();
+                    nbt.remove("Triggerable");
+                    player.getInventory().setChanged();
+                }
+                else{
+                    nbt = itemstack.getOrCreateTag();
+                    nbt.putInt("Triggerable", 1);
+                    player.getInventory().setChanged();
+                }
+
+            }
+            else
+            {
+                nbt = itemstack.getOrCreateTag();
+                nbt.putInt("Triggerable", 1);
+                player.getInventory().setChanged();
+            }
+            return InteractionResultHolder.success(itemstack);
+
+        }
         SpiderSpark spider = new SpiderSpark(ModEntities.SPARK.get(),p_41432_, p_41433_);
         spider.setPos(p_41433_.position());
         p_41432_.addFreshEntity(spider);

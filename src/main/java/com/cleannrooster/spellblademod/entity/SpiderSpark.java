@@ -157,13 +157,7 @@ public class SpiderSpark extends Spider implements NeutralMob {
         }
 
         public boolean canContinueToUse() {
-            float f = this.mob.getBrightness();
-            if (f >= 0.5F && this.mob.getRandom().nextInt(100) == 0) {
-                this.mob.setTarget((LivingEntity)null);
-                return false;
-            } else {
-                return super.canContinueToUse();
-            }
+                return true;
         }
 
         protected double getAttackReachSqr(LivingEntity p_33825_) {
