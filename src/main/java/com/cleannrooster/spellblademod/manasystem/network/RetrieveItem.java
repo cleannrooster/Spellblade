@@ -14,22 +14,25 @@ public class RetrieveItem {
     public static final String MESSAGE_NO_MANA = "message.nomana";
     private ItemStack flaskItem ;
     private ItemStack slotItem;
+    private boolean trigger;
 
     public RetrieveItem(ItemStack flaskItem, ItemStack slotItem) {
         this.flaskItem = flaskItem;
         this.slotItem = slotItem;
+
 
     }
 
     public RetrieveItem(FriendlyByteBuf buf) {
         flaskItem = buf.readItem();
         slotItem = buf.readItem();
+        trigger = buf.readBoolean();
     }
 
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeItemStack(flaskItem,false);
         buf.writeItemStack(slotItem,false);
-
+        buf.writeBoolean(trigger);
 
     }
 
@@ -41,23 +44,39 @@ public class RetrieveItem {
             ItemStack itemStack = ItemStack.of(player.getPersistentData().getCompound("spellproxy"));
             itemStack.save(compoundtag);
 
-            ((FlaskItem)flaskItem.getItem()).applyFlask(player,null,flaskItem,itemStack);
+            ((FlaskItem)flaskItem.getItem()).applyFlask(player,null,flaskItem,itemStack,trigger);
 
             CompoundTag nbt = itemStack.getOrCreateTag();
-            CompoundTag autoUse = nbt.getCompound("AutoUse");
+            if(trigger) {
+                CompoundTag autoUse = nbt.getCompound("AutoTrigger");
 
-            if (nbt.getCompound("AutoUse").contains(flaskItem.getOrCreateTag().getString("Spell"))) {
-                nbt.getCompound("AutoUse").remove(flaskItem.getOrCreateTag().getString("Spell"));
+                if (nbt.getCompound("AutoTrigger").contains(flaskItem.getOrCreateTag().getString("Spell"))) {
+                    nbt.getCompound("AutoTrigger").remove(flaskItem.getOrCreateTag().getString("Spell"));
 
-            } else {
-                nbt.getCompound("AutoUse").putBoolean(flaskItem.getOrCreateTag().getString("Spell"), true);
+                } else {
+                    autoUse.putBoolean(flaskItem.getOrCreateTag().getString("Spell"), true);
 
+                }
+                if (!nbt.contains("AutoTrigger")) {
+                    autoUse.putBoolean(flaskItem.getOrCreateTag().getString("Spell"), true);
+                }
+                nbt.put("AutoTrigger", autoUse);
             }
-            if(!nbt.contains("AutoUse")){
-                autoUse.putBoolean(flaskItem.getOrCreateTag().getString("Spell"), true);
-                nbt.put("AutoUse",autoUse);
+            else {
+                CompoundTag autoUse = nbt.getCompound("AutoUse");
+
+                if (nbt.getCompound("AutoUse").contains(flaskItem.getOrCreateTag().getString("Spell"))) {
+                    nbt.getCompound("AutoUse").remove(flaskItem.getOrCreateTag().getString("Spell"));
+
+                } else {
+                    autoUse.putBoolean(flaskItem.getOrCreateTag().getString("Spell"), true);
+
+                }
+                if (!nbt.contains("AutoUse")) {
+                    autoUse.putBoolean(flaskItem.getOrCreateTag().getString("Spell"), false);
+                }
+                nbt.put("AutoUse", autoUse);
             }
-            nbt.put("AutoUse", autoUse);
             itemStack.save(compoundtag);
             CompoundTag tag = new CompoundTag();
             tag.put("spellproxy", compoundtag);

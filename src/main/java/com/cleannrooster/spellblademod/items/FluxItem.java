@@ -187,7 +187,7 @@ public class FluxItem extends Spell {
 
     }
 
-    public static void FluxFlux(Player entity, LivingEntity target, Level level, List<LivingEntity> list, boolean first) {
+    public static void FluxFlux(Player entity, LivingEntity target, Level level, List<LivingEntity> list, boolean first,FluxEntity thisFlux) {
         if (target == null) {
             return;
         }
@@ -235,7 +235,9 @@ public class FluxItem extends Spell {
                             if(!target2.hasEffect(StatusEffectsModded.FLUXED.get())){
                                 flux.bool = true;
                             }
+                            flux.setDeltaMovement(thisFlux.getDeltaMovement());
                             target.level.addFreshEntity(flux);
+
                             iii++;
                         }
                     }

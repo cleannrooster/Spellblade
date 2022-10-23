@@ -88,9 +88,13 @@ public interface Flask {
         return true;
     }
 
-    public static  boolean triggerOrTriggeron(String spellname, Level level, Player player, LivingEntity target, float modifier, ItemStack stack){
-        if(stack.getOrCreateTag().getCompound("Oils") != null){
-            if(stack.getOrCreateTag().getCompound("Oils").getInt(spellname) > 0) {
+    public static  boolean triggerOrTriggeron(String spellname, Level level, Player player, LivingEntity target, float modifier, ItemStack stack, boolean trigger){
+        String triggeroroil = "Oils";
+        if(trigger){
+            triggeroroil = "Triggers";
+        }
+        if(stack.getOrCreateTag().getCompound(triggeroroil) != null){
+            if(stack.getOrCreateTag().getCompound(triggeroroil).getInt(spellname) > 0) {
                 for (RegistryObject<Item> spell3 : ModItems.ITEMS.getEntries()) {
                     if (spell3.get() instanceof Spell spell && spell.isTriggerable()) {
                         if (Objects.equals(spell.getDescriptionId(), spellname)) {
@@ -105,7 +109,7 @@ public interface Flask {
                 }
             }
             else{
-                stack.getOrCreateTag().getCompound("Oils").remove(spellname);
+                stack.getOrCreateTag().getCompound(triggeroroil).remove(spellname);
             }
         }
         return true;
@@ -130,14 +134,28 @@ public interface Flask {
         }
         return InteractionResultHolder.fail(player.getItemInHand(hand));
     }
-    public default void applyFlask(Player player, @Nullable InteractionHand hand, ItemStack stack, ItemStack sword){
+    public default void applyFlask(Player player, @Nullable InteractionHand hand, ItemStack stack, ItemStack sword, boolean trigger){
         CompoundTag nbt = sword.getOrCreateTag();
-        CompoundTag nbtadd = nbt.getCompound("Oils");
-        if(nbt.getCompound("Oils").getInt(getSpellItem(stack)) > 0) {
-            return;
+        CompoundTag nbtadd;
+        System.out.println(trigger);
+        if(!trigger) {
+             nbtadd = nbt.getCompound("Oils");
+            if (nbt.getCompound("Oils").getInt(getSpellItem(stack)) > 0) {
+                return;
+            }
+
+            nbtadd.putInt(getSpellItem(stack),8);
+            nbt.put("Oils", nbtadd);
         }
-        nbtadd.putInt(getSpellItem(stack),8);
-        nbt.put("Oils", nbtadd);
+        if(trigger){
+
+            nbtadd = nbt.getCompound("Triggers");
+            if (nbt.getCompound("Triggers").getInt(getSpellItem(stack)) > 0) {
+                return;
+            }
+            nbtadd.putInt(getSpellItem(stack),8);
+            nbt.put("Triggers", nbtadd);
+        }
         stack.hurtAndBreak(1, player, player1 -> {
         });
     }

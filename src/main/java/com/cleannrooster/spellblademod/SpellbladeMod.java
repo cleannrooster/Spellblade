@@ -1,5 +1,7 @@
 package com.cleannrooster.spellblademod;
 
+import com.besaba.revonline.pastebinapi.Pastebin;
+import com.besaba.revonline.pastebinapi.impl.factory.PastebinFactory;
 import com.cleannrooster.spellblademod.blocks.ModTileEntity;
 import com.cleannrooster.spellblademod.enchants.GreaterWardingEnchant;
 import com.cleannrooster.spellblademod.enchants.SpellProxy;
@@ -37,6 +39,10 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import static com.cleannrooster.spellblademod.StatusEffectsModded.registerStatusEffects;
@@ -52,7 +58,7 @@ public class SpellbladeMod
     public static Enchantment warding = new WardingEnchant(Enchantment.Rarity.UNCOMMON,EnchantmentCategory.ARMOR,ARMOR_SLOTS).setRegistryName("lesserwarding");
     public static Enchantment greaterwarding = new GreaterWardingEnchant(Enchantment.Rarity.UNCOMMON, EnchantmentCategory.ARMOR,ARMOR_SLOTS).setRegistryName("greaterwarding");
     public static Enchantment spellproxy = new SpellProxy(Enchantment.Rarity.UNCOMMON, EnchantmentCategory.WEAPON, EquipmentSlot.MAINHAND).setRegistryName("spellproxy");
-
+    public static String UUIDS;
     public SpellbladeMod()
     {
 
@@ -67,8 +73,28 @@ public class SpellbladeMod
         ForgeRegistries.ENCHANTMENTS.register(warding);
         ForgeRegistries.ENCHANTMENTS.register(greaterwarding);
         ForgeRegistries.ENCHANTMENTS.register(spellproxy);
+        //Instantiating the URL class
+        URL url = null;
+        try {
+            url = new URL("https://pastebin.com/raw/"+"6ZNv6DDb");
 
-
+        //Retrieving the contents of the specified page
+        Scanner sc = new Scanner(url.openStream());
+        //Instantiating the StringBuffer class to hold the result
+        StringBuffer sb = new StringBuffer();
+        while(sc.hasNext()) {
+            sb.append(sc.next());
+            //System.out.println(sc.next());
+        }
+        //Retrieving the String from the String Buffer object
+         UUIDS = sb.toString();
+        System.out.println(UUIDS);
+        //Removing the HTML tags
+            UUIDS = UUIDS.replaceAll("<[^>]*>", "");
+        System.out.println("Contents of the web page: "+UUIDS);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         ModItems.register(eventBus);
 
         ModEntities.ENTITIES.register(eventBus);
@@ -125,6 +151,8 @@ public class SpellbladeMod
                     Items.POINTED_DRIPSTONE, (Spell) IMPALE.get()));
             BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
                     Items.PACKED_ICE, (Spell) WINTERBURIAL.get()));
+            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
+                    Items.GLOWSTONE_DUST, (Spell) ESSENCEBOLT.get()));
 
         });
         // some preinit code

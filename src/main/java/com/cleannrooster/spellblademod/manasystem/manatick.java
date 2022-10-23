@@ -47,8 +47,10 @@ public class manatick {
 
     @SubscribeEvent
     public static void manatickevent(LivingEvent.LivingUpdateEvent event) {
-        if(event.getEntityLiving().getAttribute(SMOTE).getValue() > 0){
-            event.getEntityLiving().getAttribute(SMOTE).setBaseValue(event.getEntityLiving().getAttribute(SMOTE).getValue()-1);
+        if(event.getEntityLiving().getAttribute(SMOTE) != null) {
+            if (event.getEntityLiving().getAttribute(SMOTE).getValue() > 0) {
+                event.getEntityLiving().getAttribute(SMOTE).setBaseValue(event.getEntityLiving().getAttribute(SMOTE).getValue() - 1);
+            }
         }
     }
     @SubscribeEvent

@@ -47,6 +47,8 @@ public class ModEntities {
             () -> EntityType.Builder.<ImpaleEntity>of(ImpaleEntity::new, MobCategory.MISC).sized(1, 1).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "impale").toString()));
     public static final RegistryObject<EntityType<WinterBurialEntity>> WINTERBURIAL = ENTITIES.register("winterburialentity",
             () -> EntityType.Builder.<WinterBurialEntity>of(WinterBurialEntity::new, MobCategory.MISC).sized(1, 1).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "impale").toString()));
+    public static final RegistryObject<EntityType<EssenceBoltEntity>> ESSENCEBOLT = ENTITIES.register("essenceboltentity",
+            () -> EntityType.Builder.<EssenceBoltEntity>of(EssenceBoltEntity::new, MobCategory.MISC).sized(1, 1).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "essencebolt").toString()));
 
 
 }

@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import static com.cleannrooster.spellblademod.manasystem.manatick.SMOTE;
+
 @Mod.EventBusSubscriber(modid = "spellblademod", bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class WeaponHandler {
 
@@ -78,38 +80,37 @@ public class WeaponHandler {
     @SubscribeEvent
     public static void spellproxy(AttackEntityEvent event) {
 
-        if (/*&& !player.getPersistentData().getBoolean("cast")*/  EnchantmentHelper.getEnchantmentLevel(SpellbladeMod.spellproxy, event.getPlayer()) > 0 && event.getTarget() instanceof LivingEntity living && !(event.getTarget() instanceof SpiderSpark)) {
+        if (event.getPlayer().getAttackStrengthScale(0) > 0.5 && event.getEntityLiving() instanceof Player player && EnchantmentHelper.getEnchantmentLevel(SpellbladeMod.spellproxy, player) > 0 && event.getTarget() instanceof LivingEntity living &&  !(event.getTarget() instanceof SpiderSpark)) {
             //player.getPersistentData().putBoolean("cast", true);
-            Player player = event.getPlayer();
             ItemStack itemstack = new ItemStack(ModItems.SPELLBLADE.get());
                 itemstack = ItemStack.of(player.getPersistentData().getCompound("spellproxy"));
             CompoundTag compoundtag = new CompoundTag();
             itemstack.save(compoundtag);
-            player.setLastHurtMob(living);
+            player.setLastHurtMob(event.getTarget());
 
             CompoundTag tag = itemstack.getOrCreateTag();
 
-            if(tag.contains("Oils")){
-                for(int ii  = 0; ii < tag.getCompound("Oils").getAllKeys().size(); ii++){
-                    String spell = tag.getCompound("Oils").getAllKeys().stream().toList().get(ii);
-                    if (tag.getCompound("Oils").getInt(spell) > 0) {
+            if(tag.contains("Triggers")){
+                for(int ii  = 0; ii < tag.getCompound("Triggers").getAllKeys().size(); ii++){
+                    String spell = tag.getCompound("Triggers").getAllKeys().stream().toList().get(ii);
+                    if (tag.getCompound("Triggers").getInt(spell) > 0) {
 
-                        Flask.triggerOrTriggeron(spell, player.getLevel(), player, living, 1, itemstack);
-                        tag.getCompound("Oils").putInt(spell, tag.getCompound("Oils").getInt(spell) - 1);
+                        Flask.triggerOrTriggeron(spell, player.getLevel(), player, living, 1, itemstack, true);
+                        tag.getCompound("Triggers").putInt(spell, tag.getCompound("Triggers").getInt(spell) - 1);
                     }
-                    else if(!tag.getCompound("AutoUse").contains(spell)){
-                        tag.getCompound("Oils").remove(spell);
+                    else if(!tag.getCompound("AutoTrigger").contains(spell)){
+                        tag.getCompound("Triggers").remove(spell);
                     }
 
                 }
             }
             for(ItemStack item : player.getInventory().items){
-                if(item.getItem() instanceof Flask flask && tag.contains("AutoUse") && tag.getCompound("AutoUse").contains(Flask.getSpellItem(item))){
+                if(item.getItem() instanceof Flask flask && tag.contains("AutoTrigger") && tag.getCompound("AutoTrigger").contains(Flask.getSpellItem(item))){
                     for (RegistryObject<Item> spell3 : ModItems.ITEMS.getEntries()) {
                         if (spell3.get() instanceof Spell spell) {
                             if (Objects.equals(spell.getDescriptionId(), Flask.getSpellItem(item))) {
                                 if(spell.isTriggerable()){
-                                    flask.applyFlask(player, null, item, itemstack);
+                                    flask.applyFlask(player, null, item, itemstack, true);
                                 }
                             }
                         }
@@ -159,26 +160,32 @@ public class WeaponHandler {
     }
     @SubscribeEvent
     public static void EffigyOfChaining(LivingDamageEvent event){
-        if (event.getSource().getDirectEntity() instanceof Player && (int) event.getEntityLiving().getAttribute(manatick.SMOTE).getValue() <= 0) {
-            Player player = (Player) event.getSource().getDirectEntity();
-            LivingEntity living = event.getEntityLiving();
-            if (player.getOffhandItem().getItem() instanceof LightningEffigy && player.getMainHandItem().getItem() instanceof Spellblade) {
-                event.getEntityLiving().getAttribute(manatick.SMOTE).setBaseValue(10);
-                player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(), 80, 0));
-                List<LivingEntity> entities = player.level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(3D), livingEntity -> {
-                    return FriendshipBracelet.PlayerFriendshipPredicate(player, livingEntity);
-                });
-                List<LivingEntity> validentities = new ArrayList<>();
-                Object[] entitiesarray = entities.toArray();
-                HammerEntity hammer3 = new HammerEntity(ModEntities.TRIDENT.get(), player.getLevel());
-                hammer3.setPos(living.getBoundingBox().getCenter().add(0, 4 + living.getBoundingBox().getYsize() / 2, 0));
-                hammer3.setOwner(player);
-                hammer3.pickup = AbstractArrow.Pickup.DISALLOWED;
-                hammer3.secondary = true;
-                hammer3.shoot(0, -1, 0, 1.6F, 0);
-                living.getLevel().addFreshEntity(hammer3);
-            }
+        if(event.getEntityLiving().getAttribute(SMOTE) != null) {
 
+            if (event.getSource().getDirectEntity() instanceof Player && (int) event.getEntityLiving().getAttribute(SMOTE).getValue() <= 0) {
+                Player player = (Player) event.getSource().getDirectEntity();
+                LivingEntity living = event.getEntityLiving();
+                if (player.getOffhandItem().getItem() instanceof LightningEffigy && player.getMainHandItem().getItem() instanceof Spellblade) {
+                    if (event.getEntityLiving().getAttribute(SMOTE) != null) {
+
+                        event.getEntityLiving().getAttribute(SMOTE).setBaseValue(10);
+                    }
+                    player.addEffect(new MobEffectInstance(StatusEffectsModded.WARD_DRAIN.get(), 80, 0));
+                    List<LivingEntity> entities = player.level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(3D), livingEntity -> {
+                        return FriendshipBracelet.PlayerFriendshipPredicate(player, livingEntity);
+                    });
+                    List<LivingEntity> validentities = new ArrayList<>();
+                    Object[] entitiesarray = entities.toArray();
+                    HammerEntity hammer3 = new HammerEntity(ModEntities.TRIDENT.get(), player.getLevel());
+                    hammer3.setPos(living.getBoundingBox().getCenter().add(0, 4 + living.getBoundingBox().getYsize() / 2, 0));
+                    hammer3.setOwner(player);
+                    hammer3.pickup = AbstractArrow.Pickup.DISALLOWED;
+                    hammer3.secondary = true;
+                    hammer3.shoot(0, -1, 0, 1.6F, 0);
+                    living.getLevel().addFreshEntity(hammer3);
+                }
+
+            }
         }
     }
 }

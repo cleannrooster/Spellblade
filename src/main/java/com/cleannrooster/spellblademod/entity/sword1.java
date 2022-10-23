@@ -31,6 +31,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
+import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrownTrident;
 import net.minecraft.world.item.ItemStack;
@@ -50,7 +51,7 @@ import java.util.stream.Stream;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
-public class sword1 extends ThrownTrident {
+public class sword1 extends ThrownTrident implements ItemSupplier {
     public int number;
     public int mode;
     public boolean guard = false;
@@ -61,7 +62,6 @@ public class sword1 extends ThrownTrident {
         super(p_37561_, p_37562_);
         this.setNoGravity(true);
         this.setNoPhysics(true);
-
         this.setInvisible(true);
 
     }
@@ -154,7 +154,7 @@ public class sword1 extends ThrownTrident {
                 }
                     if (this.mode == 1) {
 
-                        double number2 = 3.5;
+                        double number2 = 0;
                         float f7 = this.getOwner().getYRot()% 360;
                         float f8 = this.getOwner().getYRot() + 60;
                         float f9 = this.getOwner().getYRot() - 60;
@@ -395,4 +395,11 @@ public class sword1 extends ThrownTrident {
         return vec3;
     }
 
+    @Override
+    public ItemStack getItem() {
+        if(this.getCustomName().getString().equals("emerald")){
+            return Items.EMERALD.getDefaultInstance();
+        }
+        return null;
+    }
 }

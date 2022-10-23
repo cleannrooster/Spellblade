@@ -33,7 +33,7 @@ public class WardBarGUI extends ForgeIngameGui {
 
     protected void renderBossHealth(PoseStack poseStack, int ii)
     {
-        bind(GuiComponent.GUI_ICONS_LOCATION);
+        bind(new ResourceLocation("spellblademod", "textures/gui/bars.png"));
         RenderSystem.defaultBlendFunc();
         minecraft.getProfiler().push("wardBar");
         this.overlay.render(poseStack, ii);

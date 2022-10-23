@@ -177,7 +177,6 @@ public class EndersEyeEntity extends Projectile implements ItemSupplier {
                                     target.getAttributes().addTransientAttributeModifiers(builder.build());
                                     target.hurt(new EntityDamageSource("spell", (Player) this.getOwner()), 2);
                                     target.getAttributes().removeAttributeModifiers(builder.build());
-                                    target.invulnerableTime = 0;
 
                                 }
                             }

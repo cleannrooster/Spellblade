@@ -43,8 +43,8 @@ public class SyncAutouse {
             CompoundTag compoundtag = new CompoundTag();
             ItemStack itemStack = ItemStack.of(Minecraft.getInstance().player.getPersistentData().getCompound("spellproxy"));
             itemStack.save(compoundtag);
-            itemStack.getOrCreateTag().put("AutoUse",tag.getCompound("AutoUse"));
-            itemStack.getOrCreateTag().put("Oils",tag.getCompound("Oils"));
+            itemStack.getOrCreateTag().put("AutoTrigger",tag.getCompound("AutoTrigger"));
+            itemStack.getOrCreateTag().put("Triggers",tag.getCompound("Triggers"));
             itemStack.save(compoundtag);
             CompoundTag tag = new CompoundTag();
             tag.put("spellproxy", compoundtag);

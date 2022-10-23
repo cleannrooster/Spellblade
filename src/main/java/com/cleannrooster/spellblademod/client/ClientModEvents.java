@@ -49,6 +49,7 @@ public class ClientModEvents {
             return new ThrownItemRenderer<>(p_174086_, 2.0F, true);});
         event.registerEntityRenderer(ModEntities.IMPALE.get(), FallingBlockRenderer::new);
         event.registerEntityRenderer(ModEntities.WINTERBURIAL.get(), FallingBlockRenderer::new);
+        event.registerEntityRenderer(ModEntities.ESSENCEBOLT.get(), ThrownItemRenderer::new);
 
 
 

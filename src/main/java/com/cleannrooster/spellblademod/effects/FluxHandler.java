@@ -115,7 +115,7 @@ public class FluxHandler {
             }
         }
     }
-    public static void fluxHandler2(LivingEntity living, Player player, float Amount, Level level, List<LivingEntity> list) {
+    public static void fluxHandler2(LivingEntity living, Player player, float Amount, Level level, List<LivingEntity> list,FluxEntity thisFlux) {
         if (living instanceof ServerPlayer){
             if (!(((ServerPlayer)living).gameMode.getGameModeForPlayer() == GameType.SURVIVAL)){
                 return;
@@ -158,6 +158,8 @@ public class FluxHandler {
                         flux.overload = true;
                         flux.bool2 = true;
                         flux.amount = Amount;
+                        flux.setDeltaMovement(thisFlux.getDeltaMovement());
+
                         living.level.addFreshEntity(flux);
                     }
                 }

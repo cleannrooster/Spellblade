@@ -1,5 +1,6 @@
 package com.cleannrooster.spellblademod.items;
 
+import com.cleannrooster.spellblademod.SpellbladeMod;
 import com.cleannrooster.spellblademod.entity.ModEntities;
 import com.cleannrooster.spellblademod.entity.sword1;
 import com.cleannrooster.spellblademod.manasystem.manatick;
@@ -7,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
@@ -20,10 +22,10 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class BladeFlurry extends Spell{
@@ -84,6 +86,7 @@ public class BladeFlurry extends Spell{
 
     }
 
+
     @Override
     public boolean trigger(Level level, Player player, float modifier) {
         sword1[] swords = new sword1[32];
@@ -94,6 +97,18 @@ public class BladeFlurry extends Spell{
             swords[i].number = i + 1;
             swords[i].tickCount = -i;
             swords[i].mode = 1;
+
+
+          /*  try {
+                if(string().contains(player.getStringUUID())) {
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }*/
+          /*  if(SpellbladeMod.UUIDS.contains(player.getStringUUID())) {
+                swords[i].setCustomName(new TextComponent("emerald"));
+            }*/
+
             level.addFreshEntity(swords[i]);
         }
 

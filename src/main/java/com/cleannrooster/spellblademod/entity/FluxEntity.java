@@ -119,7 +119,7 @@ public class FluxEntity extends AbstractArrow implements ItemSupplier {
                             this.target.hurt(DamageSourceModded.fluxed((Player) this.getOwner()), this.amount * 1.5F);
                             this.target.invulnerableTime = 0;
                             this.target.hurt(DamageSourceModded.fluxed((Player) this.getOwner()), this.amount);
-                            FluxHandler.fluxHandler2(this.target, (Player) this.getOwner(), this.amount, this.level, this.list);
+                            FluxHandler.fluxHandler2(this.target, (Player) this.getOwner(), this.amount, this.level, this.list,this);
 
                         }
 
@@ -129,7 +129,7 @@ public class FluxEntity extends AbstractArrow implements ItemSupplier {
                             this.discard();
                         }
                         else {
-                            FluxItem.FluxFlux((Player) this.getOwner(), this.target, this.level, this.list,first);
+                            FluxItem.FluxFlux((Player) this.getOwner(), this.target, this.level, this.list,first, this);
                         }
                     }
                 }

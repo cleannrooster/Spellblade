@@ -31,6 +31,11 @@ public class EndersEye extends Spell {
     public Item getIngredient1() {return Items.ENDER_EYE;};
     public Item getIngredient2() {return ModItems.FLUXITEM.get();};
 
+    @Override
+    public boolean isTargeted() {
+        return true;
+    }
+
     public InteractionResultHolder<ItemStack> use(Level p_43405_, Player p_43406_, InteractionHand p_43407_) {
 
         ItemStack itemstack = p_43406_.getItemInHand(p_43407_);
@@ -94,6 +99,36 @@ public class EndersEye extends Spell {
             return InteractionResultHolder.success(itemstack);
 
     }
+
+    @Override
+    public boolean triggeron(Level level, Player player, LivingEntity target, float modifier) {
+
+        List<EndersEyeEntity> eyes = level.getEntitiesOfClass(EndersEyeEntity.class,player.getBoundingBox().inflate(32),endersEyeEntity -> endersEyeEntity.getOwner() == player);
+        if(eyes.toArray().length >= 3) {
+            EndersEyeEntity todelete = eyes.get(0);
+            for(EndersEyeEntity eyeEntity : eyes){
+                if(eyeEntity.tickCount > todelete.tickCount){
+                    todelete = eyeEntity;
+                }
+            }
+            todelete.discard();
+
+        }
+        EndersEyeEntity eye = new EndersEyeEntity(ModEntities.ENDERS_EYE.get(), player.getLevel());
+        eye.setPos(target.getEyePosition());
+        eye.setOwner(player);
+        eye.target = target;
+        eye.pos1 = ((Player) player).position().add(new Vec3(0, 1.5, 0)).add(new Vec3(0, player.getBoundingBox().getYsize() / 2, 0));;
+
+        level.addFreshEntity(eye);
+        ((Player)player).getAttribute(manatick.WARD).setBaseValue(((Player) player).getAttributeBaseValue(manatick.WARD)-20);
+
+        if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -21) {
+            player.hurt(DamageSource.MAGIC,2);
+        }
+        return false;
+    }
+
     public boolean trigger(Level level, Player player, float modifier){
 
         List<EndersEyeEntity> eyes = level.getEntitiesOfClass(EndersEyeEntity.class,player.getBoundingBox().inflate(32),endersEyeEntity -> endersEyeEntity.getOwner() == player);

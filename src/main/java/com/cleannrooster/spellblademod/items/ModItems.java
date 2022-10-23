@@ -145,6 +145,8 @@ public class ModItems {
 
     public static final RegistryObject<Item> WINTERBURIAL = ITEMS.register("winterburial",
             () -> new WinterBurial(new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
+    public static final RegistryObject<Item> ESSENCEBOLT = ITEMS.register("essencebolt",
+            () -> new EssenceBolt(new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
 
 
 

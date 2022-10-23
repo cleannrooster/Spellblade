@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class FlaskItem extends Item implements Flask{
     public int color;
@@ -50,10 +51,10 @@ public class FlaskItem extends Item implements Flask{
     public InteractionResultHolder<ItemStack> use(Level p_41432_, Player p_41433_, InteractionHand p_41434_) {
         if(p_41433_.getMainHandItem().getItem() instanceof Spellblade || p_41433_.getOffhandItem().getItem() instanceof Spellblade ) {
             if(p_41434_ == InteractionHand.MAIN_HAND) {
-                applyFlask(p_41433_, p_41434_, p_41433_.getItemInHand(p_41434_), p_41433_.getItemInHand(InteractionHand.OFF_HAND));
+                applyFlask(p_41433_, p_41434_, p_41433_.getItemInHand(p_41434_), p_41433_.getItemInHand(InteractionHand.OFF_HAND), false);
             }
             else{
-                applyFlask(p_41433_, p_41434_, p_41433_.getItemInHand(p_41434_), p_41433_.getItemInHand(InteractionHand.MAIN_HAND));
+                applyFlask(p_41433_, p_41434_, p_41433_.getItemInHand(p_41434_), p_41433_.getItemInHand(InteractionHand.MAIN_HAND), false);
 
             }
             return InteractionResultHolder.success(p_41433_.getItemInHand(p_41434_));
@@ -67,7 +68,7 @@ public class FlaskItem extends Item implements Flask{
             }
             CompoundTag compoundtag = new CompoundTag();
             itemstack.save(compoundtag);
-            applyFlask(p_41433_, p_41434_, p_41433_.getItemInHand(p_41434_), itemstack);
+            applyFlask(p_41433_, p_41434_, p_41433_.getItemInHand(p_41434_), itemstack, false);
             itemstack.save(compoundtag);
             p_41433_.getPersistentData().put("spellproxy", compoundtag);
             return InteractionResultHolder.success(p_41433_.getItemInHand(p_41434_));
@@ -110,9 +111,16 @@ public class FlaskItem extends Item implements Flask{
     }*/
     @Override
     public boolean overrideStackedOnOther(ItemStack thisStack, Slot slot, ClickAction clickAction, Player player) {
-        if (  thisStack.getItem() instanceof FlaskItem flaskItem && clickAction == ClickAction.SECONDARY && ( EnchantmentHelper.getEnchantments(slot.getItem()).containsKey(SpellbladeMod.spellproxy))) {
+        if (  thisStack.getItem() instanceof FlaskItem flaskItem && clickAction == ClickAction.PRIMARY && ( EnchantmentHelper.getEnchantments(slot.getItem()).containsKey(SpellbladeMod.spellproxy))) {
             ItemStack slotItem = slot.getItem();
             CompoundTag compoundtag = new CompoundTag();
+            for (RegistryObject<Item> spell3 : ModItems.ITEMS.getEntries()) {
+                if (spell3.get() instanceof Spell spell && !spell.isTriggerable()) {
+                    if (Objects.equals(spell.getDescriptionId(), Flask.getSpellItem(thisStack))) {
+                        return false;
+                    }
+                }
+            }
             /*ItemStack itemStack = ItemStack.of(player.getPersistentData().getCompound("spellproxy"));
             itemStack.save(compoundtag);
 
@@ -143,21 +151,24 @@ public class FlaskItem extends Item implements Flask{
             FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
             buf.writeItem(thisStack);
             buf.writeItem(slotItem);
+            buf.writeBoolean(true);
+
             Messages.sendToServer(new RetrieveItem(buf));
 
             return true;
         }
-        return false;
+            return false;
     }
     @Override
     public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
-        TextComponent text = new TextComponent("Spellblade or Spell Proxy to use");
+        Component text = new TranslatableComponent("Spellblade or Spell Proxy to use");
         MutableComponent text2 = new TranslatableComponent(p_41421_.getOrCreateTag().getString("Spell"));
-        TextComponent text3 = new TextComponent("Drag to and Right Click on a ");
+        Component text3 = new TranslatableComponent("Drag to and Left/Right Click on a ");
+        Component text4 =  new TranslatableComponent("Left: Trigger, Right: Cast");
         p_41423_.add(text2);
         p_41423_.add(text3);
         p_41423_.add(text);
-
+        p_41423_.add(text4);
         super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
     }
 

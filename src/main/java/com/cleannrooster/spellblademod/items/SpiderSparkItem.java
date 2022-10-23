@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BundleItem;
@@ -22,6 +23,28 @@ public class SpiderSparkItem extends Spell{
     public Item getIngredient1() {return Items.FERMENTED_SPIDER_EYE;};
     public Item getIngredient2() {return ModItems.FLUXITEM.get();};
 
+    @Override
+    public boolean isTargeted() {
+        return true;
+    }
+
+    @Override
+    public boolean triggeron(Level level, Player player, LivingEntity target, float modifier) {
+        SpiderSpark spider = new SpiderSpark(ModEntities.SPARK.get(),level, player);
+        spider.setPos(target.position());
+        if(player.getLastHurtMob() != null){
+            if(player.getLastHurtMob().isAlive()){
+                spider.setTarget(player.getLastHurtMob());
+            }
+        }
+        ((Player)player).getAttribute(manatick.WARD).setBaseValue(((Player) player).getAttributeBaseValue(manatick.WARD)-10);
+
+        if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -21) {
+            player.hurt(DamageSource.MAGIC,2);
+        }
+        level.addFreshEntity(spider);
+        return false;
+    }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level p_41432_, Player p_41433_, InteractionHand p_41434_) {

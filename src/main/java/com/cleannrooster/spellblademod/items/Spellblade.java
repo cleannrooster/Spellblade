@@ -76,7 +76,7 @@ public class Spellblade extends SwordItem{
                 ItemStack itemStack = thisStack;
                 CompoundTag compoundtag = new CompoundTag();
 
-                flask.applyFlask(player,null,onStack,itemStack);
+                flask.applyFlask(player,null,onStack,itemStack, false);
 
                 CompoundTag nbt = itemStack.getOrCreateTag();
                 CompoundTag autoUse = nbt.getCompound("AutoUse");
@@ -117,7 +117,40 @@ public class Spellblade extends SwordItem{
 
 
         }
-        return false;
+        if(clickAction == ClickAction.PRIMARY) {
+            if (onStack.getItem() instanceof Flask flask && (thisStack.getItem() instanceof Spellblade)) {
+                ItemStack itemStack = thisStack;
+                CompoundTag compoundtag = new CompoundTag();
+                for (RegistryObject<Item> spell3 : ModItems.ITEMS.getEntries()) {
+                    if (spell3.get() instanceof Spell spell && !spell.isTriggerable()) {
+                        if (Objects.equals(spell.getDescriptionId(), Flask.getSpellItem(onStack))) {
+                            return false;
+                        }
+                    }
+                }
+                flask.applyFlask(player,null,onStack,itemStack,true);
+
+                CompoundTag nbt = itemStack.getOrCreateTag();
+                CompoundTag autoUse = nbt.getCompound("AutoTrigger");
+
+
+                    if (nbt.getCompound("AutoTrigger").contains(onStack.getOrCreateTag().getString("Spell"))) {
+                        nbt.getCompound("AutoTrigger").remove(onStack.getOrCreateTag().getString("Spell"));
+
+                    } else {
+                        nbt.getCompound("AutoTrigger").putBoolean(onStack.getOrCreateTag().getString("Spell"), true);
+
+                    }
+                    if (!nbt.contains("AutoTrigger")) {
+                        autoUse.putBoolean(onStack.getOrCreateTag().getString("Spell"), true);
+                        nbt.put("AutoTrigger", autoUse);
+                    }
+                    nbt.put("AutoTrigger", autoUse);
+
+                return true;
+            }
+        }
+                return false;
     }
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
@@ -169,47 +202,46 @@ public class Spellblade extends SwordItem{
 
     @Override
     public InteractionResult interactLivingEntity(ItemStack itemstack, Player player, LivingEntity p_41400_, InteractionHand p_41401_) {
-        if(player.isShiftKeyDown()){
-            super.interactLivingEntity(itemstack,player,p_41400_,p_41401_);
-        }
-        this.items = new ArrayList<>(0);
-
-        for(RegistryObject<Item> item : ModItems.ITEMS.getEntries().stream().toList()){
-            if(item.get() instanceof Flask) {
-                this.items.add(item.get());
+        if(!player.getCooldowns().isOnCooldown(this)) {
+            if (player.isShiftKeyDown()) {
+                super.interactLivingEntity(itemstack, player, p_41400_, p_41401_);
             }
-        }
+            this.items = new ArrayList<>(0);
+
+            for (RegistryObject<Item> item : ModItems.ITEMS.getEntries().stream().toList()) {
+                if (item.get() instanceof Flask) {
+                    this.items.add(item.get());
+                }
+            }
 
             CompoundTag tag = itemstack.getOrCreateTag();
-                if(tag.contains("Oils")){
-                    for(int ii  = 0; ii < tag.getCompound("Oils").getAllKeys().size(); ii++){
-                        String spell = tag.getCompound("Oils").getAllKeys().stream().toList().get(ii);
-                        if (tag.getCompound("Oils").getInt(spell) > 0) {
+            if (tag.contains("Oils")) {
+                for (int ii = 0; ii < tag.getCompound("Oils").getAllKeys().size(); ii++) {
+                    String spell = tag.getCompound("Oils").getAllKeys().stream().toList().get(ii);
+                    if (tag.getCompound("Oils").getInt(spell) > 0) {
 
-                            Flask.triggerOnOrUse(spell, player.getLevel(), player, p_41400_, 1, itemstack);
-                            tag.getCompound("Oils").putInt(spell, tag.getCompound("Oils").getInt(spell) - 1);
-                        }
-                        else if(!tag.getCompound("AutoUse").contains(spell)){
-                            tag.getCompound("Oils").remove(spell);
-                        }
-
-
+                        Flask.triggerOnOrUse(spell, player.getLevel(), player, p_41400_, 1, itemstack);
+                        tag.getCompound("Oils").putInt(spell, tag.getCompound("Oils").getInt(spell) - 1);
+                    } else if (!tag.getCompound("AutoUse").contains(spell)) {
+                        tag.getCompound("Oils").remove(spell);
                     }
-                    player.getCooldowns().addCooldown(this,20);
-                }
-                for(ItemStack item : player.getInventory().items){
-                    if(item.getItem() instanceof Flask flask && tag.contains("AutoUse") && tag.getCompound("AutoUse").contains(Flask.getSpellItem(item))){
-                        for (RegistryObject<Item> spell3 : ModItems.ITEMS.getEntries()) {
-                            if (spell3.get() instanceof Spell spell) {
-                                if (Objects.equals(spell.getDescriptionId(), Flask.getSpellItem(item))) {
-                                        flask.applyFlask(player, null, item, itemstack);
 
-                                }
+                    player.getCooldowns().addCooldown(this, 20);
+                }
+            }
+            for (ItemStack item : player.getInventory().items) {
+                if (item.getItem() instanceof Flask flask && tag.contains("AutoUse") && tag.getCompound("AutoUse").contains(Flask.getSpellItem(item))) {
+                    for (RegistryObject<Item> spell3 : ModItems.ITEMS.getEntries()) {
+                        if (spell3.get() instanceof Spell spell) {
+                            if (Objects.equals(spell.getDescriptionId(), Flask.getSpellItem(item))) {
+                                flask.applyFlask(player, null, item, itemstack, false);
+
                             }
                         }
                     }
                 }
-
+            }
+        }
         return InteractionResult.sidedSuccess(false);
     }
 
@@ -243,7 +275,7 @@ public class Spellblade extends SwordItem{
             }
             tier = tier1;
             nbt.putInt("CustomModelData", tier1);
-            nbt.putInt("ward", (int) ((ward-1)/40));
+            nbt.putInt("ward", (int) ((ward+1)/40));
         }
 
     }
@@ -260,27 +292,27 @@ public class Spellblade extends SwordItem{
                 if (p_41433_ instanceof Player player) {
                     CompoundTag tag = itemstack.getOrCreateTag();
 
-                    if(tag.contains("Oils")){
-                        for(int ii  = 0; ii < tag.getCompound("Oils").getAllKeys().size(); ii++){
-                            String spell = tag.getCompound("Oils").getAllKeys().stream().toList().get(ii);
-                            if (tag.getCompound("Oils").getInt(spell) > 0) {
+                    if(tag.contains("Triggers")){
+                        for(int ii  = 0; ii < tag.getCompound("Triggers").getAllKeys().size(); ii++){
+                            String spell = tag.getCompound("Triggers").getAllKeys().stream().toList().get(ii);
+                            if (tag.getCompound("Triggers").getInt(spell) > 0) {
 
-                                Flask.triggerOrTriggeron(spell, player.getLevel(), player, living, 1, itemstack);
-                                tag.getCompound("Oils").putInt(spell, tag.getCompound("Oils").getInt(spell) - 1);
+                                Flask.triggerOrTriggeron(spell, player.getLevel(), player, living, 1, itemstack,true);
+                                tag.getCompound("Triggers").putInt(spell, tag.getCompound("Triggers").getInt(spell) - 1);
                             }
-                            else if(!tag.getCompound("AutoUse").contains(spell)){
-                                tag.getCompound("Oils").remove(spell);
+                            else if(!tag.getCompound("AutoTrigger").contains(spell)){
+                                tag.getCompound("Triggers").remove(spell);
                             }
 
                         }
                     }
                     for(ItemStack item : player.getInventory().items){
-                        if(item.getItem() instanceof Flask flask && tag.contains("AutoUse") && tag.getCompound("AutoUse").contains(Flask.getSpellItem(item))){
+                        if(item.getItem() instanceof Flask flask && tag.contains("AutoTrigger") && tag.getCompound("AutoTrigger").contains(Flask.getSpellItem(item))){
                             for (RegistryObject<Item> spell3 : ModItems.ITEMS.getEntries()) {
                                 if (spell3.get() instanceof Spell spell) {
                                     if (Objects.equals(spell.getDescriptionId(), Flask.getSpellItem(item))) {
                                         if(spell.isTriggerable()){
-                                            flask.applyFlask(player, null, item, itemstack);
+                                            flask.applyFlask(player, null, item, itemstack, true);
                                         }
                                     }
                                 }
@@ -289,7 +321,7 @@ public class Spellblade extends SwordItem{
                 }
             }
         }
-        p_41433_.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(), 80, 1 + EnchantmentHelper.getEnchantmentLevel(SpellbladeMod.wardTempered, living)));
+        p_41433_.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(), 80, 1 + EnchantmentHelper.getEnchantmentLevel(SpellbladeMod.wardTempered, p_41433_)));
 
         super.hurtEnemy(itemstack,living,p_41433_);
         return true;
@@ -315,6 +347,9 @@ public class Spellblade extends SwordItem{
                 Set<String> keys = p_41421_.getOrCreateTag().getCompound("Oils").getAllKeys();
                 for(String key : keys){
                     if(p_41421_.getOrCreateTag().getCompound("Oils").contains(key)) {
+                        MutableComponent mutablecomponent1 = new TranslatableComponent("Casting");
+                        mutablecomponent1.append(": ");
+
                         MutableComponent mutablecomponent = new TranslatableComponent(key);
 
 
@@ -323,12 +358,34 @@ public class Spellblade extends SwordItem{
                         } else {
                             mutablecomponent.append(" ").append(new TranslatableComponent(/*"enchantment.level." +*/ String.valueOf(p_41421_.getOrCreateTag().getCompound("Oils").getInt(key))));
                         }
-                        p_41423_.add(mutablecomponent);
+                        mutablecomponent1.append(mutablecomponent);
+                        p_41423_.add(mutablecomponent1);
                     }
                 }
 
 
             }
+        if(p_41421_.getOrCreateTag().contains("Triggers")){
+            Set<String> keys = p_41421_.getOrCreateTag().getCompound("Triggers").getAllKeys();
+            for(String key : keys){
+                if(p_41421_.getOrCreateTag().getCompound("Triggers").contains(key)) {
+                    MutableComponent mutablecomponent1 = new TranslatableComponent("Triggering");
+                    mutablecomponent1.append(": ");
+                    MutableComponent mutablecomponent = new TranslatableComponent(key);
+
+
+                    if (p_41421_.getOrCreateTag().contains("AutoTrigger") && p_41421_.getOrCreateTag().getCompound("AutoTrigger").contains(key)) {
+                        mutablecomponent.append(" ").append(new TranslatableComponent("Auto"));
+                    } else {
+                        mutablecomponent.append(" ").append(new TranslatableComponent(/*"enchantment.level." +*/ String.valueOf(p_41421_.getOrCreateTag().getCompound("Triggers").getInt(key))));
+                    }
+                    mutablecomponent1.append(mutablecomponent);
+                    p_41423_.add(mutablecomponent1);
+                }
+            }
+
+
+        }
 
         super.appendHoverText(p_41421_, p_41422_, p_41423_, p_41424_);
     }
@@ -336,12 +393,12 @@ public class Spellblade extends SwordItem{
 
     public InteractionResultHolder<ItemStack> use(Level p_41432_, Player p_41433_, InteractionHand p_41434_) {
         if(p_41433_.getMainHandItem().getItem() instanceof Flask flask ) {
-            flask.applyFlask(p_41433_,InteractionHand.MAIN_HAND,p_41433_.getMainHandItem(),p_41433_.getItemInHand(p_41434_));
+            flask.applyFlask(p_41433_,InteractionHand.MAIN_HAND,p_41433_.getMainHandItem(),p_41433_.getItemInHand(p_41434_),false);
             return InteractionResultHolder.success(p_41433_.getItemInHand(p_41434_));
 
         }
         if(p_41433_.getOffhandItem().getItem() instanceof Flask flask ) {
-            flask.applyFlask(p_41433_,InteractionHand.OFF_HAND,p_41433_.getOffhandItem(),p_41433_.getItemInHand(p_41434_));
+            flask.applyFlask(p_41433_,InteractionHand.OFF_HAND,p_41433_.getOffhandItem(),p_41433_.getItemInHand(p_41434_),false);
             return InteractionResultHolder.success(p_41433_.getItemInHand(p_41434_));
 
         }
@@ -370,7 +427,7 @@ public class Spellblade extends SwordItem{
             CompoundTag tag = itemstack.getOrCreateTag();
             for(ItemStack item : p_41433_.getInventory().items){
                 if(item.getItem() instanceof Flask flask && tag.contains("AutoUse") && tag.getCompound("AutoUse").contains(Flask.getSpellItem(item))){
-                    flask.applyFlask(p_41433_, null,item,itemstack);
+                    flask.applyFlask(p_41433_, null,item,itemstack,false);
                 }
             }
             if(tag.contains("Oils")){
@@ -385,13 +442,13 @@ public class Spellblade extends SwordItem{
                     else if(!tag.getCompound("AutoUse").contains(spell)){
                         tag.getCompound("Oils").remove(spell);
                     }
-
+                    p_41433_.getCooldowns().addCooldown(this,20);
                 }
-                p_41433_.getCooldowns().addCooldown(this,20);
             }
+
             for(ItemStack item : p_41433_.getInventory().items){
                 if(item.getItem() instanceof Flask flask && tag.contains("AutoUse") && tag.getCompound("AutoUse").contains(Flask.getSpellItem(item))){
-                    flask.applyFlask(p_41433_, null,item,itemstack);
+                    flask.applyFlask(p_41433_, null,item,itemstack,false);
                 }
             }
 

@@ -39,8 +39,8 @@ public class ClientTickEvent {
 
                 }
                 stack2 = ItemStack.of(event.player.getPersistentData().getCompound("spellproxy"));
-                stack.getOrCreateTag().put("AutoUse", stack2.getOrCreateTag().getCompound("AutoUse"));
-                stack.getOrCreateTag().put("Oils", stack2.getOrCreateTag().getCompound("Oils"));
+                stack.getOrCreateTag().put("AutoTrigger", stack2.getOrCreateTag().getCompound("AutoTrigger"));
+                stack.getOrCreateTag().put("Triggers", stack2.getOrCreateTag().getCompound("Triggers"));
 
             }
         }

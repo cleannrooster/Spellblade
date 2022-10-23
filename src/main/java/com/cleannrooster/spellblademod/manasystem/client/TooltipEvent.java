@@ -43,20 +43,24 @@ public class TooltipEvent {
     @SubscribeEvent
     public static void tooltipEvent(ItemTooltipEvent event){
         if (event.getItemStack().hasTag() && !(event.getItemStack().getItem() instanceof Spellblade) && EnchantmentHelper.getEnchantments(event.getItemStack()).containsKey(SpellbladeMod.spellproxy)) {
-            if(event.getItemStack().getOrCreateTag().contains("Oils")){
+            if(event.getItemStack().getOrCreateTag().contains("Triggers")){
                 ItemStack stack = event.getItemStack();
-                Set<String> keys = stack.getOrCreateTag().getCompound("Oils").getAllKeys();
+                Set<String> keys = stack.getOrCreateTag().getCompound("Triggers").getAllKeys();
                 for(String key : keys){
-                    if(stack.getOrCreateTag().getCompound("Oils").getInt(key) > 0) {
+                    if(stack.getOrCreateTag().getCompound("Triggers").getInt(key) > 0) {
+                        MutableComponent mutablecomponent1 = new TranslatableComponent("Triggering");
+                        mutablecomponent1.append(": ");
+
                         MutableComponent mutablecomponent = new TranslatableComponent(key);
 
 
-                        if (stack.getOrCreateTag().contains("AutoUse") && stack.getOrCreateTag().getCompound("AutoUse").contains(key)) {
+                        if (stack.getOrCreateTag().contains("AutoTrigger") && stack.getOrCreateTag().getCompound("AutoTrigger").contains(key)) {
                             mutablecomponent.append(" ").append(new TranslatableComponent("Auto"));
                         } else {
-                            mutablecomponent.append(" ").append(new TranslatableComponent(/*"enchantment.level." +*/ String.valueOf(stack.getOrCreateTag().getCompound("Oils").getInt(key))));
+                            mutablecomponent.append(" ").append(new TranslatableComponent(/*"enchantment.level." +*/ String.valueOf(stack.getOrCreateTag().getCompound("Triggers").getInt(key))));
                         }
-                        event.getToolTip().add(1,mutablecomponent);
+                        mutablecomponent1.append(mutablecomponent);
+                        event.getToolTip().add(1,mutablecomponent1);
                     }
                 }
 

@@ -188,7 +188,6 @@ public class ReverberatingRay extends AbstractArrow implements ItemSupplier {
                         target.hurt(new EntityDamageSource("spell", this.getOwner()), 4);
 
                         target.getAttributes().removeAttributeModifiers(builder.build());
-                        target.invulnerableTime = 0;
                     }
                 }
                 for (int ii = 0; ii < list2.toArray().length; ii++) {
@@ -203,7 +202,6 @@ public class ReverberatingRay extends AbstractArrow implements ItemSupplier {
                         target.hurt(new EntityDamageSource("spell", this.getOwner()), 4);
 
                         target.getAttributes().removeAttributeModifiers(builder.build());
-                        target.invulnerableTime = 0;
                     }
                 }
                 for (int ii = 0; ii < list3.toArray().length; ii++) {
@@ -218,7 +216,6 @@ public class ReverberatingRay extends AbstractArrow implements ItemSupplier {
                         target.hurt(new EntityDamageSource("spell", this.getOwner()), 4);
 
                         target.getAttributes().removeAttributeModifiers(builder.build());
-                        target.invulnerableTime = 0;
                     }
                 }
             }
