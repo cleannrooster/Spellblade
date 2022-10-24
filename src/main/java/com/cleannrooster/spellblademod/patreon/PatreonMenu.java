@@ -1,10 +1,17 @@
 package com.cleannrooster.spellblademod.patreon;
 
+import com.cleannrooster.spellblademod.setup.Messages;
+import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
+import net.minecraft.client.gui.screens.multiplayer.SafetyScreen;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -16,52 +23,26 @@ public class PatreonMenu extends Screen {
         super(p_96550_);
     }
     Widget emeraldbutton;
-    public static final Component EMERALD_BLADE_FLURRY = Component.translatable("Emerald Blade Flurry");
+    public static final Component EMERALD_BLADE_FLURRY = new TranslatableComponent("Emerald Blade Flurry Toggle");
+    public static final Component EMERALD_BLADE_FLURRY_Enabled = new TranslatableComponent("Emerald Blade Flurry: Enabled");
+
     @Override
     protected void init() {
         if(allowed(Minecraft.getInstance().player)) {
-            this.emeraldbutton = this.addRenderableWidget(CycleButton.builder(isEnabled::getDisplayName).withValues(isEnabled.EMERALDENABLED, isEnabled.EMERALDDISABLED).withInitialValue(Patreon.emeraldbladeflurry.contains(Minecraft.getInstance().player) ? isEnabled.EMERALDENABLED : isEnabled.EMERALDDISABLED )
-                    .create(this.width / 2 - 102, this.height / 4 + 120 + -16, 204, 20, EMERALD_BLADE_FLURRY, (p_232910_, p_232911_) -> {
-                        this.setEnabled(p_232911_);
-                    }));
+            this.emeraldbutton = this.addRenderableWidget(new Button(this.width / 2 - 102, this.height / 4 + 120 + -16, 204, 20,EMERALD_BLADE_FLURRY,(p_210872_) -> {
+                setEnabled("emeraldbladeflurry");
+            }));
         }
     }
 
 
-    protected void setEnabled(isEnabled enabled) {
-        if(enabled.name.equals("emeraldbladeflurry")){
-            if(enabled.enabled) {
-                Patreon.emeraldbladeflurry.add(Minecraft.getInstance().player);
-            }
-            else{
-                Patreon.emeraldbladeflurry.remove(Minecraft.getInstance().player);
+    protected void setEnabled(String string) {
+        if (string.equals("emeraldbladeflurry")) {
 
-            }
+            FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+            buf.writeUUID(Minecraft.getInstance().player.getUUID());
+            Messages.sendToServer(new EmeraldPacket(buf));
         }
     }
 
-    static enum isEnabled {
-        EMERALDENABLED("emeraldbladeflurry", true),
-        EMERALDDISABLED("emeraldbladeflurry", false);
-
-        final String name;
-        final boolean enabled;
-        private final Component displayName;
-
-        private isEnabled(String p_101035_, boolean p_101036_) {
-            this.name = p_101035_;
-            this.enabled = p_101036_;
-            if(p_101036_) {
-                this.displayName = Component.translatable("Enabled");
-            }
-            else{
-                this.displayName = Component.translatable("Disabled");
-
-            }
-        }
-
-        public Component getDisplayName() {
-            return this.displayName;
-        }
-    }
 }

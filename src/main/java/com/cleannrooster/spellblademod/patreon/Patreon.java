@@ -11,7 +11,6 @@ public class Patreon {
 
     public static boolean allowed(Player player){
 
-        System.out.println(SpellbladeMod.UUIDS);
         if(SpellbladeMod.UUIDS.contains(player.getStringUUID())){
             return true;
         }

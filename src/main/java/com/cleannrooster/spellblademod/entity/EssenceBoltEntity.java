@@ -44,6 +44,9 @@ public class EssenceBoltEntity extends ThrowableItemProjectile {
         if(this.tickCount == 1){
             this.playSound( SoundEvents.ILLUSIONER_CAST_SPELL,1,1);
         }
+        if(this.tickCount > 40 && !this.getLevel().isClientSide()){
+            this.discard();
+        }
         super.tick();
         float tridentEntity = this.getYRot() % 360;
 

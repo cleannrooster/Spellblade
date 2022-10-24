@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.*;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -38,7 +39,7 @@ public class sword1renderer<T extends Entity & ItemSupplier> extends EntityRende
 
 
     public void render(T p_116111_, float p_116112_, float p_116113_, PoseStack p_116114_, MultiBufferSource p_116115_, int p_116116_) {
-        if (Objects.equals(p_116111_.getCustomName(), new TextComponent("emerald"))) {
+        if (!p_116111_.isInvisible() && Objects.equals(p_116111_.getCustomName(), new TranslatableComponent("emerald"))) {
             if (p_116111_.tickCount >= 2 || !(this.entityRenderDispatcher.camera.getEntity().distanceToSqr(p_116111_) < 12.25D)) {
                 p_116114_.pushPose();
                 p_116114_.mulPose(Vector3f.YP.rotationDegrees(Mth.lerp(p_116113_, p_116111_.yRotO, p_116111_.getYRot()) - 90.0F));
@@ -50,7 +51,7 @@ public class sword1renderer<T extends Entity & ItemSupplier> extends EntityRende
                 return;
             }
         }
-        if(!p_116111_.isInvisible()) {
+        else if (!p_116111_.isInvisible()) {
             p_116114_.pushPose();
             p_116114_.mulPose(Vector3f.YP.rotationDegrees(Mth.lerp(p_116113_, p_116111_.yRotO, p_116111_.getYRot()) - 90.0F));
             p_116114_.mulPose(Vector3f.ZP.rotationDegrees(Mth.lerp(p_116113_, p_116111_.xRotO, p_116111_.getXRot()) + 90.0F));

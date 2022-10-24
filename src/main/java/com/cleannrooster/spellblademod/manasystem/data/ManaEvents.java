@@ -3,6 +3,7 @@ package com.cleannrooster.spellblademod.manasystem.data;
 import com.cleannrooster.spellblademod.manasystem.client.GUI;
 import com.cleannrooster.spellblademod.manasystem.manatick;
 import com.cleannrooster.spellblademod.manasystem.network.Hurt;
+import com.cleannrooster.spellblademod.patreon.Listener;
 import com.cleannrooster.spellblademod.setup.Messages;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.netty.buffer.Unpooled;
@@ -24,14 +25,15 @@ public class ManaEvents {
 
     public static void onWorldTick(TickEvent.WorldTickEvent event) {
         // Don't do anything client side
-        if (event.world.isClientSide) {
+        if (event.world.isClientSide()) {
             return;
         }
-        if (event.phase == TickEvent.Phase.START) {
+        if (event.phase != TickEvent.Phase.END) {
             return;
         }
         ManaManager.tick(event.world);
-
+        Listener manager = Listener.get(event.world);
+        manager.tick(event.world);
     }
 
 }

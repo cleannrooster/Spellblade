@@ -11,9 +11,12 @@ import com.cleannrooster.spellblademod.entity.ModEntities;
 import com.cleannrooster.spellblademod.items.ModItems;
 import com.cleannrooster.spellblademod.items.Spell;
 import com.cleannrooster.spellblademod.manasystem.manatick;
+import com.cleannrooster.spellblademod.patreon.KeyHandler;
 import com.cleannrooster.spellblademod.setup.Config;
 import com.cleannrooster.spellblademod.setup.ModSetup;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Items;
@@ -22,6 +25,7 @@ import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.event.RegistryEvent;
@@ -59,6 +63,7 @@ public class SpellbladeMod
     public static Enchantment greaterwarding = new GreaterWardingEnchant(Enchantment.Rarity.UNCOMMON, EnchantmentCategory.ARMOR,ARMOR_SLOTS).setRegistryName("greaterwarding");
     public static Enchantment spellproxy = new SpellProxy(Enchantment.Rarity.UNCOMMON, EnchantmentCategory.WEAPON, EquipmentSlot.MAINHAND).setRegistryName("spellproxy");
     public static String UUIDS;
+
     public SpellbladeMod()
     {
 
@@ -88,15 +93,13 @@ public class SpellbladeMod
         }
         //Retrieving the String from the String Buffer object
          UUIDS = sb.toString();
-        System.out.println(UUIDS);
         //Removing the HTML tags
             UUIDS = UUIDS.replaceAll("<[^>]*>", "");
-        System.out.println("Contents of the web page: "+UUIDS);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
         ModItems.register(eventBus);
-
         ModEntities.ENTITIES.register(eventBus);
 
         // Register the setup method for modloading

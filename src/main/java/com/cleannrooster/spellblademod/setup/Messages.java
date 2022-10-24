@@ -6,6 +6,7 @@ import com.cleannrooster.spellblademod.items.ParticlePacket;
 import com.cleannrooster.spellblademod.items.ParticlePacket2;
 import com.cleannrooster.spellblademod.manasystem.client.ParticleReverb;
 import com.cleannrooster.spellblademod.manasystem.network.*;
+import com.cleannrooster.spellblademod.patreon.EmeraldPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
@@ -41,6 +42,11 @@ public class Messages {
                 .decoder(RetrieveItem::new)
                 .encoder(RetrieveItem::toBytes)
                 .consumer(RetrieveItem::handle)
+                .add();
+        net.messageBuilder(EmeraldPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(EmeraldPacket::new)
+                .encoder(EmeraldPacket::toBytes)
+                .consumer(EmeraldPacket::handle)
                 .add();
         net.messageBuilder(ParticleReverb.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(ParticleReverb::new)

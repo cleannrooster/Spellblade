@@ -1,15 +1,18 @@
 package com.cleannrooster.spellblademod.client;
 
 import com.cleannrooster.spellblademod.entity.*;
+import com.cleannrooster.spellblademod.patreon.KeyHandler;
 import net.minecraft.client.model.ZombieModel;
 import net.minecraft.client.renderer.entity.*;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.EnderEyeItem;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @Mod.EventBusSubscriber(modid = "spellblademod", bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientModEvents {
@@ -21,7 +24,11 @@ public class ClientModEvents {
         event.registerLayerDefinition(sword1model.LAYER_LOCATION, sword1model::createBodyLayer);
 
     }
+    @SubscribeEvent
+    public static void init(FMLClientSetupEvent event) {
+        ClientRegistry.registerKeyBinding(KeyHandler.PATREON);
 
+    }
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event){
         event.registerEntityRenderer(ModEntities.TRIDENT.get(), HammerRenderer::new);

@@ -137,7 +137,6 @@ public interface Flask {
     public default void applyFlask(Player player, @Nullable InteractionHand hand, ItemStack stack, ItemStack sword, boolean trigger){
         CompoundTag nbt = sword.getOrCreateTag();
         CompoundTag nbtadd;
-        System.out.println(trigger);
         if(!trigger) {
              nbtadd = nbt.getCompound("Oils");
             if (nbt.getCompound("Oils").getInt(getSpellItem(stack)) > 0) {

@@ -4,6 +4,7 @@ import com.cleannrooster.spellblademod.SpellbladeMod;
 import com.cleannrooster.spellblademod.entity.ModEntities;
 import com.cleannrooster.spellblademod.entity.sword1;
 import com.cleannrooster.spellblademod.manasystem.manatick;
+import com.cleannrooster.spellblademod.patreon.Patreon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -73,7 +74,9 @@ public class BladeFlurry extends Spell{
             swords[i].tickCount = -i;
             swords[i].mode = 3;
             swords[i].shootFromRotation(player,player.getXRot(), player.getYRot(), 0, 2.5F, 1.0F);
-
+            if(!level.isClientSide() && Patreon.allowed(player) && Patreon.emeraldbladeflurry.contains(player)) {
+                swords[i].setCustomName(new TranslatableComponent("emerald"));
+            }
             level.addFreshEntity(swords[i]);
         }
 
@@ -108,7 +111,9 @@ public class BladeFlurry extends Spell{
           /*  if(SpellbladeMod.UUIDS.contains(player.getStringUUID())) {
                 swords[i].setCustomName(new TextComponent("emerald"));
             }*/
-
+            if(!level.isClientSide() && Patreon.allowed(player) && Patreon.emeraldbladeflurry.contains(player)) {
+                swords[i].setCustomName(new TranslatableComponent("emerald"));
+            }
             level.addFreshEntity(swords[i]);
         }
 
