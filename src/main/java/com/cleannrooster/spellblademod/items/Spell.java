@@ -48,7 +48,12 @@ public class Spell extends Item {
     public boolean isTriggerable() {return true;}
     public Item getIngredient1() {return Items.AIR;};
     public Item getIngredient2() {return Items.AIR;};
-
+    public boolean canFail(){
+        return false;
+    }
+    public boolean failState(Level level, Player player, InteractionHand hand){
+        return true;
+    }
     @Override
     public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
         TextComponent text = new TextComponent("Spellweaving");

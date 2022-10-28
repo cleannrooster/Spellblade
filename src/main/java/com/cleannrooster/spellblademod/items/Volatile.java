@@ -21,6 +21,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.NeutralMob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.ThrownTrident;
@@ -61,6 +62,7 @@ public class Volatile extends Spell{
         }
         VolatileEntity volatile5 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
         volatile5.explosionPower = 2;
+        volatile5.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
         Random rand = new Random();
         volatile5.setPos(player.position().add( new Vec3(rand.nextDouble(-1, 1),rand.nextDouble(0, 1),rand.nextDouble(-1, 1))));
         volatile5.setOwner(player);
@@ -94,6 +96,10 @@ public class Volatile extends Spell{
             VolatileEntity volatile1 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
             VolatileEntity volatile2 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
             VolatileEntity volatile3 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
+            volatile1.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+            volatile2.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+            volatile3.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+
             volatile1.explosionPower = 2;
             volatile3.explosionPower = 2;
             volatile2.explosionPower = 2;
@@ -204,6 +210,10 @@ public class Volatile extends Spell{
             VolatileEntity volatile1 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
             VolatileEntity volatile2 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
             VolatileEntity volatile3 = new VolatileEntity(ModEntities.VOLATILE_ENTITY.get(),level);
+            volatile1.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+            volatile2.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+            volatile3.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+
             volatile1.setPos(player.getEyePosition().add( new Vec3(level.random.nextDouble(-1, 1),level.random.nextDouble(0, 1),level.random.nextDouble(-1, 1))));
             volatile2.setPos(player.getEyePosition().add( new Vec3(level.random.nextDouble(-1, 1),level.random.nextDouble(0, 1),level.random.nextDouble(-1, 1))));
             volatile3.setPos(player.getEyePosition().add( new Vec3(level.random.nextDouble(-1, 1),level.random.nextDouble(0, 1),level.random.nextDouble(-1, 1))));
@@ -267,6 +277,10 @@ public class Volatile extends Spell{
             volatile1.explosionPower = 2;
             volatile3.explosionPower = 2;
             volatile2.explosionPower = 2;
+            volatile1.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+            volatile2.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+            volatile3.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+
             Random rand = new Random();
             volatile1.setPos(player.position().add( new Vec3(rand.nextDouble(-1, 1),rand.nextDouble(0, 1),rand.nextDouble(-1, 1))));
             volatile2.setPos(player.position().add( new Vec3(rand.nextDouble(-1, 1),rand.nextDouble(0, 1),rand.nextDouble(-1, 1))));

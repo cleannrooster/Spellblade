@@ -1,5 +1,8 @@
 {
   "item.spellblademod.spellblade": "Spellblade",
+  "item.spellblademod.claymore": "Battlemage's Claymore",
+  "item.spellblademod.mace": "Battlemage's Mace",
+  "item.spellblademod.dagger": "Rune Dagger",
   "item.spellblademod.splitting_trident": "Splitting Trident",
   "item.spellblademod.vengeful_stance": "Vengeful Stance",
   "item.spellblademod.lightning_whirl": "Lightning Whirl",
@@ -23,6 +26,8 @@
   "item.spellblademod.friendshipbracelet": "Band of Friendship",
   "item.spellblademod.volatile": "Volatile Orb",
   "item.spellblademod.animate": "Animate",
+  "item.spellblademod.bombard": "Celebration",
+  "item.spellblademod.disappearingact": "Jester's Blink",
   "item.spellblademod.nullifyingstance": "Nullifying Stance",
   "item.spellblademod.enderloperstance": "Enderloper Stance",
   "item.spellblademod.bladeflurry": "Blade Flurry",

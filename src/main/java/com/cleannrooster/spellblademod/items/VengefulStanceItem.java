@@ -77,10 +77,11 @@ public class VengefulStanceItem extends Guard{
             intarray[0] = (int) Math.round(entity.getBoundingBox().getCenter().x);
             intarray[1] = (int) Math.round(entity.getBoundingBox().getCenter().y);
             intarray[2] = (int) Math.round(entity.getBoundingBox().getCenter().z);
-            FriendlyByteBuf buf =new FriendlyByteBuf(Unpooled.buffer()).writeVarIntArray(intarray);
-            Stream<ServerPlayer> serverplayers = level.getServer().getPlayerList().getPlayers().stream();
-            ParticlePacket packet = new ParticlePacket(buf);
             for (ServerPlayer player2 : ((ServerLevel) level).getPlayers(serverPlayer -> serverPlayer.hasLineOfSight(entity))){
+                FriendlyByteBuf buf =new FriendlyByteBuf(Unpooled.buffer()).writeVarIntArray(intarray);
+                Stream<ServerPlayer> serverplayers = level.getServer().getPlayerList().getPlayers().stream();
+                ParticlePacket packet = new ParticlePacket(buf);
+
                 Messages.sendToPlayer(packet, (ServerPlayer) player2);
             }
 

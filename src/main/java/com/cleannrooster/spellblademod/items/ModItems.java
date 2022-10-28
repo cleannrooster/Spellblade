@@ -72,6 +72,13 @@ public class ModItems {
 
     public static final RegistryObject<Item> SPELLBLADE = ITEMS.register("spellblade",
             () -> new Spellblade(Tiers.DIAMOND, 2, -2.0F, (new Item.Properties()).tab(ModSetup.ITEM_GROUP)));
+    public static final RegistryObject<Item> CLAYMORE = ITEMS.register("claymore",
+            () -> new BattlemageClaymore(Tiers.DIAMOND, 5, -2.8F, (new Item.Properties()).tab(ModSetup.ITEM_GROUP)));
+    public static final RegistryObject<Item> MACE = ITEMS.register("mace",
+            () -> new BattlemagesMace(Tiers.DIAMOND, 4, -2.5F, (new Item.Properties()).tab(ModSetup.ITEM_GROUP)));
+    public static final RegistryObject<Item> DAGGER = ITEMS.register("dagger",
+            () -> new SpellDagger(Tiers.DIAMOND, 0, -1.0F, (new Item.Properties()).tab(ModSetup.ITEM_GROUP)));
+
     public static final RegistryObject<Item> DIAMOND_WARDING_HELMET = ITEMS.register("warding_helmet",
             () -> new WardArmorItem(ModArmorMaterials.DIAMOND_WARDING, EquipmentSlot.HEAD, new Item.Properties().tab(ModSetup.ITEM_GROUP)));
     public static final RegistryObject<Item> DIAMOND_WARDING_CHEST = ITEMS.register("warding_chest",
@@ -147,6 +154,10 @@ public class ModItems {
             () -> new WinterBurial(new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
     public static final RegistryObject<Item> ESSENCEBOLT = ITEMS.register("essencebolt",
             () -> new EssenceBolt(new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
+    public static final RegistryObject<Item> BOMBARD = ITEMS.register("bombard",
+            () -> new Bombard(new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
+    public static final RegistryObject<Item> DISAPPEARINGACT = ITEMS.register("disappearingact",
+            () -> new DisappearingAct(new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
 
 
 

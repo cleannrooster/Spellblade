@@ -15,6 +15,7 @@ import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -30,6 +31,7 @@ public class BouncingEntity extends Fireball {
     LivingEntity thrower;
     int changetime = 0;
     public boolean canspawn;
+    public boolean isbetty = true;
 
 
     public BouncingEntity(Level entityWorld, Player playerIn) {
@@ -37,6 +39,14 @@ public class BouncingEntity extends Fireball {
         this.setPos(playerIn.getX(), playerIn.getEyeY(), playerIn.getZ());
         this.thrower = playerIn;
         this.canspawn = true;
+
+    }
+    public BouncingEntity(Level entityWorld, Player playerIn, Boolean bool) {
+        super(ModEntities.BETTY.get(),entityWorld);
+        this.setPos(playerIn.getX(), playerIn.getEyeY(), playerIn.getZ());
+        this.thrower = playerIn;
+        this.canspawn = true;
+        this.isbetty = bool;
 
     }
 
@@ -79,7 +89,7 @@ public class BouncingEntity extends Fireball {
 
         if(firstTick){
             SoundEvent soundEvent = SoundEvents.BLAZE_SHOOT;
-            this.playSound(soundEvent, 1F, 1F);
+            this.playSound(soundEvent, 0.25F, 1F);
         }
 
         super.baseTick();
@@ -128,11 +138,12 @@ public class BouncingEntity extends Fireball {
         } else {
             f = 0.99F;
         }
-
-        this.setDeltaMovement(vec3.scale((double)f));
-        if (!this.isNoGravity()) {
-            Vec3 vec31 = this.getDeltaMovement();
-            this.setDeltaMovement(vec31.x, vec31.y - (double)this.getGravity(), vec31.z);
+        if(!this.getLevel().isClientSide()) {
+            this.setDeltaMovement(vec3.scale((double) f));
+            if (!this.isNoGravity()) {
+                Vec3 vec31 = this.getDeltaMovement();
+                this.setDeltaMovement(vec31.x, vec31.y - (double) this.getGravity(), vec31.z);
+            }
         }
 
         this.setPos(d2, d0, d1);
@@ -147,9 +158,9 @@ public class BouncingEntity extends Fireball {
         if(result.getType() == HitResult.Type.BLOCK && !this.getLevel().isClientSide()) {
             final int NUM_POINTS = 24;
             final double RADIUS = 4d;
-
-                if((result.getDirection() == Direction.NORTH) || result.getDirection() == Direction.SOUTH) {
-                    this.setDeltaMovement(1*this.getDeltaMovement().x, 1*this.getDeltaMovement().y, -1*this.getDeltaMovement().z);
+            if (this.isbetty && !this.level.isClientSide()) {
+                if ((result.getDirection() == Direction.NORTH) || result.getDirection() == Direction.SOUTH) {
+                    this.setDeltaMovement(1 * this.getDeltaMovement().x, 1 * this.getDeltaMovement().y, -1 * this.getDeltaMovement().z);
 				/*for (int i = 0; i < NUM_POINTS; ++i)
 				{
 				    final double angle = Math.toRadians(((double) i / NUM_POINTS) * 360d);
@@ -168,8 +179,8 @@ public class BouncingEntity extends Fireball {
 				}
 				this.count++;*/
                 }
-                if((result.getDirection() == Direction.EAST || result.getDirection() == Direction.WEST )) {
-                    this.setDeltaMovement(-1*this.getDeltaMovement().x, 1*this.getDeltaMovement().y, 1*this.getDeltaMovement().z);
+                if ((result.getDirection() == Direction.EAST || result.getDirection() == Direction.WEST)) {
+                    this.setDeltaMovement(-1 * this.getDeltaMovement().x, 1 * this.getDeltaMovement().y, 1 * this.getDeltaMovement().z);
 				/*for (int i = 0; i < NUM_POINTS; ++i)
 				{
 				    final double angle = Math.toRadians(((double) i / NUM_POINTS) * 360d);
@@ -189,38 +200,45 @@ public class BouncingEntity extends Fireball {
 				this.count++;*/
 
                 }
-                if(result.getDirection() == Direction.UP || result.getDirection() == Direction.DOWN) {
-                    this.setDeltaMovement(1*this.getDeltaMovement().x, -1*this.getDeltaMovement().y, 1*this.getDeltaMovement().z);
-                    if(result.getDirection() == Direction.UP){
-                        if(this.getDeltaMovement().y<0.2) {
+                if (result.getDirection() == Direction.UP || result.getDirection() == Direction.DOWN) {
+                    this.setDeltaMovement(1 * this.getDeltaMovement().x, -1 * this.getDeltaMovement().y, 1 * this.getDeltaMovement().z);
+                    if (result.getDirection() == Direction.UP) {
+                        if (this.getDeltaMovement().y < 0.2) {
                             this.setDeltaMovement(this.getDeltaMovement().x, 0.2, this.getDeltaMovement().z);
                         }
-                        for (int i = 0; i < NUM_POINTS; ++i)
-                        {
+                        for (int i = 0; i < NUM_POINTS; ++i) {
                             final double angle = Math.toRadians(((double) i / NUM_POINTS) * 360d);
 
                             double x = Math.cos(angle) * RADIUS;
                             double y = Math.sin(angle) * RADIUS;
 
-                            ThrownItems thrown = new ThrownItems(this.level, this.thrower,true);
-                            thrown.setPos(this.getX(), this.getY()+0.5, this.getZ());
-                            Vec3 vec3 = new Vec3(x,0,y);
-                            thrown.setDeltaMovement(vec3.x/10, 0.12, vec3.z/10);
-                            if(this.canspawn) {
+                            ThrownItems thrown = new ThrownItems(this.level, this.thrower, true);
+                            thrown.setPos(this.getX(), this.getY() + 0.5, this.getZ());
+                            Vec3 vec3 = new Vec3(x, 0, y);
+                            thrown.setDeltaMovement(vec3.x / 10, 0.12, vec3.z / 10);
+                            if (this.canspawn) {
                                 this.level.addFreshEntity(thrown);
                             }
 
                         }
                         SoundEvent soundEvent = SoundEvents.BLAZE_SHOOT;
                         this.playSound(soundEvent, 1F, 1F);
-                        if(count >= 4) {
+                        if (count >= 4) {
                             this.discard();
                         }
                         this.count++;
 
                     }
                 }
+            }
+            else if (this.thrower != null) {
 
+                SoundEvent soundEvent = SoundEvents.BLAZE_SHOOT;
+                this.playSound(soundEvent, 0.25F, 1F);
+                if(this.level.isClientSide()){
+                    this.discard();
+                }
+            }
         }
         super.onHitBlock(result);
     }

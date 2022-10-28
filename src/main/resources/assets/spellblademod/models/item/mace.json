@@ -1,0 +1,12 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+  "layer0": "spellblademod:item/mace"
+  },
+  "overrides": [
+    { "predicate":  { "custom_model_data": 1 }, "model": "spellblademod:item/mace_1"},
+    { "predicate":  { "custom_model_data": 2 }, "model": "spellblademod:item/mace_2"},
+    { "predicate":  { "custom_model_data": 3 }, "model": "spellblademod:item/mace_3"},
+    { "predicate":  { "custom_model_data": 4 }, "model": "spellblademod:item/mace_4"}
+  ]
+}

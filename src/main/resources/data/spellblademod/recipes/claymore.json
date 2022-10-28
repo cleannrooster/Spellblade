@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smithing",
+  "base": {
+    "item": "spellblademod:spellblade"
+  },
+  "addition": {
+    "item": "spellblademod:wardiron"
+  },
+  "result": {
+    "item": "spellblademod:claymore"
+  }
+}

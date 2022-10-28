@@ -10,9 +10,10 @@ public class Patreon {
     public static List<Player> emeraldbladeflurry = new ArrayList<>();
 
     public static boolean allowed(Player player){
-
-        if(SpellbladeMod.UUIDS.contains(player.getStringUUID())){
-            return true;
+        if(SpellbladeMod.UUIDS != null) {
+            if (SpellbladeMod.UUIDS.contains(player.getStringUUID())) {
+                return true;
+            }
         }
         if(player.getGameProfile().getName().equals("Dev")){
             return true;

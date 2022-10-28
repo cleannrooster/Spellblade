@@ -12,6 +12,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.NeutralMob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -84,6 +85,7 @@ public class EndersEye extends Spell {
                     eye.target = p_43406_.getLastHurtMob();
                 }
             }
+            eye.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
         List<EndersEyeEntity> eyes = p_43405_.getEntitiesOfClass(EndersEyeEntity.class,player.getBoundingBox().inflate(32),endersEyeEntity -> endersEyeEntity.getOwner() == player);
             if(eyes.toArray().length >= 3){
                 EndersEyeEntity todelete = eyes.get(0);
@@ -119,6 +121,7 @@ public class EndersEye extends Spell {
         eye.setOwner(player);
         eye.target = target;
         eye.pos1 = ((Player) player).position().add(new Vec3(0, 1.5, 0)).add(new Vec3(0, player.getBoundingBox().getYsize() / 2, 0));;
+        eye.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
 
         level.addFreshEntity(eye);
         ((Player)player).getAttribute(manatick.WARD).setBaseValue(((Player) player).getAttributeBaseValue(manatick.WARD)-20);
@@ -151,6 +154,7 @@ public class EndersEye extends Spell {
             }
         }
         eye.pos1 = ((Player) player).position().add(new Vec3(0, 1.5, 0)).add(new Vec3(0, player.getBoundingBox().getYsize() / 2, 0));;
+        eye.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
 
         level.addFreshEntity(eye);
         ((Player)player).getAttribute(manatick.WARD).setBaseValue(((Player) player).getAttributeBaseValue(manatick.WARD)-20);
@@ -161,7 +165,7 @@ public class EndersEye extends Spell {
         return false;
     }
     public int getColor() {
-        return 4950629;
+        return 3827506;
     }
     @Override
     public void inventoryTick(ItemStack p_41404_, Level level, Entity p_41406_, int p_41407_, boolean p_41408_) {

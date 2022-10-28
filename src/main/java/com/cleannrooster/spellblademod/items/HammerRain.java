@@ -8,6 +8,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.Item;
@@ -71,7 +72,9 @@ public class HammerRain extends Spell {
             hammer1.setOwner(p_43406_);
             hammer1.pickup = AbstractArrow.Pickup.DISALLOWED;
             hammer1.shootFromRotation(p_43406_, p_43406_.getXRot(), p_43406_.getYRot(), 0.0F, 1.6F, 1.0F);
-            p_43405_.addFreshEntity(hammer1);
+        hammer1.damage = (float) p_43406_.getAttributeValue(Attributes.ATTACK_DAMAGE);
+
+        p_43405_.addFreshEntity(hammer1);
             return InteractionResultHolder.success(itemstack);
     }
     @Override
@@ -89,22 +92,30 @@ public class HammerRain extends Spell {
         hammer1.setOwner(player);
         hammer1.pickup = AbstractArrow.Pickup.DISALLOWED;
         hammer1.secondary = true;
+        hammer1.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+
         HammerEntity hammer2 = new HammerEntity(ModEntities.TRIDENT.get(),player.getLevel());
         hammer2.triggered = true;
         hammer2.setPos(target.position().add(rand.nextDouble(-4,-1), rand.nextDouble(3,6), rand.nextDouble(1,4)));
         hammer2.setOwner(player);
         hammer2.pickup = AbstractArrow.Pickup.DISALLOWED;
         hammer2.secondary = true;
+        hammer2.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+
         HammerEntity hammer3 = new HammerEntity(ModEntities.TRIDENT.get(),player.getLevel());
         hammer3.triggered = true;
         hammer3.setPos(target.position().add(rand.nextDouble(1,4), rand.nextDouble(3,6), rand.nextDouble(1,4)));
         hammer3.setOwner(player);
         hammer3.pickup = AbstractArrow.Pickup.DISALLOWED;
         hammer3.secondary = true;
+        hammer3.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+
         HammerEntity hammer4 = new HammerEntity(ModEntities.TRIDENT.get(),player.getLevel());
         hammer4.triggered = true;
         hammer4.setPos(target.position().add(rand.nextDouble(1,4), rand.nextDouble(3,6), rand.nextDouble(-4,-1)));
         hammer4.setOwner(player);
+        hammer4.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+
         hammer4.pickup = AbstractArrow.Pickup.DISALLOWED;
         hammer4.secondary = true;
         hammer1.setXRot(90);
@@ -147,22 +158,30 @@ public class HammerRain extends Spell {
         hammer1.setOwner(player);
         hammer1.pickup = AbstractArrow.Pickup.DISALLOWED;
         hammer1.secondary = true;
+        hammer1.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+
         HammerEntity hammer2 = new HammerEntity(ModEntities.TRIDENT.get(),player.getLevel());
         hammer2.triggered = true;
         hammer2.setPos(player.position().add(rand.nextDouble(-4,-1), rand.nextDouble(3,6), rand.nextDouble(1,4)));
         hammer2.setOwner(player);
         hammer2.pickup = AbstractArrow.Pickup.DISALLOWED;
         hammer2.secondary = true;
+        hammer2.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+
         HammerEntity hammer3 = new HammerEntity(ModEntities.TRIDENT.get(),player.getLevel());
         hammer3.triggered = true;
         hammer3.setPos(player.position().add(rand.nextDouble(1,4), rand.nextDouble(3,6), rand.nextDouble(1,4)));
         hammer3.setOwner(player);
+        hammer3.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+
         hammer3.pickup = AbstractArrow.Pickup.DISALLOWED;
         hammer3.secondary = true;
         HammerEntity hammer4 = new HammerEntity(ModEntities.TRIDENT.get(),player.getLevel());
         hammer4.triggered = true;
         hammer4.setPos(player.position().add(rand.nextDouble(1,4), rand.nextDouble(3,6), rand.nextDouble(-4,-1)));
         hammer4.setOwner(player);
+        hammer4.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+
         hammer4.pickup = AbstractArrow.Pickup.DISALLOWED;
         hammer4.secondary = true;
         hammer1.setXRot(90);

@@ -52,7 +52,7 @@ public class ReverberatingRay extends AbstractArrow implements ItemSupplier {
     public LivingEntity target;
     private boolean secondary = false;
     public boolean triggered = false;
-
+    public float damage = 6;
     @Override
     protected void onHit(HitResult p_37218_) {
     }
@@ -90,15 +90,15 @@ public class ReverberatingRay extends AbstractArrow implements ItemSupplier {
         float f1 = Mth.clamp(f, -p_24959_, p_24959_);
         return p_24957_ + f1;
     }
-    protected float getYRotD(LivingEntity target) {
-        double d0 = target.getX() - this.getX();
-        double d1 = target.getZ() - this.getZ();
+    public static float getYRotD(Entity this1, LivingEntity target) {
+        double d0 = target.getX() - this1.getX();
+        double d1 = target.getZ() - this1.getZ();
         return /*!(Math.abs(d1) > (double)1.0E-5F) && !(Math.abs(d0) > (double)1.0E-5F) ? Optional.empty() : Optional.of(*/(float)(Mth.atan2(d1, d0) * (double)(180F / (float)Math.PI)) - 90.0F;
     }
-    protected float getXRotD(LivingEntity target) {
-        double d0 = target.getX() - this.getX();
-        double d1 = target.getY()+target.getBoundingBox().getYsize()/2 - this.getEyeY();
-        double d2 = target.getZ() - this.getZ();
+    public static float getXRotD(Entity this1, LivingEntity target) {
+        double d0 = target.getX() - this1.getX();
+        double d1 = target.getY()+target.getBoundingBox().getYsize()/2 - this1.getEyeY();
+        double d2 = target.getZ() - this1.getZ();
         double d3 = Math.sqrt(d0 * d0 + d2 * d2);
         return /*!(Math.abs(d1) > (double)1.0E-5F) && !(Math.abs(d3) > (double)1.0E-5F) ? Optional.empty() : Optional.of(*/(float)(-(Mth.atan2(d1, d3) * (double)(180F / (float)Math.PI)));
     }
@@ -120,8 +120,8 @@ public class ReverberatingRay extends AbstractArrow implements ItemSupplier {
             float f9 = this.getOwner().getYRot()-60;
             float f = this.getOwner().getXRot();
             if(this.target != null){
-                f7 = this.getYRotD(target);
-                f = this.getXRotD(target);
+                f7 = getYRotD(this,target);
+                f = getXRotD(this,target);
             }
             float f1 = -Mth.sin(f7 * ((float) Math.PI / 180F)) * Mth.cos(f * ((float) Math.PI / 180F));
             float f2 = -Mth.sin(f * ((float) Math.PI / 180F));
@@ -185,7 +185,7 @@ public class ReverberatingRay extends AbstractArrow implements ItemSupplier {
                         builder.put(Attributes.KNOCKBACK_RESISTANCE, modifier);
                         target.getAttributes().addTransientAttributeModifiers(builder.build());
                         target.invulnerableTime = 0;
-                        target.hurt(new EntityDamageSource("spell", this.getOwner()), 4);
+                        target.hurt(new EntityDamageSource("spell", this.getOwner()), (float)Math.max(2,this.damage/3));
 
                         target.getAttributes().removeAttributeModifiers(builder.build());
                     }
@@ -199,7 +199,7 @@ public class ReverberatingRay extends AbstractArrow implements ItemSupplier {
                         builder.put(Attributes.KNOCKBACK_RESISTANCE, modifier);
                         target.getAttributes().addTransientAttributeModifiers(builder.build());
                         target.invulnerableTime = 0;
-                        target.hurt(new EntityDamageSource("spell", this.getOwner()), 4);
+                        target.hurt(new EntityDamageSource("spell", this.getOwner()), (float)Math.max(2,this.damage/3));
 
                         target.getAttributes().removeAttributeModifiers(builder.build());
                     }
@@ -213,7 +213,7 @@ public class ReverberatingRay extends AbstractArrow implements ItemSupplier {
                         builder.put(Attributes.KNOCKBACK_RESISTANCE, modifier);
                         target.getAttributes().addTransientAttributeModifiers(builder.build());
                         target.invulnerableTime = 0;
-                        target.hurt(new EntityDamageSource("spell", this.getOwner()), 4);
+                        target.hurt(new EntityDamageSource("spell", this.getOwner()), (float)Math.max(2,this.damage/3));
 
                         target.getAttributes().removeAttributeModifiers(builder.build());
                     }

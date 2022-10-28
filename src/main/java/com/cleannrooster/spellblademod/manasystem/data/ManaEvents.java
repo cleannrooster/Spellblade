@@ -32,8 +32,6 @@ public class ManaEvents {
             return;
         }
         ManaManager.tick(event.world);
-        Listener manager = Listener.get(event.world);
-        manager.tick(event.world);
     }
 
 }

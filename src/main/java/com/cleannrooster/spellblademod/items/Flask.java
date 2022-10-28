@@ -114,13 +114,19 @@ public interface Flask {
         }
         return true;
     }
-    public static InteractionResultHolder<ItemStack> useSpell(String spellname, Level level, Player player, InteractionHand hand, ItemStack stack){
+    public static boolean useSpell(String spellname, Level level, Player player, InteractionHand hand, ItemStack stack){
+        boolean worked = true;
         if(stack.getOrCreateTag().getCompound("Oils") != null){
             if(stack.getOrCreateTag().getCompound("Oils").getInt(spellname) > 0) {
                 for (RegistryObject<Item> spell3 : ModItems.ITEMS.getEntries()) {
                     if (spell3.get() instanceof Spell spell) {
                         if (Objects.equals(spell.getDescriptionId(), spellname)) {
-                            ((Spell) spell).use(level, player, hand);
+                            if(spell.canFail()){
+                                worked = spell.failState(level,player,hand);
+                            }
+                            else {
+                                ((Spell) spell).use(level, player, hand);
+                            }
 
                         }
 
@@ -132,7 +138,7 @@ public interface Flask {
                 stack.getOrCreateTag().getCompound("Oils").remove(spellname);
             }
         }
-        return InteractionResultHolder.fail(player.getItemInHand(hand));
+        return worked;
     }
     public default void applyFlask(Player player, @Nullable InteractionHand hand, ItemStack stack, ItemStack sword, boolean trigger){
         CompoundTag nbt = sword.getOrCreateTag();

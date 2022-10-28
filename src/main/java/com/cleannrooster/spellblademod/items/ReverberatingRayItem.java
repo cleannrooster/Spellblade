@@ -9,6 +9,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -70,6 +71,7 @@ public class ReverberatingRayItem extends Spell {
         ((Player)p_41433_).getAttribute(manatick.WARD).setBaseValue(((Player) p_41433_).getAttributeBaseValue(manatick.WARD)-20);
 
             ReverberatingRay orb = new ReverberatingRay(ModEntities.REVERBERATING_RAY_ORB.get(), ((Player) p_41433_).getLevel(),(LivingEntity)null);
+            orb.damage = (float) p_41433_.getAttributeValue(Attributes.ATTACK_DAMAGE);
             orb.setPos(((Player) p_41433_).getEyePosition());
             orb.pickup = AbstractArrow.Pickup.DISALLOWED;
             orb.setNoPhysics(true);
@@ -104,6 +106,7 @@ public class ReverberatingRayItem extends Spell {
             if(target != null) {
                 ReverberatingRay orb = new ReverberatingRay(ModEntities.REVERBERATING_RAY_ORB.get(), ((Player) player).getLevel(), target);
                 orb.setPos(((Player) player).getEyePosition());
+                orb.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
                 orb.pickup = AbstractArrow.Pickup.DISALLOWED;
                 orb.setNoPhysics(true);
                 orb.setOwner((Player) player);
@@ -132,6 +135,7 @@ public class ReverberatingRayItem extends Spell {
             orb.setPos(((Player) player).getEyePosition());
             orb.pickup = AbstractArrow.Pickup.DISALLOWED;
             orb.setNoPhysics(true);
+            orb.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
             orb.setOwner((Player) player);
             orb.primary = true;
             orb.triggered = true;

@@ -17,8 +17,15 @@ import com.cleannrooster.spellblademod.setup.ModSetup;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
@@ -41,6 +48,7 @@ import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -63,7 +71,6 @@ public class SpellbladeMod
     public static Enchantment greaterwarding = new GreaterWardingEnchant(Enchantment.Rarity.UNCOMMON, EnchantmentCategory.ARMOR,ARMOR_SLOTS).setRegistryName("greaterwarding");
     public static Enchantment spellproxy = new SpellProxy(Enchantment.Rarity.UNCOMMON, EnchantmentCategory.WEAPON, EquipmentSlot.MAINHAND).setRegistryName("spellproxy");
     public static String UUIDS;
-
     public SpellbladeMod()
     {
 
@@ -131,31 +138,13 @@ public class SpellbladeMod
     private void setup(final FMLCommonSetupEvent event)
     {
         event.enqueueWork(() -> {
+            for (RegistryObject<Item> spell3 : ModItems.ITEMS.getEntries()) {
+                if (spell3.get() instanceof Spell spell) {
+                    BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(spell.getIngredient2(),
+                            spell.getIngredient1(), spell));
+                }
+            }
 
-            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(Items.GLASS_BOTTLE,
-                    Items.GLOW_BERRIES, (Spell) FLUXITEM.get()));
-            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
-                    Items.FIRE_CHARGE, (Spell) VOLATILE.get()));
-            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
-                    Items.MAGMA_CREAM, (Spell) BOUNCINGITEM.get()));
-            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
-                    Items.FERMENTED_SPIDER_EYE, (Spell) SPARKITEM.get()));
-            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
-                    Items.PRISMARINE, (Spell) SPLITTING_TRIDENT.get()));
-            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
-                    Items.ENDER_PEARL, (Spell) REVERBERATING_RAY.get()));
-            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
-                    Items.AMETHYST_SHARD, (Spell) BLADEFLURRY.get()));
-            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
-                    Items.PRISMARINE_CRYSTALS, (Spell) LIGHTNING_WHIRL.get()));
-            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
-                    Items.ENDER_EYE, (Spell) ENDERSEYE.get()));
-            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
-                    Items.POINTED_DRIPSTONE, (Spell) IMPALE.get()));
-            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
-                    Items.PACKED_ICE, (Spell) WINTERBURIAL.get()));
-            BrewingRecipeRegistry.addRecipe(new FlaskBrewingRecipe(FLUXITEM.get(),
-                    Items.GLOWSTONE_DUST, (Spell) ESSENCEBOLT.get()));
 
         });
         // some preinit code

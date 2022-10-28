@@ -7,6 +7,7 @@ import com.cleannrooster.spellblademod.items.ParticlePacket2;
 import com.cleannrooster.spellblademod.manasystem.client.ParticleReverb;
 import com.cleannrooster.spellblademod.manasystem.network.*;
 import com.cleannrooster.spellblademod.patreon.EmeraldPacket;
+import com.cleannrooster.spellblademod.patreon.RefreshPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
@@ -48,10 +49,20 @@ public class Messages {
                 .encoder(EmeraldPacket::toBytes)
                 .consumer(EmeraldPacket::handle)
                 .add();
+        net.messageBuilder(RefreshPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(RefreshPacket::new)
+                .encoder(RefreshPacket::toBytes)
+                .consumer(RefreshPacket::handle)
+                .add();
         net.messageBuilder(ParticleReverb.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(ParticleReverb::new)
                 .encoder(ParticleReverb::toBytes)
                 .consumer(ParticleReverb::handle)
+                .add();
+        net.messageBuilder(FireworkHandler.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(FireworkHandler::new)
+                .encoder(FireworkHandler::toBytes)
+                .consumer(FireworkHandler::handle)
                 .add();
         net.messageBuilder(SyncAutouse.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(SyncAutouse::new)
@@ -68,6 +79,7 @@ public class Messages {
                 .encoder(ParticlePacket::toBytes)
                 .consumer(ParticlePacket::handle)
                 .add();
+
         net.messageBuilder(AmorphousPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
                 .decoder(AmorphousPacket::new)
                 .encoder(AmorphousPacket::toBytes)

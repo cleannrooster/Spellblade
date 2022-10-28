@@ -37,7 +37,7 @@ import static java.lang.Math.sin;
 public class HammerEntity extends ThrownTrident {
     public boolean triggered = false;
     public boolean dealtDamage = false;
-
+    public float damage =  6;
 public boolean secondary = false;
     public HammerEntity(EntityType<? extends ThrownTrident> p_37561_, Level p_37562_) {
         super(p_37561_, p_37562_);
@@ -64,11 +64,10 @@ public boolean secondary = false;
         DamageSource damagesource = DamageSource.trident(this, this.getOwner());
         this.dealtDamage = true;
         SoundEvent soundevent = SoundEvents.TRIDENT_HIT;
-        entity.invulnerableTime = 0;
 
         if (entity instanceof LivingEntity) {
             if (FriendshipBracelet.PlayerFriendshipPredicate((Player) this.getOwner(), (LivingEntity) entity)) {
-                entity.hurt(damagesource, 4);
+                entity.hurt(damagesource, (float)Math.max(6,this.damage));
                 if (entity.getType() == EntityType.ENDERMAN) {
                     return;
                 }
@@ -147,8 +146,7 @@ public boolean secondary = false;
                     ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
                     builder.put(Attributes.KNOCKBACK_RESISTANCE, modifier);
                     target.getAttributes().addTransientAttributeModifiers(builder.build());
-                    target.invulnerableTime = 0;
-                    target.hurt(new IndirectEntityDamageSource("spell",this,this.getOwner()), 3);
+                    target.hurt(new IndirectEntityDamageSource("spell",this,this.getOwner()), (float)Math.max(6,this.damage));
 
                     target.getAttributes().removeAttributeModifiers(builder.build());
                 }

@@ -25,7 +25,6 @@ public class sword1renderer<T extends Entity & ItemSupplier> extends EntityRende
     private final float scale;
     private final boolean fullBright;
     private final sword1model model;
-
     public sword1renderer(EntityRendererProvider.Context p_174420_, float p_174417_, boolean p_174418_) {
         super(p_174420_);
         this.model = new sword1model<>(p_174420_.bakeLayer(sword1model.LAYER_LOCATION));

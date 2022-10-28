@@ -83,7 +83,7 @@ return true;
 
         BouncingEntity thrown = new BouncingEntity(playerIn.getLevel(), playerIn);
 
-        thrown.setDeltaMovement(playerIn.getViewVector(0).x+playerIn.getDeltaMovement().x,playerIn.getViewVector(0).y+playerIn.getDeltaMovement().y,playerIn.getViewVector(0).z+playerIn.getDeltaMovement().z);
+        thrown.setDeltaMovement(0.5*playerIn.getViewVector(0).x+playerIn.getDeltaMovement().x,0.5*playerIn.getViewVector(0).y+playerIn.getDeltaMovement().y,0.5*playerIn.getViewVector(0).z+playerIn.getDeltaMovement().z);
         if(!worldIn.isClientSide()) {
             playerIn.getLevel().addFreshEntity(thrown);
         }

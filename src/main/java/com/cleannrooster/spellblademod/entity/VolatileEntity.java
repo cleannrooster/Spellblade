@@ -1,11 +1,14 @@
 package com.cleannrooster.spellblademod.entity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -18,10 +21,11 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class VolatileEntity extends LargeFireball implements ItemSupplier{
-    public int explosionPower = 2;
+    public float explosionPower = 2;
     public LivingEntity target;
     boolean flag = false;
     int waiting = 0;
+    public float damage = 6;
     public  VolatileEntity(EntityType<? extends VolatileEntity> p_37006_, Level p_37007_) {
         super(p_37006_, p_37007_);
     }
@@ -47,8 +51,11 @@ public class VolatileEntity extends LargeFireball implements ItemSupplier{
             this.gameEvent(GameEvent.PROJECTILE_LAND, this.getOwner());
         }
         if (!this.level.isClientSide) {
+            if(this.getOwner() instanceof Player player){
+                this.explosionPower = (float)Math.max(2,((Player)this.getOwner()).getAttributeValue(Attributes.ATTACK_DAMAGE)/3);
+            }
             boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this.getOwner());
-            this.level.explode((Entity)null, this.getX(), this.getY(), this.getZ(), (float)this.explosionPower, false, Explosion.BlockInteraction.NONE);
+            this.level.explode((Entity)null, this.getX(), this.getY(), this.getZ(), (float)Math.max(1.5,1.5*this.damage/6), false, Explosion.BlockInteraction.NONE);
             this.discard();
         }
     }
@@ -67,10 +74,17 @@ public class VolatileEntity extends LargeFireball implements ItemSupplier{
     public void tick() {
         this.setSecondsOnFire(5);
         this.setNoGravity(true);
+        if(firstTick){
+            SoundEvent soundEvent = SoundEvents.BLAZE_SHOOT;
+            this.playSound(soundEvent, 0.25F, 1F);
+        }
         if(tickCount > 400){
             if (!this.level.isClientSide) {
                 boolean flag = false;
-                this.level.explode((Entity)this.getOwner(), this.getX(), this.getY(), this.getZ(), (float)this.explosionPower, flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
+                if(this.getOwner() instanceof Player player){
+                    this.explosionPower = (float)Math.max(2,((Player)this.getOwner()).getAttributeValue(Attributes.ATTACK_DAMAGE)/3);
+                }
+                this.level.explode((Entity)this.getOwner(), this.getX(), this.getY(), this.getZ(), (float)Math.max(1.5,1.5*this.damage/6), flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
                 this.discard();
             }
         }
@@ -81,7 +95,10 @@ public class VolatileEntity extends LargeFireball implements ItemSupplier{
                 if(this.target != null) {
                     target.invulnerableTime= 0;
                 }
-                this.level.explode((Entity)this.getOwner(), this.getX(), this.getY(), this.getZ(), (float)this.explosionPower, flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
+                if(this.getOwner() instanceof Player player){
+                    this.explosionPower = (float)Math.max(2,((Player)this.getOwner()).getAttributeValue(Attributes.ATTACK_DAMAGE)/3);
+                }
+                this.level.explode((Entity)this.getOwner(), this.getX(), this.getY(), this.getZ(), (float)Math.max(1.5,1.5*this.damage/6), flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
                 if(this.target != null) {
                     target.invulnerableTime= 0;
                 }
@@ -94,7 +111,6 @@ public class VolatileEntity extends LargeFireball implements ItemSupplier{
 
         if(this.target != null){
             this.noPhysics = true;
-            super.tick();
             Vec3 vec3 = target.getBoundingBox().getCenter().subtract(this.position());
             this.setPosRaw(this.getX(), this.getY() + vec3.y * 0.015D * (double)2, this.getZ());
             if (this.level.isClientSide) {
@@ -107,9 +123,8 @@ public class VolatileEntity extends LargeFireball implements ItemSupplier{
                 this.flag = true;
             }
         }
-        else{
-            super.tick();
-        }
+
+        super.tick();
 
     }
 

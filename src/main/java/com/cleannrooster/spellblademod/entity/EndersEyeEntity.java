@@ -18,6 +18,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.util.ParticleUtils;
@@ -60,6 +61,7 @@ public class EndersEyeEntity extends Projectile implements ItemSupplier {
     public List<Entity> blacklist;
     public LivingEntity target;
     public Vec3 pos1;
+    public float damage = 1;
 
     public EndersEyeEntity(EntityType<? extends EndersEyeEntity> p_19870_, Level p_19871_) {
         super(p_19870_, p_19871_);
@@ -73,11 +75,16 @@ public class EndersEyeEntity extends Projectile implements ItemSupplier {
     double lastz = 0;
     @Override
     public void tick() {
+        if(firstTick){
+            SoundEvent soundEvent = SoundEvents.ENDERMAN_TELEPORT;
+            this.playSound(soundEvent, 0.25F, 1F);
+        }
         super.tick();
         this.noPhysics = true;
         if (this.tickCount > 160 && !this.getLevel().isClientSide()){
             this.discard();
         }
+
         if(this.getOwner()!=null){
             if (this.distanceTo(this.getOwner()) > 32 && !this.getLevel().isClientSide()){
                 this.discard();
@@ -175,7 +182,7 @@ public class EndersEyeEntity extends Projectile implements ItemSupplier {
                                     ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
                                     builder.put(Attributes.KNOCKBACK_RESISTANCE, modifier);
                                     target.getAttributes().addTransientAttributeModifiers(builder.build());
-                                    target.hurt(new EntityDamageSource("spell", (Player) this.getOwner()), 2);
+                                    target.hurt(new EntityDamageSource("spell", (Player) this.getOwner()), (float)Math.max(1,this.damage/6));
                                     target.getAttributes().removeAttributeModifiers(builder.build());
 
                                 }

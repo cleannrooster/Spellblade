@@ -72,8 +72,8 @@ public class WinterBurial extends Spell{
             return InteractionResultHolder.success(itemstack);
 
         }
-        if(Impale.getPlayerPOVHitResult(level,player, ClipContext.Fluid.NONE).getType() == HitResult.Type.BLOCK) {
-            new WinterBurialEntity(ModEntities.WINTERBURIAL.get(), level, player,Impale.getPlayerPOVHitResult(level,player, ClipContext.Fluid.NONE).getBlockPos() , 3);
+        if(Impale.getPlayerPOVHitResult(level,player, ClipContext.Fluid.NONE, player.getAttribute(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).getValue()).getType() == HitResult.Type.BLOCK) {
+            new WinterBurialEntity(ModEntities.WINTERBURIAL.get(), level, player,Impale.getPlayerPOVHitResult(level,player, ClipContext.Fluid.NONE, player.getAttribute(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).getValue()).getBlockPos() , 3);
             ((Player)player).getAttribute(manatick.WARD).setBaseValue(((Player) player).getAttributeBaseValue(manatick.WARD)-20);
 
             if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -21) {

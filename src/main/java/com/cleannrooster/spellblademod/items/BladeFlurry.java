@@ -10,9 +10,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
@@ -20,6 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,6 +50,54 @@ public class BladeFlurry extends Spell{
     public Item getIngredient2() {return ModItems.FLUXITEM.get();};
 
     @Override
+    public boolean isTriggerable() {
+        return true;
+    }
+
+    @Override
+    public boolean isTargeted() {
+        return true;
+    }
+
+    @Override
+    public boolean triggeron(Level level, Player player, LivingEntity target, float modifier) {
+        sword1[] swords = new sword1[32];
+        for(int i = 0; i < swords.length; i++) {
+            swords[i] = new sword1(ModEntities.SWORD.get(), level, player);
+            swords[i].setPos(player.getEyePosition().add(player.getViewVector(0).multiply(3.5,3.5,3.5)));
+            swords[i].number = i + 1;
+            swords[i].tickCount = -i-16;
+            swords[i].mode = 2;
+            swords[i].target = target;
+
+
+      /*  try {
+            if(string().contains(player.getStringUUID())) {
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+      /*  if(SpellbladeMod.UUIDS.contains(player.getStringUUID())) {
+            swords[i].setCustomName(new TextComponent("emerald"));
+        }*/
+            if(!level.isClientSide() && Patreon.allowed(player) && Patreon.emeraldbladeflurry.contains(player)) {
+                swords[i].setCustomName(new TranslatableComponent("emerald"));
+            }
+            swords[i].damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+
+            level.addFreshEntity(swords[i]);
+        }
+
+        ((Player)player).getAttribute(manatick.WARD).setBaseValue(((Player) player).getAttributeBaseValue(manatick.WARD)-20);
+
+        if (((Player)player).getAttributes().getBaseValue(manatick.WARD) < -21) {
+            player.hurt(DamageSource.MAGIC,2);
+        }
+
+        return super.triggeron(level, player, target, modifier);
+    }
+
+    @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         if (player.isShiftKeyDown() && itemstack.getItem() instanceof Spell) {
@@ -68,16 +121,20 @@ public class BladeFlurry extends Spell{
         sword1[] swords = new sword1[20];
 
         for(int i = 0; i < swords.length; i++) {
-            swords[i] = new sword1(ModEntities.SWORD.get(), level, player);
+            swords[i] = new sword1(ModEntities.SWORD.get(), level, player,player.getViewVector(0));
             swords[i].setPos(player.getEyePosition().add(level.random.nextDouble(-0.3,0.3),level.random.nextDouble(-0.3,0.3),level.random.nextDouble(-0.3,0.3)).add(2*player.getBbWidth()*player.getViewVector(0).x,2*player.getBbWidth()*player.getViewVector(0).y,2*player.getBbWidth()*player.getViewVector(0).z));
             swords[i].number = i + 1;
-            swords[i].tickCount = -i;
+            swords[i].tickCount = -i-1;
             swords[i].mode = 3;
-            swords[i].shootFromRotation(player,player.getXRot(), player.getYRot(), 0, 2.5F, 1.0F);
+            swords[i].damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+
+            double d0 = player.getViewVector(0).horizontalDistance();
             if(!level.isClientSide() && Patreon.allowed(player) && Patreon.emeraldbladeflurry.contains(player)) {
                 swords[i].setCustomName(new TranslatableComponent("emerald"));
             }
+
             level.addFreshEntity(swords[i]);
+
         }
 
         ((Player)player).getAttribute(manatick.WARD).setBaseValue(((Player) player).getAttributeBaseValue(manatick.WARD)-20);
@@ -111,6 +168,7 @@ public class BladeFlurry extends Spell{
           /*  if(SpellbladeMod.UUIDS.contains(player.getStringUUID())) {
                 swords[i].setCustomName(new TextComponent("emerald"));
             }*/
+            swords[i].damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
             if(!level.isClientSide() && Patreon.allowed(player) && Patreon.emeraldbladeflurry.contains(player)) {
                 swords[i].setCustomName(new TranslatableComponent("emerald"));
             }

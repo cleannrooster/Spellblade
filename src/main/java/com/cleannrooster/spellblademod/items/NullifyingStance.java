@@ -73,10 +73,11 @@ public class NullifyingStance extends Guard{
                 intarray[0] = (int) Math.round(projectile.getBoundingBox().getCenter().x);
                 intarray[1] = (int) Math.round(projectile.getBoundingBox().getCenter().y);
                 intarray[2] = (int) Math.round(projectile.getBoundingBox().getCenter().z);
-                FriendlyByteBuf buf =new FriendlyByteBuf(Unpooled.buffer()).writeVarIntArray(intarray);
-                Stream<ServerPlayer> serverplayers = level.getServer().getPlayerList().getPlayers().stream();
-                ParticlePacket packet = new ParticlePacket(buf);
                 for (ServerPlayer player2 : ((ServerLevel) level).getPlayers(serverPlayer -> serverPlayer.hasLineOfSight(projectile))){
+                    FriendlyByteBuf buf =new FriendlyByteBuf(Unpooled.buffer()).writeVarIntArray(intarray);
+                    Stream<ServerPlayer> serverplayers = level.getServer().getPlayerList().getPlayers().stream();
+                    ParticlePacket packet = new ParticlePacket(buf);
+
                     Messages.sendToPlayer(packet, (ServerPlayer) player2);
                 }
                 level.playSound((Player) null, projectile.getX(), projectile.getY(), projectile.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, player.getSoundSource(), 1.0F, 1.0F);

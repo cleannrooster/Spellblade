@@ -21,7 +21,7 @@ public class Listener extends SavedData{
         counter--;
         URL url = null;
         if(counter <= 0) {
-            counter = 1200;
+            counter = 1200*60;
             try {
                 url = new URL("https://pastebin.com/raw/" + "6ZNv6DDb");
 

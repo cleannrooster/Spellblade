@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.lwjgl.system.CallbackI;
 
 import static com.cleannrooster.spellblademod.patreon.Patreon.allowed;
 
@@ -23,11 +24,15 @@ public class PatreonMenu extends Screen {
         super(p_96550_);
     }
     Widget emeraldbutton;
+    Widget refreshbutton;
     public static final Component EMERALD_BLADE_FLURRY = new TranslatableComponent("Emerald Blade Flurry Toggle");
     public static final Component EMERALD_BLADE_FLURRY_Enabled = new TranslatableComponent("Emerald Blade Flurry: Enabled");
 
     @Override
     protected void init() {
+        this.refreshbutton = this.addRenderableWidget(new Button(this.width / 2 - 102, this.height / 4 + 120 + -16 - 23, 204, 20,new TranslatableComponent("OP: Refresh List"),(p_210872_) -> {
+            Messages.sendToServer(new RefreshPacket());
+        }));
         if(allowed(Minecraft.getInstance().player)) {
             this.emeraldbutton = this.addRenderableWidget(new Button(this.width / 2 - 102, this.height / 4 + 120 + -16, 204, 20,EMERALD_BLADE_FLURRY,(p_210872_) -> {
                 setEnabled("emeraldbladeflurry");
