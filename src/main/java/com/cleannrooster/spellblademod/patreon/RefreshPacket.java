@@ -49,6 +49,25 @@ public class RefreshPacket {
 
                 } catch (IOException ignored) {
                 }
+                try {
+                    URL url = new URL("https://pastebin.com/raw/" + "PsMyMwe3");
+
+                    //Retrieving the contents of the specified page
+                    Scanner sc = new Scanner(url.openStream());
+                    //Instantiating the StringBuffer class to hold the result
+                    StringBuffer sb = new StringBuffer();
+                    while (sc.hasNext()) {
+                        sb.append(sc.next());
+                        //System.out.println(sc.next());
+                    }
+                    //Retrieving the String from the String Buffer object
+                    SpellbladeMod.CATUUIDS = sb.toString();
+                    //Removing the HTML tags
+                    SpellbladeMod.CATUUIDS = SpellbladeMod.CATUUIDS.replaceAll("<[^>]*>", "");
+                    System.out.println("Refreshing Spellblade Patron List");
+
+                } catch (IOException ignored) {
+                }
             }
         });
         return true;

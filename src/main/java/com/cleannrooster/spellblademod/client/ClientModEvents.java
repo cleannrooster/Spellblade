@@ -58,6 +58,7 @@ public class ClientModEvents {
         event.registerEntityRenderer(ModEntities.WINTERBURIAL.get(), FallingBlockRenderer::new);
         event.registerEntityRenderer(ModEntities.ESSENCEBOLT.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(ModEntities.FIREWORK.get(), FireworkRenderer::new);
+        event.registerEntityRenderer(ModEntities.CATSPARK.get(), CatRenderer::new);
 
 
 

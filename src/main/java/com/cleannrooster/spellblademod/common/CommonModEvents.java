@@ -15,6 +15,7 @@ public class CommonModEvents {
 
         event.put(ModEntities.INVISIVEX.get(), Vex.createAttributes().build());
         event.put(ModEntities.SPARK.get(), SpiderSpark.createAttributes().build());
+        event.put(ModEntities.CATSPARK.get(), SpiderSpark.createAttributes().build());
 
     }
 }

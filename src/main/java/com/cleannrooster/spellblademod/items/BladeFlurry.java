@@ -80,7 +80,7 @@ public class BladeFlurry extends Spell{
       /*  if(SpellbladeMod.UUIDS.contains(player.getStringUUID())) {
             swords[i].setCustomName(new TextComponent("emerald"));
         }*/
-            if(!level.isClientSide() && Patreon.allowed(player) && Patreon.emeraldbladeflurry.contains(player)) {
+            if(!level.isClientSide() && Patreon.allowed(player, SpellbladeMod.UUIDS) && Patreon.emeraldbladeflurry.contains(player)) {
                 swords[i].setCustomName(new TranslatableComponent("emerald"));
             }
             swords[i].damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
@@ -129,7 +129,7 @@ public class BladeFlurry extends Spell{
             swords[i].damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
 
             double d0 = player.getViewVector(0).horizontalDistance();
-            if(!level.isClientSide() && Patreon.allowed(player) && Patreon.emeraldbladeflurry.contains(player)) {
+            if(!level.isClientSide() && Patreon.allowed(player,SpellbladeMod.UUIDS) && Patreon.emeraldbladeflurry.contains(player)) {
                 swords[i].setCustomName(new TranslatableComponent("emerald"));
             }
 
@@ -169,7 +169,7 @@ public class BladeFlurry extends Spell{
                 swords[i].setCustomName(new TextComponent("emerald"));
             }*/
             swords[i].damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
-            if(!level.isClientSide() && Patreon.allowed(player) && Patreon.emeraldbladeflurry.contains(player)) {
+            if(!level.isClientSide() && Patreon.allowed(player,SpellbladeMod.UUIDS) && Patreon.emeraldbladeflurry.contains(player)) {
                 swords[i].setCustomName(new TranslatableComponent("emerald"));
             }
             level.addFreshEntity(swords[i]);

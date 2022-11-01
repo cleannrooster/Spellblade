@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.EntityDamageSource;
+import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -119,13 +120,13 @@ public class ThrownItems extends Fireball {
                 if (FriendshipBracelet.PlayerFriendshipPredicate(player, (LivingEntity) p_37259_.getEntity()) && p_37259_.getEntity() != this.thrower) {
                     p_37259_.getEntity().invulnerableTime = 0;
                     p_37259_.getEntity().setSecondsOnFire(4);
-                    p_37259_.getEntity().hurt(new EntityDamageSource("spell", this.thrower).setIsFire(), 2);
+                    p_37259_.getEntity().hurt(new IndirectEntityDamageSource("spell",this,this.getOwner()).setIsFire(), 2);
                 }
             }
             else if (p_37259_.getEntity() != this.thrower){
                 p_37259_.getEntity().invulnerableTime = 0;
                 p_37259_.getEntity().setSecondsOnFire(4);
-                p_37259_.getEntity().hurt(new EntityDamageSource("spell", this.thrower).setIsFire(), 2);
+                p_37259_.getEntity().hurt(new IndirectEntityDamageSource("spell",this,this.getOwner()).setIsFire(), 2);
 
             }
         }

@@ -99,7 +99,7 @@ public class ModItems {
     public static final RegistryObject<Item> SENTINEL_TOTEM = ITEMS.register("sentinel_totem",
             () -> new SentinelTotemItem(ModBlocks.SENTINEL_TOTEM_BLOCK.get(), new Item.Properties().tab(ModSetup.ITEM_GROUP)));
     public static final RegistryObject<Item> OIL = ITEMS.register("oil",
-            () -> new FlaskItem(new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1).durability(8)));
+            () -> new FlaskItem(new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1).durability(12)));
     public static final RegistryObject<Item> LIGHTNING_WHIRL = ITEMS.register("lightning_whirl",
             () -> new LightningWhirl( new Item.Properties().tab(ModSetup.ITEM_GROUP).stacksTo(1)));
 

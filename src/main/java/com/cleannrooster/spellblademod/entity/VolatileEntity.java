@@ -122,6 +122,8 @@ public class VolatileEntity extends LargeFireball implements ItemSupplier{
             if(vec3.length() < 0.5){
                 this.flag = true;
             }
+            this.setDeltaMovement(this.getDeltaMovement().normalize().multiply(5F / 20F, 5F / 20F, 5F / 20F));
+
         }
 
         super.tick();

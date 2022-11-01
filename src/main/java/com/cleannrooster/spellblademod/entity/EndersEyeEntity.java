@@ -9,6 +9,7 @@ import com.cleannrooster.spellblademod.setup.Messages;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.math.Vector3f;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleOptions;
@@ -22,8 +23,11 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.util.ParticleUtils;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.EntityDamageSource;
+import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -35,6 +39,7 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.EyeOfEnder;
+import net.minecraft.world.entity.projectile.Fireball;
 import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
@@ -147,7 +152,7 @@ public class EndersEyeEntity extends Projectile implements ItemSupplier {
 
 
                         if (tickCount % 10 == 5) {
-                            List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, this.target.getBoundingBox().inflate(3D), livingEntity -> {
+                            List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, this.target.getBoundingBox().inflate(2D), livingEntity -> {
                                 return FriendshipBracelet.PlayerFriendshipPredicate((Player) this.getOwner(), livingEntity);
                             });
                             entities.removeIf(livingEntity -> {
@@ -156,14 +161,14 @@ public class EndersEyeEntity extends Projectile implements ItemSupplier {
                                 } else {
                                     return false;
                                 }
-                            });
+                            });/*
                             if (((Player) this.getOwner()).getLastHurtMob() != null) {
                                 if (((Player) this.getOwner()).getLastHurtMob().isAlive() && this.getOwner().distanceTo(((Player) this.getOwner()).getLastHurtMob()) <= 8) {
                                     if (!entities.contains(((Player) this.getOwner()).getLastHurtMob())) {
                                         entities.add(((Player) this.getOwner()).getLastHurtMob());
                                     }
                                 }
-                            }
+                            }*/
                             Object[] entitiesarray = entities.toArray();
 
                             int entityamount = entitiesarray.length;
@@ -182,7 +187,7 @@ public class EndersEyeEntity extends Projectile implements ItemSupplier {
                                     ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
                                     builder.put(Attributes.KNOCKBACK_RESISTANCE, modifier);
                                     target.getAttributes().addTransientAttributeModifiers(builder.build());
-                                    target.hurt(new EntityDamageSource("spell", (Player) this.getOwner()), (float)Math.max(1,this.damage/6));
+                                    target.hurt(new IndirectEntityDamageSource("spell",this, (Player) this.getOwner()), (float)Math.max(1,this.damage/6));
                                     target.getAttributes().removeAttributeModifiers(builder.build());
 
                                 }
@@ -215,7 +220,7 @@ public class EndersEyeEntity extends Projectile implements ItemSupplier {
                         double X = this.position().x + (this.lastx - this.position().x) * ((double) iii / (25));
                         double Y = this.position().y + (this.lasty - this.position().y) * ((double) iii / (25));
                         double Z = this.position().z + (this.lastz - this.position().z) * ((double) iii / (25));
-                        this.level.addParticle(ParticleTypes.DRAGON_BREATH, X, Y, Z, 0, 0, 0);
+                        this.level.addParticle(ParticleTypes.DRAGON_BREATH, X, Y,   Z, 0, 0, 0);
                     }
                 }
                 this.lastx = this.position().x;
@@ -229,6 +234,14 @@ public class EndersEyeEntity extends Projectile implements ItemSupplier {
         }
     }
 
+   @Override
+    public boolean isPickable() {
+        return true;
+    }
+
+    public float getPickRadius() {
+        return 0.125F;
+    }
     @Override
     public ItemStack getItem() {
         return ModItems.ENDERSEYE.get().getDefaultInstance();

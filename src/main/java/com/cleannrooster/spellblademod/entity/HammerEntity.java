@@ -67,7 +67,7 @@ public boolean secondary = false;
 
         if (entity instanceof LivingEntity) {
             if (FriendshipBracelet.PlayerFriendshipPredicate((Player) this.getOwner(), (LivingEntity) entity)) {
-                entity.hurt(damagesource, (float)Math.max(6,this.damage));
+                entity.hurt(new IndirectEntityDamageSource("spell",this,this.getOwner()), (float)Math.max(6,this.damage));
                 if (entity.getType() == EntityType.ENDERMAN) {
                     return;
                 }
@@ -111,7 +111,7 @@ public boolean secondary = false;
             else{
                 multi = 0.75F;
             }
-            int num_pts = 100;
+            int num_pts = 50;
             LivingEntity entity = (LivingEntity) this.getOwner();
             /*if (this.getLevel().isClientSide)
             {
@@ -133,7 +133,7 @@ public boolean secondary = false;
             //}
         if (this.getOwner() != null) {
 
-            List<LivingEntity> entities = this.getLevel().getEntitiesOfClass(LivingEntity.class,this.getBoundingBox().inflate(6D),livingEntity -> {return FriendshipBracelet.PlayerFriendshipPredicate((Player) this.getOwner(),livingEntity);});
+            List<LivingEntity> entities = this.getLevel().getEntitiesOfClass(LivingEntity.class,this.getBoundingBox().inflate(3D),livingEntity -> {return FriendshipBracelet.PlayerFriendshipPredicate((Player) this.getOwner(),livingEntity);});
 
             Object[] entitiesarray = entities.toArray();
             int entityamount = entitiesarray.length;

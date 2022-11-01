@@ -17,6 +17,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.EntityDamageSource;
+import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -90,7 +91,7 @@ public class FireworkEntity extends Projectile implements ItemSupplier {
         this.baseTick();
         HitResult hitresult = ProjectileUtil.getHitResult(this, this::canHitEntity);
         if (!this.noPhysics) {
-            if(hitresult.getType() != HitResult.Type.MISS) {
+            if(hitresult.getType() == HitResult.Type.BLOCK) {
                 this.onHit(hitresult);
             }
         }
@@ -210,15 +211,13 @@ public class FireworkEntity extends Projectile implements ItemSupplier {
         }
 
         if (f > 0.0F && this.getOwner() != null) {
-            if (this.attachedToEntity != null) {
-                this.attachedToEntity.hurt(DamageSource.explosion((LivingEntity) this.getOwner()), (float)Math.max(6,(this.damage)));
-            }
+
 
             double d0 = 5.0D;
             Vec3 vec3 = this.position();
 
             for(LivingEntity livingentity : this.level.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(2.0D))) {
-                if (livingentity != this.attachedToEntity && !(this.distanceToSqr(livingentity) > 25.0D)) {
+                if (livingentity != this.attachedToEntity && !(this.distanceToSqr(livingentity) > 25.0D) && livingentity != this.getOwner()) {
                     boolean flag = false;
 
                     for(int i = 0; i < 2; ++i) {
@@ -232,7 +231,7 @@ public class FireworkEntity extends Projectile implements ItemSupplier {
 
                     if (flag) {
                         float f1 = f * (float)Math.sqrt((5.0D - (double)this.distanceTo(livingentity)) / 5.0D);
-                        livingentity.hurt(DamageSource.explosion((LivingEntity) this.getOwner()), (float)Math.max(6,(this.damage)));
+                        livingentity.hurt(new IndirectEntityDamageSource("spell",this,this.getOwner()), (float)Math.max(6,(this.damage)));
                     }
                 }
             }

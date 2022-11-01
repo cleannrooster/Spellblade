@@ -1,5 +1,6 @@
 package com.cleannrooster.spellblademod.patreon;
 
+import com.cleannrooster.spellblademod.SpellbladeMod;
 import com.cleannrooster.spellblademod.setup.Messages;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
@@ -25,7 +26,10 @@ public class PatreonMenu extends Screen {
     }
     Widget emeraldbutton;
     Widget refreshbutton;
+    Widget catbutton;
     public static final Component EMERALD_BLADE_FLURRY = new TranslatableComponent("Emerald Blade Flurry Toggle");
+    public static final Component CATSPIDERS = new TranslatableComponent("Cat Spiders");
+
     public static final Component EMERALD_BLADE_FLURRY_Enabled = new TranslatableComponent("Emerald Blade Flurry: Enabled");
 
     @Override
@@ -33,9 +37,14 @@ public class PatreonMenu extends Screen {
         this.refreshbutton = this.addRenderableWidget(new Button(this.width / 2 - 102, this.height / 4 + 120 + -16 - 23, 204, 20,new TranslatableComponent("OP: Refresh List"),(p_210872_) -> {
             Messages.sendToServer(new RefreshPacket());
         }));
-        if(allowed(Minecraft.getInstance().player)) {
+        if(allowed(Minecraft.getInstance().player, SpellbladeMod.UUIDS)) {
             this.emeraldbutton = this.addRenderableWidget(new Button(this.width / 2 - 102, this.height / 4 + 120 + -16, 204, 20,EMERALD_BLADE_FLURRY,(p_210872_) -> {
                 setEnabled("emeraldbladeflurry");
+            }));
+        }
+        if(allowed(Minecraft.getInstance().player,SpellbladeMod.CATUUIDS)) {
+            this.catbutton = this.addRenderableWidget(new Button(this.width / 2 - 102, this.height / 4 + 120 + -16 + 23, 204, 20,CATSPIDERS,(p_210872_) -> {
+                setEnabled("catspiders");
             }));
         }
     }
@@ -48,6 +57,13 @@ public class PatreonMenu extends Screen {
             buf.writeUUID(Minecraft.getInstance().player.getUUID());
             Messages.sendToServer(new EmeraldPacket(buf));
         }
+        if (string.equals("catspiders")) {
+
+            FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+            buf.writeUUID(Minecraft.getInstance().player.getUUID());
+            Messages.sendToServer(new CatPacket(buf));
+        }
     }
+
 
 }

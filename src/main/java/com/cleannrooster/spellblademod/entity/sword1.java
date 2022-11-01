@@ -21,6 +21,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.EntityDamageSource;
+import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -128,7 +129,7 @@ public class sword1 extends ThrownTrident implements ItemSupplier {
     @Override
     protected void onHitEntity(EntityHitResult p_37573_) {
         if(this.mode == 3 && this.getOwner() instanceof Player && p_37573_.getEntity() instanceof LivingEntity && p_37573_.getEntity() != this.getOwner()){
-        p_37573_.getEntity().hurt(EntityDamageSource.playerAttack((Player) this.getOwner()), (float) Math.max(6,(float) this.damage));
+        p_37573_.getEntity().hurt(new IndirectEntityDamageSource("spell",this,(Player) this.getOwner()), (float) Math.max(6,(float) this.damage)/2);
 
         }
     }
@@ -161,7 +162,7 @@ public class sword1 extends ThrownTrident implements ItemSupplier {
                         SoundEvent event = SoundEvents.PLAYER_ATTACK_SWEEP;
                         this.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, 0.25F, 1.0F);
                         if(entity != null){
-                            entity.hurt(EntityDamageSource.playerAttack((Player) this.getOwner()), (float) Math.max(6,this.damage));
+                            entity.hurt(new IndirectEntityDamageSource("spell",this,(Player) this.getOwner()), (float) Math.max(6,this.damage)/2);
                             this.discard();
                         }
                     }
@@ -176,7 +177,7 @@ public class sword1 extends ThrownTrident implements ItemSupplier {
                         this.setNoPhysics(false);
                         this.setNoGravity(true);
                         if(entity != null){
-                            entity.hurt(EntityDamageSource.playerAttack((Player) this.getOwner()), (float) Math.max(6,(float) this.damage));
+                            entity.hurt( new IndirectEntityDamageSource("spell",this,(Player) this.getOwner()), (float) Math.max(6,(float) this.damage)/2);
                             this.discard();
                         }
                         this.setInvisible(false);
@@ -250,7 +251,7 @@ public class sword1 extends ThrownTrident implements ItemSupplier {
                                             builder.put(Attributes.KNOCKBACK_RESISTANCE, modifier);
 
                                             living.getAttributes().addTransientAttributeModifiers(builder.build());
-                                            living.hurt(new EntityDamageSource("spell", this.getOwner()), Math.max(6,(float) this.damage));
+                                            living.hurt(new IndirectEntityDamageSource("spell",this, this.getOwner()), Math.max(6,(float) this.damage)/2);
 
                                             if (level.getServer() != null) {
                                                 int intarray[];
@@ -386,7 +387,7 @@ public class sword1 extends ThrownTrident implements ItemSupplier {
                             SoundEvent event = SoundEvents.PLAYER_ATTACK_SWEEP;
                             this.playSound(SoundEvents.PLAYER_ATTACK_SWEEP, 0.25F, 1.0F);
                             if(entity != null){
-                                entity.hurt(EntityDamageSource.playerAttack((Player) this.getOwner()), (float) Math.max(3,(float) this.damage/2));
+                                entity.hurt(new IndirectEntityDamageSource("spell",this,(Player) this.getOwner()), (float) Math.max(3,(float) this.damage/2));
                                 this.discard();
                             }
 
@@ -396,7 +397,7 @@ public class sword1 extends ThrownTrident implements ItemSupplier {
                             this.setNoGravity(true);
 
                             if(entity != null){
-                                entity.hurt(EntityDamageSource.playerAttack((Player) this.getOwner()), (float) Math.max(3,(float) this.damage/2));
+                                entity.hurt(new IndirectEntityDamageSource("spell",this,(Player) this.getOwner()), (float) Math.max(3,(float) this.damage/2));
                                 this.discard();
                             }
                         }

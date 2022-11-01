@@ -1,6 +1,8 @@
 package com.cleannrooster.spellblademod.items;
 
 import com.cleannrooster.spellblademod.SpellbladeMod;
+import com.cleannrooster.spellblademod.StatusEffectsModded;
+import com.cleannrooster.spellblademod.effects.FluxHandler;
 import com.cleannrooster.spellblademod.manasystem.client.ClientSetup;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.nbt.CompoundTag;
@@ -10,6 +12,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -22,6 +25,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -88,11 +92,12 @@ public interface Flask {
         return true;
     }
 
-    public static  boolean triggerOrTriggeron(String spellname, Level level, Player player, LivingEntity target, float modifier, ItemStack stack, boolean trigger){
+    public static  Spell triggerOrTriggeron(String spellname, Level level, Player player, LivingEntity target, float modifier, ItemStack stack, boolean trigger){
         String triggeroroil = "Oils";
         if(trigger){
             triggeroroil = "Triggers";
         }
+        Spell spell2 = null;
         if(stack.getOrCreateTag().getCompound(triggeroroil) != null){
             if(stack.getOrCreateTag().getCompound(triggeroroil).getInt(spellname) > 0) {
                 for (RegistryObject<Item> spell3 : ModItems.ITEMS.getEntries()) {
@@ -100,6 +105,9 @@ public interface Flask {
                         if (Objects.equals(spell.getDescriptionId(), spellname)) {
                             if (spell.isTargeted()) {
                                 ((Spell) spell).triggeron(level, player, target, 1);
+                                if(!(spell instanceof FluxItem)) {
+                                    spell2 = spell;
+                                }
                             } else {
                                 ((Spell) spell).trigger(level, player, 1);
 
@@ -112,7 +120,7 @@ public interface Flask {
                 stack.getOrCreateTag().getCompound(triggeroroil).remove(spellname);
             }
         }
-        return true;
+        return spell2;
     }
     public static boolean useSpell(String spellname, Level level, Player player, InteractionHand hand, ItemStack stack){
         boolean worked = true;

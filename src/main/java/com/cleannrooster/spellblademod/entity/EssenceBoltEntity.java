@@ -4,6 +4,7 @@ import com.mojang.math.Vector3d;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
@@ -36,6 +37,7 @@ public class EssenceBoltEntity extends ThrowableItemProjectile {
                 player.attack(p_37259_.getEntity());
             }
         }
+        this.discard();
         super.onHitEntity(p_37259_);
     }
 
@@ -75,12 +77,12 @@ public class EssenceBoltEntity extends ThrowableItemProjectile {
         double yy1 = this.getY() - 0.5 * vec3d.y;
         double zz1 = this.getZ() - 0.5 * vec3d.z;
         this.level.addParticle(new DustParticleOptions(new Vector3f(Vec3.fromRGB24(16766720)),1F), true, x1 , y1 , z1, 0,0, 0);
-        this.level.addParticle(new DustParticleOptions(new Vector3f(Vec3.fromRGB24(16766720)),1F), true, this.getX(), this.getY(), this.getZ(), 0, 0, 0);
+        this.level.addParticle( ParticleTypes.ELECTRIC_SPARK, true, this.getX(), this.getY(), this.getZ(), this.getDeltaMovement().x, this.getDeltaMovement().y, this.getDeltaMovement().z);
 
         this.level.addParticle(new DustParticleOptions(new Vector3f(Vec3.fromRGB24(16766720)),1F), true, xx1, yy1, zz1, 0, 0, 0);
 
     }
-    public Vec3 rotate(double x, double y, double z, double pitch, double roll, double yaw) {
+    public static Vec3 rotate(double x, double y, double z, double pitch, double roll, double yaw) {
         double cosa = Math.cos(yaw);
         double sina = Math.sin(yaw);
 

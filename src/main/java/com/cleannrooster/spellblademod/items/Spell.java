@@ -78,8 +78,9 @@ public class Spell extends Item {
                     text5.append(" Spell Oil");
                 }
 
-
-        p_41423_.add(text1);
+        if(this.isTriggerable()) {
+            p_41423_.add(text1);
+        }
         p_41423_.add(text2);
         p_41423_.add(text5);
 

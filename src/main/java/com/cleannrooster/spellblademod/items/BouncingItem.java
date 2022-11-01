@@ -32,7 +32,7 @@ return true;
         if(!playerIn.getCooldowns().isOnCooldown(this)) {
             BouncingEntity thrown = new BouncingEntity(playerIn.getLevel(), playerIn);
             thrown.setPos(target.getEyePosition());
-            thrown.setDeltaMovement(0 + playerIn.getDeltaMovement().x, -1 + playerIn.getDeltaMovement().y, 0 + playerIn.getDeltaMovement().z);
+            thrown.setDeltaMovement(0 + playerIn.getDeltaMovement().x, -0.5 + playerIn.getDeltaMovement().y, 0 + playerIn.getDeltaMovement().z);
             if (!worldIn.isClientSide()) {
                 playerIn.getLevel().addFreshEntity(thrown);
             }
@@ -104,7 +104,7 @@ return true;
         if(!playerIn.getCooldowns().isOnCooldown(this)) {
             BouncingEntity thrown = new BouncingEntity(playerIn.getLevel(), playerIn);
 
-            thrown.setDeltaMovement(0 + playerIn.getDeltaMovement().x, -1 + playerIn.getDeltaMovement().y, 0 + playerIn.getDeltaMovement().z);
+            thrown.setDeltaMovement(0 + playerIn.getDeltaMovement().x, -0.5 + playerIn.getDeltaMovement().y, 0 + playerIn.getDeltaMovement().z);
             if (!worldIn.isClientSide()) {
                 playerIn.getLevel().addFreshEntity(thrown);
             }

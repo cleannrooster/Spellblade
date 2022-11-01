@@ -1,5 +1,7 @@
 package com.cleannrooster.spellblademod;
 
+import com.cleannrooster.spellblademod.effects.DamageSourceModded;
+import com.cleannrooster.spellblademod.effects.FluxHandler;
 import com.cleannrooster.spellblademod.entity.HammerEntity;
 import com.cleannrooster.spellblademod.entity.ModEntities;
 import com.cleannrooster.spellblademod.entity.SpiderSpark;
@@ -13,6 +15,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
@@ -30,10 +33,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.RegistryObject;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static com.cleannrooster.spellblademod.manasystem.manatick.SMOTE;
 
@@ -79,7 +79,7 @@ public class WeaponHandler {
     }
     @SubscribeEvent
     public static void spellproxy(AttackEntityEvent event) {
-
+        List<Spell> spells = new ArrayList<>();
         if (event.getPlayer().getAttackStrengthScale(0) > 0.5 && event.getEntityLiving() instanceof Player player && EnchantmentHelper.getEnchantmentLevel(SpellbladeMod.spellproxy, player) > 0 && event.getTarget() instanceof LivingEntity living &&  !(event.getTarget() instanceof SpiderSpark)) {
             //player.getPersistentData().putBoolean("cast", true);
             ItemStack itemstack = new ItemStack(ModItems.SPELLBLADE.get());
@@ -95,7 +95,8 @@ public class WeaponHandler {
                     String spell = tag.getCompound("Triggers").getAllKeys().stream().toList().get(ii);
                     if (tag.getCompound("Triggers").getInt(spell) > 0) {
 
-                        Flask.triggerOrTriggeron(spell, player.getLevel(), player, living, 1, itemstack, true);
+                        spells.add(Flask.triggerOrTriggeron(spell, player.getLevel(), player, living, 1, itemstack,true));
+
                         tag.getCompound("Triggers").putInt(spell, tag.getCompound("Triggers").getInt(spell) - 1);
                     }
                     else if(!tag.getCompound("AutoTrigger").contains(spell)){
@@ -122,6 +123,15 @@ public class WeaponHandler {
             player.getPersistentData().put("spellproxy", compoundtag);
             player.addEffect(new MobEffectInstance(StatusEffectsModded.WARDING.get(), 80, -1+EnchantmentHelper.getEnchantmentLevel(SpellbladeMod.spellproxy, player) + EnchantmentHelper.getEnchantmentLevel(SpellbladeMod.wardTempered, player)));
 
+            if(living.hasEffect(StatusEffectsModded.FLUXED.get())){
+                living.invulnerableTime = 0;
+                living.hurt(DamageSourceModded.fluxed((Player) player), (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE) * 0.5F);
+                living.invulnerableTime = 0;
+                FluxHandler.fluxHandler2(living,player, (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE),player.getLevel(),new ArrayList<>(),spells, UUID.randomUUID());
+                living.removeEffect(StatusEffectsModded.FLUXED.get());
+                living.removeEffect(MobEffects.GLOWING);
+
+            }
         }
     }
     @SubscribeEvent

@@ -3,12 +3,16 @@ package com.cleannrooster.spellblademod.entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.animal.Cat;
+import net.minecraft.world.entity.animal.Ocelot;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
@@ -16,34 +20,26 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
 import java.util.UUID;
 
-public class SpiderSpark extends Spider implements NeutralMob {
-    public Player owner = null;
+public class CatSpark extends Cat{
 
-    public SpiderSpark(EntityType<? extends SpiderSpark> p_33786_, Level p_33787_) {
-        super(p_33786_, p_33787_);
-    }
-    public SpiderSpark(EntityType<? extends SpiderSpark> p_33786_, Level p_33787_, Player player) {
-        super(p_33786_, p_33787_);
-        this.owner = player;
+    public CatSpark(EntityType<? extends CatSpark> p_28114_, Level p_28115_) {
+        super(p_28114_, p_28115_);
     }
 
     protected void registerGoals() {
         this.goalSelector.addGoal(3, new PanicAlwaysGoal(this,1));
         this.goalSelector.addGoal(1, new LeapAtTargetGoal(this, 0.4F));
-        this.goalSelector.addGoal(2, new SpiderAttackGoal(this));
+        this.goalSelector.addGoal(2, new CatSpark.SpiderAttackGoal(this));
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
     }
-    @Override
-    public int getRemainingPersistentAngerTime() {
-        return 0;
-    }
+
+
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 16.0D).add(Attributes.MOVEMENT_SPEED, (double)1F);
     }
@@ -55,7 +51,6 @@ public class SpiderSpark extends Spider implements NeutralMob {
             this.playSound(soundtype.getStepSound(), soundtype.getVolume() * 0.15F, soundtype.getPitch());
         }
     }
-
     @Override
     public void tick() {
         if(this.tickCount > 160){
@@ -65,20 +60,10 @@ public class SpiderSpark extends Spider implements NeutralMob {
     }
 
     @Override
-    public void setRemainingPersistentAngerTime(int p_21673_) {
-
+    public boolean onClimbable() {
+        return this.horizontalCollision;
     }
 
-    @Nullable
-    @Override
-    public UUID getPersistentAngerTarget() {
-        return null;
-    }
-
-    @Override
-    public void setPersistentAngerTarget(@Nullable UUID p_21672_) {
-
-    }
     @Override
     public boolean hurt(DamageSource p_21016_, float p_21017_) {
         return false;
@@ -98,7 +83,6 @@ public class SpiderSpark extends Spider implements NeutralMob {
     protected boolean shouldDropLoot() {
         return false;
     }
-
     @Override
     protected void dropExperience() {
         return;
@@ -118,12 +102,6 @@ public class SpiderSpark extends Spider implements NeutralMob {
     public boolean isInvulnerable() {
         return true;
     }
-
-    @Override
-    public void startPersistentAngerTimer() {
-
-    }
-
     @Override
     public boolean isAttackable() {
         return false;
@@ -153,7 +131,7 @@ public class SpiderSpark extends Spider implements NeutralMob {
         }
     }
     static class SpiderAttackGoal extends MeleeAttackGoal {
-        public SpiderAttackGoal(Spider p_33822_) {
+        public SpiderAttackGoal(CatSpark p_33822_) {
             super(p_33822_, 1.0D, true);
         }
 
@@ -162,7 +140,7 @@ public class SpiderSpark extends Spider implements NeutralMob {
         }
 
         public boolean canContinueToUse() {
-                return true;
+            return true;
         }
 
         protected double getAttackReachSqr(LivingEntity p_33825_) {

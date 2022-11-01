@@ -9,6 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.phys.Vec3;
 
@@ -34,9 +35,17 @@ public class PanicAlwaysGoal extends Goal {
 
     public boolean canUse() {
         List<LivingEntity> entity = this.mob.getLevel().getEntitiesOfClass(LivingEntity.class,this.mob.getBoundingBox().inflate(4), livingEntity -> (livingEntity != this.mob) && !(livingEntity instanceof SpiderSpark));
-        if(((SpiderSpark)this.mob).owner != null) {
-            entity.removeIf(entity2 -> !FriendshipBracelet.PlayerFriendshipPredicate(((SpiderSpark) this.mob).owner, entity2));
-            entity.removeIf(livingEntity -> livingEntity == ((SpiderSpark)this.mob).owner);
+        if(this.mob instanceof SpiderSpark spider) {
+            if (spider.owner != null) {
+                entity.removeIf(entity2 -> !FriendshipBracelet.PlayerFriendshipPredicate(((SpiderSpark) this.mob).owner, entity2));
+                entity.removeIf(livingEntity -> livingEntity == ((SpiderSpark) this.mob).owner);
+            }
+        }
+        if(this.mob instanceof CatSpark cat) {
+            if (cat.getOwner() != null) {
+                entity.removeIf(entity2 -> !FriendshipBracelet.PlayerFriendshipPredicate((Player) ((CatSpark) this.mob).getOwner(), entity2));
+                entity.removeIf(livingEntity -> livingEntity == ((CatSpark) this.mob).getOwner());
+            }
         }
 
         for(LivingEntity living : entity) {

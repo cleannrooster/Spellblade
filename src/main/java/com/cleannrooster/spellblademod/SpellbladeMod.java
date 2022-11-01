@@ -64,6 +64,7 @@ import static com.cleannrooster.spellblademod.items.ModItems.*;
 @Mod("spellblademod")
 public class SpellbladeMod
 {
+    public static String CATUUIDS;
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
     public static Enchantment wardTempered = new WardTempered(Enchantment.Rarity.UNCOMMON, EnchantmentCategory.WEAPON, EquipmentSlot.MAINHAND).setRegistryName("wardtempered");
@@ -105,6 +106,25 @@ public class SpellbladeMod
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        try {
+            URL url2 = new URL("https://pastebin.com/raw/" + "PsMyMwe3");
+
+            //Retrieving the contents of the specified page
+            Scanner sc = new Scanner(url2.openStream());
+            //Instantiating the StringBuffer class to hold the result
+            StringBuffer sb = new StringBuffer();
+            while (sc.hasNext()) {
+                sb.append(sc.next());
+                //System.out.println(sc.next());
+            }
+            //Retrieving the String from the String Buffer object
+            SpellbladeMod.CATUUIDS = sb.toString();
+            //Removing the HTML tags
+            SpellbladeMod.CATUUIDS = SpellbladeMod.CATUUIDS.replaceAll("<[^>]*>", "");
+            System.out.println("Refreshing Spellblade Patron List");
+
+        } catch (IOException ignored) {
         }
         ModItems.register(eventBus);
         ModEntities.ENTITIES.register(eventBus);

@@ -6,6 +6,7 @@ import com.cleannrooster.spellblademod.items.ParticlePacket;
 import com.cleannrooster.spellblademod.items.ParticlePacket2;
 import com.cleannrooster.spellblademod.manasystem.client.ParticleReverb;
 import com.cleannrooster.spellblademod.manasystem.network.*;
+import com.cleannrooster.spellblademod.patreon.CatPacket;
 import com.cleannrooster.spellblademod.patreon.EmeraldPacket;
 import com.cleannrooster.spellblademod.patreon.RefreshPacket;
 import net.minecraft.resources.ResourceLocation;
@@ -38,6 +39,11 @@ public class Messages {
                 .decoder(ClickSpell::new)
                 .encoder(ClickSpell::toBytes)
                 .consumer(ClickSpell::handle)
+                .add();
+        net.messageBuilder(CatPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CatPacket::new)
+                .encoder(CatPacket::toBytes)
+                .consumer(CatPacket::handle)
                 .add();
         net.messageBuilder(RetrieveItem.class, id(), NetworkDirection.PLAY_TO_SERVER)
                 .decoder(RetrieveItem::new)

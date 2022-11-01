@@ -80,11 +80,6 @@ public class EndersEye extends Spell {
             EndersEyeEntity eye = new EndersEyeEntity(ModEntities.ENDERS_EYE.get(),p_43406_.getLevel());
             eye.setPos(((Player) p_43406_).getEyePosition());
             eye.setOwner((Player) p_43406_);
-            if(p_43406_.getLastHurtMob() != null){
-                if(p_43406_.getLastHurtMob().isAlive() && player.distanceTo(player.getLastHurtMob()) <= player.getAttribute(ForgeMod.REACH_DISTANCE.get()).getValue() * 2){
-                    eye.target = p_43406_.getLastHurtMob();
-                }
-            }
             eye.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
         List<EndersEyeEntity> eyes = p_43405_.getEntitiesOfClass(EndersEyeEntity.class,player.getBoundingBox().inflate(32),endersEyeEntity -> endersEyeEntity.getOwner() == player);
             if(eyes.toArray().length >= 3){
@@ -148,11 +143,6 @@ public class EndersEye extends Spell {
         EndersEyeEntity eye = new EndersEyeEntity(ModEntities.ENDERS_EYE.get(), player.getLevel());
         eye.setPos(player.getEyePosition());
         eye.setOwner(player);
-        if(player.getLastHurtMob() != null){
-            if(player.getLastHurtMob().isAlive() && player.distanceTo(player.getLastHurtMob()) <= player.getAttribute(ForgeMod.REACH_DISTANCE.get()).getValue() * 2){
-                eye.target = player.getLastHurtMob();
-            }
-        }
         eye.pos1 = ((Player) player).position().add(new Vec3(0, 1.5, 0)).add(new Vec3(0, player.getBoundingBox().getYsize() / 2, 0));;
         eye.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
 

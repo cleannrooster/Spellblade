@@ -51,6 +51,8 @@ public class ModEntities {
             () -> EntityType.Builder.<EssenceBoltEntity>of(EssenceBoltEntity::new, MobCategory.MISC).sized(1, 1).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "essencebolt").toString()));
     public static final RegistryObject<EntityType<FireworkEntity>> FIREWORK = ENTITIES.register("fireworkentity",
             () -> EntityType.Builder.<FireworkEntity>of(FireworkEntity::new, MobCategory.MISC).sized(1, 1).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "firework").toString()));
+    public static final RegistryObject<EntityType<CatSpark>> CATSPARK = ENTITIES.register("catspark",
+            () -> EntityType.Builder.<CatSpark>of(CatSpark::new, MobCategory.MISC).sized(1, 1).clientTrackingRange(100).updateInterval(1).build(new ResourceLocation("spellblademod", "catspark").toString()));
 
 
 }

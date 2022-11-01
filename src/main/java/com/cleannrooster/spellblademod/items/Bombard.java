@@ -171,7 +171,7 @@ public class Bombard extends Spell{
             fireworkrocketentity.damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
 
             fireworkrocketentity.setDeltaMovement(level.getRandom().nextDouble(-0.2, 0.2)+0.2*vec3.x(), 0.3+level.getRandom().nextDouble(-0.1, 0.1), level.getRandom().nextDouble(-0.2, 0.2)+0.2*vec3.z());
-            fireworkrocketentity.setPos(target.getEyePosition());
+            fireworkrocketentity.setPos(target.getX(),target.getEyeY()+target.getBoundingBox().getYsize(),target.getZ());
             if (!level.isClientSide()) {
                 level.addFreshEntity(fireworkrocketentity);
             }

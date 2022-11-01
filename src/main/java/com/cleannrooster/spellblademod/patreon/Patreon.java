@@ -8,10 +8,11 @@ import java.util.List;
 
 public class Patreon {
     public static List<Player> emeraldbladeflurry = new ArrayList<>();
+    public static List<Player> cat = new ArrayList<>();
 
-    public static boolean allowed(Player player){
-        if(SpellbladeMod.UUIDS != null) {
-            if (SpellbladeMod.UUIDS.contains(player.getStringUUID())) {
+    public static boolean allowed(Player player, String string){
+        if(string != null) {
+            if (string.contains(player.getStringUUID())) {
                 return true;
             }
         }
